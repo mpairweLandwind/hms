@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/WEB-INF/templates/main-layout.xhtml">
+    <ui:define name="title">Appointment Calendar</ui:define>
+    
+    <ui:define name="content">
+        <div class="calendar-container">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="pi pi-calendar"></i>
+                    Appointment Calendar
+                </h1>
+                <div class="header-actions">
+                    <p:commandButton value="Today" 
+                                    icon="pi pi-calendar-times"
+                                    action="#{appointmentCalendarController.goToToday}"
+                                    update="calendar"
+                                    styleClass="ui-button-info"/>
+                    <p:commandButton value="New Appointment" 
+                                    icon="pi pi-plus" 
+                                    styleClass="ui-button-success"
+                                    onclick="PF('createAppointmentDialog').show()" 
+                                    action="#{appointmentController.openCreateDialog}"/>
+                </div>
+            </div>
+
+            <!-- Calendar View -->
+            <p:schedule id="calendar" 
+                       value="#{appointmentCalendarController.eventModel}"
+                       view="month"
+                       locale="en"
+                       timeZone="#{appointmentCalendarController.timeZone}"
+                       clientTimeZone="#{appointmentCalendarController.clientTimeZone}"
+                       tooltip="true"
+                       showWeekNumbers="true"
+                       aspectRatio="1.35">
+                
+                <p:ajax event="dateSelect" 
+                       listener="#{appointmentCalendarController.onDateSelect}" 
+                       update="eventDetails" 
+                       oncomplete="PF('eventDialog').show()" />
+                
+                <p:ajax event="eventSelect" 
+                       listener="#{appointmentCalendarController.onEventSelect}" 
+                       update="eventDetails" 
+                       oncomplete="PF('eventDialog').show()" />
+                
+                <p:ajax event="eventMove" 
+                       listener="#{appointmentCalendarController.onEventMove}" 
+                       update="messages" />
+                
+                <p:ajax event="eventResize" 
+                       listener="#{appointmentCalendarController.onEventResize}" 
+                       update="messages" />
+            </p:schedule>
+        </div>
+
+        <!-- Event Details Dialog -->
+        <p:dialog header="Appointment Details" 
+                  widgetVar="eventDialog" 
+                  modal="true" 
+                  resizable="false"
+                  width="500" 
+                  height="400"
+                  styleClass="event-dialog">
+            
+            <h:form id="eventForm">
+                <h:panelGrid id="eventDetails" columns="2" styleClass="event-details-grid">
+                    <p:outputLabel value="Title:" />
+                    <p:inputText value="#{appointmentCalendarController.event.title}" 
+                                required="true" 
+                                label="Title"/>
+                    
+                    <p:outputLabel value="Start Date:" />
+                    <p:calendar value="#{appointmentCalendarController.event.startDate}" 
+                               pattern="dd/MM/yyyy HH:mm" 
+                               timeZone="#{appointmentCalendarController.timeZone}"/>
+                    
+                    <p:outputLabel value="End Date:" />
+                    <p:calendar value="#{appointmentCalendarController.event.endDate}" 
+                               pattern="dd/MM/yyyy HH:mm" 
+                               timeZone="#{appointmentCalendarController.timeZone}"/>
+                    
+                    <p:outputLabel value="All Day:" />
+                    <p:selectBooleanCheckbox value="#{appointmentCalendarController.event.allDay}" />
+                    
+                    <p:outputLabel value="Description:" />
+                    <p:inputTextarea value="#{appointmentCalendarController.event.description}" 
+                                    rows="3" 
+                                    cols="30"/>
+                </h:panelGrid>
+                
+                <div class="dialog-buttons">
+                    <p:commandButton value="Save" 
+                                    icon="pi pi-check"
+                                    actionListener="#{appointmentCalendarController.addEvent}" 
+                                    update="calendar" 
+                                    oncomplete="PF('eventDialog').hide()"
+                                    styleClass="ui-button-success"/>
+                    
+                    <p:commandButton value="Delete" 
+                                    icon="pi pi-trash"
+                                    actionListener="#{appointmentCalendarController.deleteEvent}" 
+                                    update="calendar" 
+                                    oncomplete="PF('eventDialog').hide()"
+                                    styleClass="ui-button-danger"
+                                    rendered="#{not empty appointmentCalendarController.event.id}">
+                        <p:confirm header="Delete Appointment" 
+                                  message="Are you sure you want to delete this appointment?" 
+                                  icon="pi pi-exclamation-triangle" />
+                    </p:commandButton>
+                    
+                    <p:commandButton value="Cancel" 
+                                    icon="pi pi-times"
+                                    onclick="PF('eventDialog').hide()"
+                                    type="button"
+                                    styleClass="ui-button-secondary"/>
+                </div>
+            </h:form>
+        </p:dialog>
+
+        <!-- Include Create Appointment Dialog -->
+        <ui:include src="/WEB-INF/dialogs/create-appointment-dialog.xhtml" />
+    </ui:define>
+</ui:composition>
+</html>

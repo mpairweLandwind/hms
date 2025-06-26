@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      lang="en">
+
+<h:head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title><ui:insert name="title">Dashboard - Hospital Management System</ui:insert></title>
+    
+    <h:outputStylesheet library="css" name="dashboard.css"/>
+    <h:outputStylesheet library="css" name="sidebar.css"/>
+    <h:outputStylesheet library="css" name="components.css"/>
+    <h:outputStylesheet library="css" name="responsive.css"/>
+    
+    <ui:insert name="head"/>
+</h:head>
+
+<h:body styleClass="dashboard-layout">
+    <!-- Skip Navigation -->
+    <a href="#main-content" class="skip-nav">Skip to main content</a>
+    
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" id="sidebar" role="navigation" aria-label="Dashboard navigation">
+            <div class="sidebar-header">
+                <div class="brand-logo">
+                    <i class="pi pi-heart-fill"></i>
+                    <span class="brand-text">HealthCare<span class="brand-suffix">Plus</span></span>
+                </div>
+                <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+                    <i class="pi pi-bars"></i>
+                </button>
+            </div>
+            
+            <!-- User Profile Section -->
+            <div class="sidebar-user">
+                <div class="user-avatar">
+                    <img src="#{authController.currentUser.avatarUrl}" 
+                         alt="#{authController.currentUser.fullName}"
+                         onerror="this.src='#{resource['images:default-avatar.png']}'"/>
+                </div>
+                <div class="user-info">
+                    <h4 class="user-name">#{authController.currentUser.firstName} #{authController.currentUser.lastName}</h4>
+                    <p class="user-role">#{authController.currentUser.role.displayName}</p>
+                </div>
+                <div class="user-actions">
+                    <p:commandButton icon="pi pi-cog" 
+                                     styleClass="p-button-text p-button-sm"
+                                     title="Settings"
+                                     onclick="window.location.href='settings.xhtml'"/>
+                    <p:commandButton icon="pi pi-sign-out" 
+                                     styleClass="p-button-text p-button-sm logout-btn"
+                                     title="Logout"
+                                     action="#{authController.logout}"/>
+                </div>
+            </div>
+            
+            <!-- Navigation Menu -->
+            <nav class="sidebar-nav">
+                <ul class="nav-menu">
+                    
+                    <!-- Dashboard -->
+                    <li class="nav-item">
+                        <h:link outcome="/views/dashboard/#{authController.currentUser.role.name().toLowerCase()}-dashboard" 
+                                styleClass="nav-link #{request.requestURI.contains('dashboard') ? 'active' : ''}">
+                            <i class="pi pi-home nav-icon"></i>
+                            <span class="nav-text">Dashboard</span>
+                        </h:link>
+                    </li>
+                    
+                    <!-- Patient Management -->
+                    <li class="nav-item">
+                        <a href="#" class="nav-link has-submenu" onclick="toggleSubmenu(this)">
+                            <i class="pi pi-users nav-icon"></i>
+                            <span class="nav-text">Patients</span>
+                            <i class="pi pi-chevron-down nav-arrow"></i>
+                        </a>
+                        <ul class="nav-submenu">
+                            <li><h:link outcome="/views/patients/patient-list" styleClass="nav-sublink">
+                                <i class="pi pi-list"></i>All Patients
+                            </h:link></li>
+                            <li><h:link outcome="/views/patients/patient-registration" styleClass="nav-sublink">
+                                <i class="pi pi-plus"></i>Add Patient
+                            </h:link></li>
+                            <li><h:link outcome="/views/patients/patient-search" styleClass="nav-sublink">
+                                <i class="pi pi-search"></i>Search Patients
+                            </h:link></li>
+                        </ul>
+                    </li>
+                    
+                    <!-- Doctor Management -->
+                    <li class="nav-item" style="#{authController.hasRole('ADMIN') or authController.hasRole('STAFF') ? 'display: block;' : 'display: none;'}">
+                        <a href="#" class="nav-link has-submenu" onclick="toggleSubmenu(this)">
+                            <i class="pi pi-user-plus nav-icon"></i>
+                            <span class="nav-text">Doctors</span>
+                            <i class="pi pi-chevron-down nav-arrow"></i>
+                        </a>
+                        <ul class="nav-submenu">
+                            <li><h:link outcome="/views/doctors/doctor-list" styleClass="nav-sublink">
+                                <i class="pi pi-list"></i>All Doctors
+                            </h:link></li>
+                            <li><h:link outcome="/views/doctors/doctor-registration" styleClass="nav-sublink">
+                                <i class="pi pi-plus"></i>Add Doctor
+                            </h:link></li>
+                            <li><h:link outcome="/views/doctors/doctor-schedule" styleClass="nav-sublink">
+                                <i class="pi pi-calendar"></i>Schedules
+                            </h:link></li>
+                        </ul>
+                    </li>
+                    
+                    <!-- Appointments -->
+                    <li class="nav-item">
+                        <a href="#" class="nav-link has-submenu" onclick="toggleSubmenu(this)">
+                            <i class="pi pi-calendar nav-icon"></i>
+                            <span class="nav-text">Appointments</span>
+                            <i class="pi pi-chevron-down nav-arrow"></i>
+                        </a>
+                        <ul class="nav-submenu">
+                            <li><h:link outcome="/views/appointments/appointment-list" styleClass="nav-sublink">
+                                <i class="pi pi-list"></i>All Appointments
+                            </h:link></li>
+                            <li><h:link outcome="/views/appointments/appointment-booking" styleClass="nav-sublink">
+                                <i class="pi pi-plus"></i>Book Appointment
+                            </h:link></li>
+                            <li><h:link outcome="/views/appointments/appointment-calendar" styleClass="nav-sublink">
+                                <i class="pi pi-calendar"></i>Calendar View
+                            </h:link></li>
+                        </ul>
+                    </li>
+                    
+                    <!-- Medical Records -->
+                    <li class="nav-item">
+                        <a href="#" class="nav-link has-submenu" onclick="toggleSubmenu(this)">
+                            <i class="pi pi-file-edit nav-icon"></i>
+                            <span class="nav-text">Medical Records</span>
+                            <i class="pi pi-chevron-down nav-arrow"></i>
+                        </a>
+                        <ul class="nav-submenu">
+                            <li><h:link outcome="/views/medical-records/record-list" styleClass="nav-sublink">
+                                <i class="pi pi-list"></i>All Records
+                            </h:link></li>
+                            <li><h:link outcome="/views/medical-records/record-create" styleClass="nav-sublink">
+                                <i class="pi pi-plus"></i>New Record
+                            </h:link></li>
+                            <li><h:link outcome="/views/prescriptions/prescription-list" styleClass="nav-sublink">
+                                <i class="pi pi-file"></i>Prescriptions
+                            </h:link></li>
+                        </ul>
+                    </li>
+                    
+                    <!-- Billing -->
+                    <li class="nav-item" style="#{authController.hasRole('ADMIN') or authController.hasRole('STAFF') ? 'display: block;' : 'display: none;'}">
+                        <a href="#" class="nav-link has-submenu" onclick="toggleSubmenu(this)">
+                            <i class="pi pi-credit-card nav-icon"></i>
+                            <span class="nav-text">Billing</span>
+                            <i class="pi pi-chevron-down nav-arrow"></i>
+                        </a>
+                        <ul class="nav-submenu">
+                            <li><h:link outcome="/views/billing/billing-list" styleClass="nav-sublink">
+                                <i class="pi pi-list"></i>All Invoices
+                            </h:link></li>
+                            <li><h:link outcome="/views/billing/billing-create" styleClass="nav-sublink">
+                                <i class="pi pi-plus"></i>New Invoice
+                            </h:link></li>
+                            <li><h:link outcome="/views/billing/payment-processing" styleClass="nav-sublink">
+                                <i class="pi pi-credit-card"></i>Process Payments
+                            </h:link></li>
+                            <li><h:link outcome="/views/billing/billing-reports" styleClass="nav-sublink">
+                                <i class="pi pi-chart-bar"></i>Reports
+                            </h:link></li>
+                        </ul>
+                    </li>
+                    
+                    <!-- Staff Management (Admin Only) -->
+                    <li class="nav-item" style="#{authController.hasRole('ADMIN') ? 'display: block;' : 'display: none;'}">
+                        <a href="#" class="nav-link has-submenu" onclick="toggleSubmenu(this)">
+                            <i class="pi pi-users nav-icon"></i>
+                            <span class="nav-text">Staff</span>
+                            <i class="pi pi-chevron-down nav-arrow"></i>
+                        </a>
+                        <ul class="nav-submenu">
+                            <li><h:link outcome="/views/staff/staff-list" styleClass="nav-sublink">
+                                <i class="pi pi-list"></i>All Staff
+                            </h:link></li>
+                            <li><h:link outcome="/views/staff/staff-registration" styleClass="nav-sublink">
+                                <i class="pi pi-plus"></i>Add Staff
+                            </h:link></li>
+                            <li><h:link outcome="/views/staff/staff-roles" styleClass="nav-sublink">
+                                <i class="pi pi-key"></i>Roles &amp; Permissions
+                            </h:link></li>
+                        </ul>
+                    </li>
+                    
+                    <!-- System Administration (Admin Only) -->
+                    <li class="nav-item" style="#{authController.hasRole('ADMIN') ? 'display: block;' : 'display: none;'}">
+                        <a href="#" class="nav-link has-submenu" onclick="toggleSubmenu(this)">
+                            <i class="pi pi-cog nav-icon"></i>
+                            <span class="nav-text">Administration</span>
+                            <i class="pi pi-chevron-down nav-arrow"></i>
+                        </a>
+                        <ul class="nav-submenu">
+                            <li><h:link outcome="/views/admin/system-settings" styleClass="nav-sublink">
+                                <i class="pi pi-cog"></i>System Settings
+                            </h:link></li>
+                            <li><h:link outcome="/views/admin/departments" styleClass="nav-sublink">
+                                <i class="pi pi-building"></i>Departments
+                            </h:link></li>
+                            <li><h:link outcome="/views/admin/audit-logs" styleClass="nav-sublink">
+                                <i class="pi pi-history"></i>Audit Logs
+                            </h:link></li>
+                            <li><h:link outcome="/views/admin/backup-restore" styleClass="nav-sublink">
+                                <i class="pi pi-database"></i>Backup &amp; Restore
+                            </h:link></li>
+                        </ul>
+                    </li>
+                    
+                    <!-- Reports -->
+                    <li class="nav-item">
+                        <a href="#" class="nav-link has-submenu" onclick="toggleSubmenu(this)">
+                            <i class="pi pi-chart-bar nav-icon"></i>
+                            <span class="nav-text">Reports</span>
+                            <i class="pi pi-chevron-down nav-arrow"></i>
+                        </a>
+                        <ul class="nav-submenu">
+                            <li><h:link outcome="/views/reports/patient-reports" styleClass="nav-sublink">
+                                <i class="pi pi-users"></i>Patient Reports
+                            </h:link></li>
+                            <li><h:link outcome="/views/reports/financial-reports" styleClass="nav-sublink">
+                                <i class="pi pi-dollar"></i>Financial Reports
+                            </h:link></li>
+                            <li><h:link outcome="/views/reports/appointment-reports" styleClass="nav-sublink">
+                                <i class="pi pi-calendar"></i>Appointment Reports
+                            </h:link></li>
+                        </ul>
+                    </li>
+                    
+                </ul>
+            </nav>
+            
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer">
+                <div class="system-info">
+                    <p class="version">Version 2.0.1</p>
+                    <p class="copyright">© 2024 HealthCare Plus</p>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content Area -->
+        <main class="dashboard-main" id="main-content">
+            
+            <!-- Top Header -->
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <button class="mobile-sidebar-toggle" onclick="toggleMobileSidebar()" aria-label="Toggle mobile sidebar">
+                        <i class="pi pi-bars"></i>
+                    </button>
+                    <div class="breadcrumb-container">
+                        <ui:insert name="breadcrumb">
+                            <p:breadCrumb model="#{breadcrumbController.model}" styleClass="custom-breadcrumb"/>
+                        </ui:insert>
+                    </div>
+                </div>
+                
+                <div class="header-right">
+                    <!-- Quick Actions -->
+                    <div class="quick-actions">
+                        <p:commandButton icon="pi pi-plus" 
+                                         title="Quick Add"
+                                         styleClass="p-button-text p-button-rounded"
+                                         onclick="PF('quickAddMenu').toggle(this)"/>
+                        
+                        <p:overlayPanel widgetVar="quickAddMenu" styleClass="quick-add-menu">
+                            <ul class="quick-add-list">
+                                <li><h:link outcome="/views/patients/patient-registration">
+                                    <i class="pi pi-user-plus"></i>Add Patient
+                                </h:link></li>
+                                <li><h:link outcome="/views/appointments/appointment-booking">
+                                    <i class="pi pi-calendar-plus"></i>Book Appointment
+                                </h:link></li>
+                                <li><h:link outcome="/views/billing/billing-create">
+                                    <i class="pi pi-credit-card"></i>Create Invoice
+                                </h:link></li>
+                            </ul>
+                        </p:overlayPanel>
+                        
+                        <p:commandButton icon="pi pi-bell" 
+                                         title="Notifications"
+                                         styleClass="p-button-text p-button-rounded notification-btn"
+                                         onclick="PF('notificationPanel').toggle(this)">
+                            <span class="notification-badge">3</span>
+                        </p:commandButton>
+                        
+                        <p:overlayPanel widgetVar="notificationPanel" styleClass="notification-panel">
+                            <div class="notification-header">
+                                <h4>Recent Notifications</h4>
+                            </div>
+                            <div class="notification-list">
+                                <div class="notification-item unread">
+                                    <i class="pi pi-calendar"></i>
+                                    <div class="notification-content">
+                                        <p>New appointment scheduled</p>
+                                        <span class="notification-time">5 minutes ago</span>
+                                    </div>
+                                </div>
+                                <div class="notification-item">
+                                    <i class="pi pi-credit-card"></i>
+                                    <div class="notification-content">
+                                        <p>Payment received</p>
+                                        <span class="notification-time">1 hour ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </p:overlayPanel>
+                    </div>
+                    
+                    <!-- User Menu -->
+                    <div class="user-menu">
+                        <p:commandButton styleClass="p-button-text user-menu-btn"
+                                         onclick="PF('userMenuPanel').toggle(this)">
+                            <div class="user-avatar-small">
+                                <img src="#{authController.currentUser.avatarUrl}" 
+                                     alt="#{authController.currentUser.fullName}"
+                                     onerror="this.src='#{resource['images:default-avatar.png']}'"/>
+                            </div>
+                            <span class="user-name-header">#{authController.currentUser.firstName}</span>
+                            <i class="pi pi-chevron-down"></i>
+                        </p:commandButton>
+                        
+                        <p:overlayPanel widgetVar="userMenuPanel" styleClass="user-menu-panel">
+                            <div class="user-menu-items">
+                                <h:link outcome="/views/profile/profile" styleClass="menu-item">
+                                    <i class="pi pi-user"></i>My Profile
+                                </h:link>
+                                <h:link outcome="/views/profile/settings" styleClass="menu-item">
+                                    <i class="pi pi-cog"></i>Settings
+                                </h:link>
+                                <div class="menu-divider"></div>
+                                <p:commandLink action="#{authController.logout}" styleClass="menu-item logout">
+                                    <i class="pi pi-sign-out"></i>Logout
+                                </p:commandLink>
+                            </div>
+                        </p:overlayPanel>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Page Content -->
+            <div class="dashboard-content">
+                <ui:insert name="page-header"/>
+                <ui:insert name="content"/>
+            </div>
+            
+        </main>
+    </div>
+    
+    <!-- Global Messages -->
+    <p:growl id="globalMessages" 
+             showDetail="true" 
+             showSummary="true" 
+             sticky="false" 
+             life="5000"
+             autoUpdate="true"/>
+    
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner">
+            <i class="pi pi-spin pi-spinner"></i>
+            <p>Loading...</p>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <h:outputScript library="js" name="dashboard.js"/>
+    <ui:insert name="scripts"/>
+</h:body>
+</html>

@@ -1,0 +1,55 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <div class="form-grid">
+        <div class="form-group">
+            <p:outputLabel for="firstName" value="First Name *" styleClass="form-label required">
+                <i class="pi pi-user label-icon" aria-hidden="true"></i>
+            </p:outputLabel>
+            <p:inputText id="firstName" 
+                       value="#{controller.registrationDTO.firstName}" 
+                       required="true" 
+                       placeholder="Your first name"
+                       styleClass="form-input"/>
+        </div>
+        
+        <div class="form-group">
+            <p:outputLabel for="lastName" value="Last Name *" styleClass="form-label required">
+                <i class="pi pi-user label-icon" aria-hidden="true"></i>
+            </p:outputLabel>
+            <p:inputText id="lastName" 
+                       value="#{controller.registrationDTO.lastName}" 
+                       required="true" 
+                       placeholder="Your last name"
+                       styleClass="form-input"/>
+        </div>
+    </div>
+    
+    <div class="form-grid">
+        <div class="form-group">
+            <p:outputLabel for="phoneNumber" value="Phone Number *" styleClass="form-label required">
+                <i class="pi pi-phone label-icon" aria-hidden="true"></i>
+            </p:outputLabel>
+            <p:inputText id="phoneNumber" 
+                       value="#{controller.registrationDTO.phoneNumber}" 
+                       required="true" 
+                       placeholder="Your contact number"
+                       styleClass="form-input"/>
+        </div>
+        
+        <div class="form-group">
+            <p:outputLabel for="address" value="Address" styleClass="form-label">
+                <i class="pi pi-map-marker label-icon" aria-hidden="true"></i>
+            </p:outputLabel>
+            <p:inputTextarea id="address" 
+                           value="#{controller.registrationDTO.address}" 
+                           rows="3" 
+                           placeholder="Your complete address"
+                           styleClass="form-input"/>
+        </div>
+    </div>
+
+</ui:composition>

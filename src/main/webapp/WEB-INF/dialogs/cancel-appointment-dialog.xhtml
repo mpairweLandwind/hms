@@ -1,0 +1,82 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+
+    <p:dialog header="Cancel Appointment" 
+              widgetVar="cancelAppointmentDialog" 
+              modal="true" 
+              resizable="false"
+              width="500" 
+              height="300"
+              styleClass="appointment-dialog">
+        
+        <h:form id="cancelAppointmentForm">
+            <div class="cancel-confirmation">
+                <div class="cancel-icon">
+                    <i class="pi pi-exclamation-triangle" style="font-size: 3rem; color: #f39c12;"></i>
+                </div>
+                
+                <h3>Are you sure you want to cancel this appointment?</h3>
+                
+                <div class="appointment-summary" rendered="#{not empty appointmentController.selectedAppointment}">
+                    <p><strong>Patient:</strong> #{appointmentController.selectedAppointment.patientName}</p>
+                    <p><strong>Doctor:</strong> #{appointmentController.selectedAppointment.doctorName}</p>
+                    <p><strong>Date & Time:</strong> 
+                        <h:outputText value="#{appointmentController.selectedAppointment.appointmentDate}">
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                        </h:outputText>
+                    </p>
+                </div>
+                
+                <p class="cancel-warning">
+                    <i class="pi pi-info-circle"></i>
+                    This action cannot be undone. The appointment will be marked as cancelled.
+                </p>
+            </div>
+            
+            <div class="dialog-buttons">
+                <p:commandButton value="Yes, Cancel Appointment" 
+                                icon="pi pi-check"
+                                action="#{appointmentController.cancelAppointment}"
+                                update=":appointmentsForm:appointmentsTable, :appointmentsForm:todaysAppointmentsTable"
+                                styleClass="ui-button-danger"/>
+                
+                <p:commandButton value="No, Keep Appointment" 
+                                icon="pi pi-times"
+                                onclick="PF('cancelAppointmentDialog').hide()"
+                                type="button"
+                                styleClass="ui-button-secondary"/>
+            </div>
+        </h:form>
+    </p:dialog>
+    
+    <style>
+        .cancel-confirmation {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .cancel-icon {
+            margin-bottom: 20px;
+        }
+        
+        .appointment-summary {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .cancel-warning {
+            color: #856404;
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+    </style>
+</ui:composition>

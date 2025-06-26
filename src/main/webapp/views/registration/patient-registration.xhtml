@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="/WEB-INF/templates/registration-layout.xhtml">
+    
+    <ui:param name="roleType" value="PATIENT"/>
+    <ui:param name="pageDescription" value="Register as a patient to access our comprehensive healthcare services"/>
+    
+    <ui:define name="pageTitle">Patient Registration</ui:define>
+    
+    <ui:define name="roleIcon">
+        <i class="pi pi-user" aria-hidden="true"></i>
+    </ui:define>
+    
+    <ui:define name="heroTitle">Register as Patient</ui:define>
+    
+    <ui:define name="heroSubtitle">
+        Join thousands of patients who trust us with their healthcare journey. 
+        Access appointments, medical records, and personalized care.
+    </ui:define>
+    
+    <ui:define name="progressSteps">
+        <div class="step active" data-step="1">
+            <span class="step-number">1</span>
+            <span class="step-label">Account</span>
+        </div>
+        <div class="step" data-step="2">
+            <span class="step-number">2</span>
+            <span class="step-label">Personal</span>
+        </div>
+        <div class="step" data-step="3">
+            <span class="step-number">3</span>
+            <span class="step-label">Medical</span>
+        </div>
+    </ui:define>
+    
+    <ui:define name="registrationForm">
+        <h:form id="patientRegistrationForm" styleClass="registration-form">
+            
+            <!-- Step 1: Account Information -->
+            <div class="form-step active" data-step="1">
+                <div class="step-header">
+                    <h3>Create Your Account</h3>
+                    <p>Set up your secure login credentials</p>
+                </div>
+                
+                <ui:include src="/WEB-INF/includes/account-fields.xhtml">
+                    <ui:param name="controller" value="#{patientRegistrationController}"/>
+                </ui:include>
+            </div>
+
+            <!-- Step 2: Personal Information -->
+            <div class="form-step" data-step="2">
+                <div class="step-header">
+                    <h3>Personal Information</h3>
+                    <p>Tell us about yourself</p>
+                </div>
+                
+                <ui:include src="/WEB-INF/includes/personal-fields.xhtml">
+                    <ui:param name="controller" value="#{patientRegistrationController}"/>
+                </ui:include>
+            </div>
+
+            <!-- Step 3: Medical Information -->
+            <div class="form-step" data-step="3">
+                <div class="step-header">
+                    <h3>Medical Information</h3>
+                    <p>Help us provide better care for you</p>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <p:outputLabel for="dateOfBirth" value="Date of Birth" styleClass="form-label">
+                            <i class="pi pi-calendar label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:datePicker id="dateOfBirth" 
+                                    value="#{patientRegistrationController.registrationDTO.dateOfBirth}" 
+                                    pattern="dd/MM/yyyy"
+                                    placeholder="Select your birth date"
+                                    styleClass="form-input"
+                                    showIcon="true"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="gender" value="Gender" styleClass="form-label">
+                            <i class="pi pi-user label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:selectOneMenu id="gender" 
+                                       value="#{patientRegistrationController.registrationDTO.gender}"
+                                       styleClass="form-input">
+                            <f:selectItem itemLabel="Select Gender" itemValue=""/>
+                            <f:selectItem itemLabel="Male" itemValue="MALE"/>
+                            <f:selectItem itemLabel="Female" itemValue="FEMALE"/>
+                            <f:selectItem itemLabel="Other" itemValue="OTHER"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <p:outputLabel for="bloodType" value="Blood Type" styleClass="form-label">
+                            <i class="pi pi-heart label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:selectOneMenu id="bloodType" 
+                                       value="#{patientRegistrationController.registrationDTO.bloodType}"
+                                       styleClass="form-input">
+                            <f:selectItem itemLabel="Select Blood Type" itemValue=""/>
+                            <f:selectItem itemLabel="A+" itemValue="A_POSITIVE"/>
+                            <f:selectItem itemLabel="A-" itemValue="A_NEGATIVE"/>
+                            <f:selectItem itemLabel="B+" itemValue="B_POSITIVE"/>
+                            <f:selectItem itemLabel="B-" itemValue="B_NEGATIVE"/>
+                            <f:selectItem itemLabel="AB+" itemValue="AB_POSITIVE"/>
+                            <f:selectItem itemLabel="AB-" itemValue="AB_NEGATIVE"/>
+                            <f:selectItem itemLabel="O+" itemValue="O_POSITIVE"/>
+                            <f:selectItem itemLabel="O-" itemValue="O_NEGATIVE"/>
+                        </p:selectOneMenu>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="insuranceNumber" value="Insurance Number" styleClass="form-label">
+                            <i class="pi pi-id-card label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:inputText id="insuranceNumber" 
+                                   value="#{patientRegistrationController.registrationDTO.insuranceNumber}" 
+                                   placeholder="Your insurance policy number"
+                                   styleClass="form-input"/>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <p:outputLabel for="emergencyContact" value="Emergency Contact Name" styleClass="form-label">
+                            <i class="pi pi-phone label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:inputText id="emergencyContact" 
+                                   value="#{patientRegistrationController.registrationDTO.emergencyContact}" 
+                                   placeholder="Emergency contact person"
+                                   styleClass="form-input"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="emergencyPhone" value="Emergency Contact Phone" styleClass="form-label">
+                            <i class="pi pi-phone label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:inputText id="emergencyPhone" 
+                                   value="#{patientRegistrationController.registrationDTO.emergencyPhone}" 
+                                   placeholder="Emergency contact number"
+                                   styleClass="form-input"/>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <p:outputLabel for="allergies" value="Known Allergies" styleClass="form-label">
+                        <i class="pi pi-exclamation-triangle label-icon" aria-hidden="true"></i>
+                    </p:outputLabel>
+                    <p:inputTextarea id="allergies" 
+                                   value="#{patientRegistrationController.registrationDTO.allergies}" 
+                                   rows="3" 
+                                   placeholder="List any known allergies or medical conditions"
+                                   styleClass="form-input"/>
+                </div>
+                
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <p:selectBooleanCheckbox id="acceptTerms" 
+                                               value="#{patientRegistrationController.registrationDTO.acceptTerms}"
+                                               required="true"
+                                               styleClass="custom-checkbox"/>
+                        <p:outputLabel for="acceptTerms" styleClass="checkbox-label">
+                            I agree to the <h:link value="Terms of Service" outcome="/terms"/> and 
+                            <h:link value="Privacy Policy" outcome="/privacy"/>
+                        </p:outputLabel>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="form-navigation">
+                <p:commandButton value="Previous" 
+                               icon="pi pi-chevron-left" 
+                               styleClass="btn btn-secondary nav-btn prev-btn"
+                               onclick="previousStep(); return false;"
+                               style="display: none;"/>
+                
+                <p:commandButton value="Next" 
+                               icon="pi pi-chevron-right" 
+                               iconPos="right"
+                               styleClass="btn btn-primary nav-btn next-btn"
+                               onclick="nextStep(); return false;"/>
+                
+                <p:commandButton value="Create Patient Account" 
+                               icon="pi pi-user-plus" 
+                               styleClass="btn btn-primary nav-btn submit-btn"
+                               action="#{patientRegistrationController.registerPatient}"
+                               update="patientRegistrationForm messages"
+                               onstart="showLoading('Creating your patient account...')"
+                               oncomplete="hideLoading(); handleRegistrationComplete(args);"
+                               style="display: none;"/>
+            </div>
+
+            <p:messages id="messages" showDetail="true" closable="true"/>
+        </h:form>
+    </ui:define>
+    
+    <ui:define name="alternativeRoles">
+        <h:link outcome="/views/registration/doctor-registration" styleClass="role-link">
+            <i class="pi pi-user-edit" aria-hidden="true"></i>
+            <span>Doctor</span>
+        </h:link>
+        <h:link outcome="/views/registration/staff-registration" styleClass="role-link">
+            <i class="pi pi-users" aria-hidden="true"></i>
+            <span>Staff</span>
+        </h:link>
+    </ui:define>
+    
+    <ui:define name="additionalScripts">
+        <script>
+            function handleRegistrationComplete(args) {
+                if (args.validationFailed) {
+                    return;
+                }
+                
+                if (args.success) {
+                    showSuccessMessage('Patient account created successfully! Please check your email for verification.');
+                    setTimeout(() => {
+                        window.location.href = '/index.xhtml';
+                    }, 3000);
+                }
+            }
+        </script>
+    </ui:define>
+    
+</ui:composition>
+</html>

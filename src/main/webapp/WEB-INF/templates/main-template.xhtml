@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      lang="en">
+
+<h:head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Hospital Management System - Professional Healthcare Management"/>
+    <meta name="keywords" content="hospital, healthcare, management, appointments, medical records"/>
+    <meta name="author" content="Hospital Management System"/>
+    
+    <title>
+        <ui:insert name="title">Hospital Management System</ui:insert>
+    </title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="#{resource['images:favicon.ico']}"/>
+    
+    <!-- Stylesheets -->
+    <h:outputStylesheet library="css" name="main.css"/>
+    <h:outputStylesheet library="css" name="components.css"/>
+    <h:outputStylesheet library="css" name="responsive.css"/>
+    <h:outputStylesheet library="css" name="accessibility.css"/>
+    
+    <!-- Additional CSS -->
+    <ui:insert name="head"/>
+</h:head>
+
+<h:body styleClass="#{sessionController.currentUser != null ? 'authenticated' : 'guest'}">
+    <!-- Skip Navigation for Accessibility -->
+    <a href="#main-content" class="skip-nav" tabindex="1">Skip to main content</a>
+    
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner">
+            <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="main-header" role="banner">
+        <ui:insert name="header">
+            <ui:include src="/WEB-INF/includes/header.xhtml"/>
+        </ui:insert>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="main-navigation" role="navigation" aria-label="Main navigation">
+        <ui:insert name="navigation">
+            <ui:include src="/WEB-INF/includes/navigation.xhtml"/>
+        </ui:insert>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content" role="main" tabindex="-1">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb-container">
+            <ui:insert name="breadcrumb">
+                <ui:include src="/WEB-INF/includes/breadcrumb.xhtml"/>
+            </ui:insert>
+        </div>
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <ui:insert name="page-header"/>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <ui:insert name="content"/>
+        </div>
+    </main>
+
+    <!-- Sidebar -->
+    <aside class="main-sidebar" role="complementary">
+        <ui:insert name="sidebar">
+            <ui:include src="/WEB-INF/includes/sidebar.xhtml"/>
+        </ui:insert>
+    </aside>
+
+    <!-- Footer -->
+    <footer class="main-footer" role="contentinfo">
+        <ui:insert name="footer">
+            <ui:include src="/WEB-INF/includes/footer.xhtml"/>
+        </ui:insert>
+    </footer>
+
+    <!-- Global Messages -->
+    <p:growl id="globalMessages" 
+             showDetail="true" 
+             showSummary="true" 
+             sticky="false" 
+             life="5000"
+             autoUpdate="true"
+             escape="false"/>
+
+    <!-- Confirmation Dialog -->
+    <p:confirmDialog global="true" 
+                     showEffect="fade" 
+                     hideEffect="fade" 
+                     responsive="true"
+                     width="350"
+                     styleClass="confirmation-dialog">
+        <p:commandButton value="Yes" 
+                         type="button" 
+                         styleClass="ui-confirmdialog-yes p-button-success" 
+                         icon="pi pi-check"/>
+        <p:commandButton value="No" 
+                         type="button" 
+                         styleClass="ui-confirmdialog-no p-button-secondary" 
+                         icon="pi pi-times"/>
+    </p:confirmDialog>
+
+    <!-- JavaScript -->
+    <h:outputScript library="js" name="main.js"/>
+    <ui:insert name="scripts"/>
+
+    <!-- Accessibility Announcements -->
+    <div id="aria-live-region" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+</h:body>
+</html>

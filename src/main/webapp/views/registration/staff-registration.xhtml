@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="/WEB-INF/templates/registration-layout.xhtml">
+    
+    <ui:param name="roleType" value="STAFF"/>
+    <ui:param name="pageDescription" value="Register as hospital staff to join our administrative and support team"/>
+    
+    <ui:define name="pageTitle">Staff Registration</ui:define>
+    
+    <ui:define name="roleIcon">
+        <i class="pi pi-users" aria-hidden="true"></i>
+    </ui:define>
+    
+    <ui:define name="heroTitle">Join Our Support Team</ui:define>
+    
+    <ui:define name="heroSubtitle">
+        Register as hospital staff and become part of our dedicated team providing 
+        administrative support and exceptional patient care services.
+    </ui:define>
+    
+    <ui:define name="progressSteps">
+        <div class="step active" data-step="1">
+            <span class="step-number">1</span>
+            <span class="step-label">Account</span>
+        </div>
+        <div class="step" data-step="2">
+            <span class="step-number">2</span>
+            <span class="step-label">Personal</span>
+        </div>
+        <div class="step" data-step="3">
+            <span class="step-number">3</span>
+            <span class="step-label">Employment</span>
+        </div>
+    </ui:define>
+    
+    <ui:define name="registrationForm">
+        <h:form id="staffRegistrationForm" styleClass="registration-form">
+            
+            <!-- Step 1: Account Information -->
+            <div class="form-step active" data-step="1">
+                <div class="step-header">
+                    <h3>Create Your Account</h3>
+                    <p>Set up your staff login credentials</p>
+                </div>
+                
+                <ui:include src="/WEB-INF/includes/account-fields.xhtml">
+                    <ui:param name="controller" value="#{staffRegistrationController}"/>
+                </ui:include>
+            </div>
+
+            <!-- Step 2: Personal Information -->
+            <div class="form-step" data-step="2">
+                <div class="step-header">
+                    <h3>Personal Information</h3>
+                    <p>Your personal details</p>
+                </div>
+                
+                <ui:include src="/WEB-INF/includes/personal-fields.xhtml">
+                    <ui:param name="controller" value="#{staffRegistrationController}"/>
+                </ui:include>
+            </div>
+
+            <!-- Step 3: Employment Information -->
+            <div class="form-step" data-step="3">
+                <div class="step-header">
+                    <h3>Employment Details</h3>
+                    <p>Your role and department information</p>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <p:outputLabel for="position" value="Position/Job Title *" styleClass="form-label required">
+                            <i class="pi pi-briefcase label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:inputText id="position" 
+                                   value="#{staffRegistrationController.registrationDTO.position}" 
+                                   required="true"
+                                   placeholder="e.g., Nurse, Receptionist, Administrator"
+                                   styleClass="form-input"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="employeeId" value="Employee ID *" styleClass="form-label required">
+                            <i class="pi pi-id-card label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:inputText id="employeeId" 
+                                   value="#{staffRegistrationController.registrationDTO.employeeId}" 
+                                   required="true"
+                                   placeholder="Your assigned employee ID"
+                                   styleClass="form-input">
+                            <p:ajax event="blur" 
+                                  listener="#{staffRegistrationController.validateEmployeeId}" 
+                                  update="messages"/>
+                        </p:inputText>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <p:outputLabel for="department" value="Department" styleClass="form-label">
+                            <i class="pi pi-building label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:selectOneMenu id="department" 
+                                       value="#{staffRegistrationController.registrationDTO.departmentId}"
+                                       styleClass="form-input">
+                            <f:selectItem itemLabel="Select Department" itemValue=""/>
+                            <f:selectItems value="#{staffRegistrationController.departments}" 
+                                         var="dept" 
+                                         itemLabel="#{dept.departmentName}" 
+                                         itemValue="#{dept.departmentId}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="hireDate" value="Hire Date" styleClass="form-label">
+                            <i class="pi pi-calendar label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:datePicker id="hireDate" 
+                                    value="#{staffRegistrationController.registrationDTO.hireDate}" 
+                                    pattern="dd/MM/yyyy"
+                                    placeholder="Select hire date"
+                                    styleClass="form-input"
+                                    showIcon="true"
+                                    maxDate="#{staffRegistrationController.today}"/>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <p:outputLabel for="salary" value="Salary (Optional)" styleClass="form-label">
+                            <i class="pi pi-dollar label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:inputNumber id="salary" 
+                                     value="#{staffRegistrationController.registrationDTO.salary}" 
+                                     symbol="$" 
+                                     decimalPlaces="2" 
+                                     minValue="0"
+                                     placeholder="Annual salary"
+                                     styleClass="form-input"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="status" value="Employment Status" styleClass="form-label">
+                            <i class="pi pi-check-circle label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:selectOneMenu id="status" 
+                                       value="#{staffRegistrationController.registrationDTO.status}"
+                                       styleClass="form-input">
+                            <f:selectItem itemLabel="Pending Verification" itemValue="PENDING_VERIFICATION"/>
+                            <f:selectItem itemLabel="Active" itemValue="ACTIVE"/>
+                            <f:selectItem itemLabel="On Leave" itemValue="ON_LEAVE"/>
+                            <f:selectItem itemLabel="Inactive" itemValue="INACTIVE"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <p:outputLabel for="notes" value="Additional Notes" styleClass="form-label">
+                        <i class="pi pi-file-edit label-icon" aria-hidden="true"></i>
+                    </p:outputLabel>
+                    <p:inputTextarea id="notes" 
+                                   value="#{staffRegistrationController.registrationDTO.notes}" 
+                                   rows="3" 
+                                   placeholder="Any additional information about your role or experience"
+                                   styleClass="form-input"/>
+                </div>
+                
+                <!-- Document Upload Section -->
+                <div class="document-upload-section">
+                    <h4>Employment Documents</h4>
+                    <p class="upload-note">Please upload relevant employment documents:</p>
+                    
+                    <div class="upload-grid">
+                        <div class="upload-item">
+                            <p:outputLabel value="Resume/CV" styleClass="upload-label"/>
+                            <p:fileUpload id="resumeUpload"
+                                        mode="simple"
+                                        skinSimple="true"
+                                        label="Choose File"
+                                        accept=".pdf,.doc,.docx"
+                                        styleClass="upload-input"/>
+                            <small class="upload-help">PDF or Word document</small>
+                        </div>
+                        
+                        <div class="upload-item">
+                            <p:outputLabel value="Certifications" styleClass="upload-label"/>
+                            <p:fileUpload id="certificatesUpload"
+                                        mode="simple"
+                                        skinSimple="true"
+                                        label="Choose File"
+                                        accept=".pdf,.jpg,.jpeg,.png"
+                                        styleClass="upload-input"/>
+                            <small class="upload-help">Professional certifications</small>
+                        </div>
+                        
+                        <div class="upload-item">
+                            <p:outputLabel value="References" styleClass="upload-label"/>
+                            <p:fileUpload id="referencesUpload"
+                                        mode="simple"
+                                        skinSimple="true"
+                                        label="Choose File"
+                                        accept=".pdf,.doc,.docx"
+                                        styleClass="upload-input"/>
+                            <small class="upload-help">Professional references</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <p:selectBooleanCheckbox id="acceptTerms" 
+                                               value="#{staffRegistrationController.registrationDTO.acceptTerms}"
+                                               required="true"
+                                               styleClass="custom-checkbox"/>
+                        <p:outputLabel for="acceptTerms" styleClass="checkbox-label">
+                            I agree to the <h:link value="Terms of Service" outcome="/terms"/> and 
+                            <h:link value="Privacy Policy" outcome="/privacy"/>
+                        </p:outputLabel>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <p:selectBooleanCheckbox id="acceptEmployment" 
+                                               value="#{staffRegistrationController.registrationDTO.acceptEmployment}"
+                                               required="true"
+                                               styleClass="custom-checkbox"/>
+                        <p:outputLabel for="acceptEmployment" styleClass="checkbox-label">
+                            I accept the employment agreement and hospital policies
+                        </p:outputLabel>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="form-navigation">
+                <p:commandButton value="Previous" 
+                               icon="pi pi-chevron-left" 
+                               styleClass="btn btn-secondary nav-btn prev-btn"
+                               onclick="previousStep(); return false;"
+                               style="display: none;"/>
+                
+                <p:commandButton value="Next" 
+                               icon="pi pi-chevron-right" 
+                               iconPos="right"
+                               styleClass="btn btn-primary nav-btn next-btn"
+                               onclick="nextStep(); return false;"/>
+                
+                <p:commandButton value="Submit Application" 
+                               icon="pi pi-send" 
+                               styleClass="btn btn-primary nav-btn submit-btn"
+                               action="#{staffRegistrationController.registerStaff}"
+                               update="staffRegistrationForm messages"
+                               onstart="showLoading('Submitting your application...')"
+                               oncomplete="hideLoading(); handleRegistrationComplete(args);"
+                               style="display: none;"/>
+            </div>
+
+            <p:messages id="messages" showDetail="true" closable="true"/>
+        </h:form>
+    </ui:define>
+    
+    <ui:define name="alternativeRoles">
+        <h:link outcome="/views/registration/patient-registration" styleClass="role-link">
+            <i class="pi pi-user" aria-hidden="true"></i>
+            <span>Patient</span>
+        </h:link>
+        <h:link outcome="/views/registration/doctor-registration" styleClass="role-link">
+            <i class="pi pi-user-edit" aria-hidden="true"></i>
+            <span>Doctor</span>
+        </h:link>
+    </ui:define>
+    
+    <ui:define name="additionalScripts">
+        <script>
+            function handleRegistrationComplete(args) {
+                if (args.validationFailed) {
+                    return;
+                }
+                
+                if (args.success) {
+                    showSuccessMessage('Staff application submitted successfully! HR will review your application and contact you soon.');
+                    setTimeout(() => {
+                        window.location.href = '/index.xhtml';
+                    }, 5000);
+                }
+            }
+        </script>
+    </ui:define>
+    
+</ui:composition>
+</html>
