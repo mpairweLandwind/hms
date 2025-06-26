@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+    <title>Staff Management - HMS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <h:outputStylesheet library="css" name="custom.css"/>
+</h:head>
+
+<h:body>
+    <div class="layout-wrapper">
+        <!-- Header -->
+        <div class="layout-topbar">
+            <div class="layout-topbar-logo">
+                <h:link outcome="index">
+                    <i class="pi pi-heart-fill" style="font-size: 2rem; color: #e74c3c;"></i>
+                    <span>HMS</span>
+                </h:link>
+            </div>
+            
+            <div class="layout-topbar-menu">
+                <h:link outcome="index" styleClass="layout-topbar-button">
+                    <i class="pi pi-home"></i>
+                    <span>Dashboard</span>
+                </h:link>
+                <h:link outcome="staff" styleClass="layout-topbar-button active">
+                    <i class="pi pi-users"></i>
+                    <span>Staff</span>
+                </h:link>
+                <h:link outcome="prescriptions" styleClass="layout-topbar-button">
+                    <i class="pi pi-file-edit"></i>
+                    <span>Prescriptions</span>
+                </h:link>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="layout-main">
+            <div class="layout-content">
+                <div class="content-section">
+                    <div class="card">
+                        <h5>Staff Management</h5>
+                        
+                        <!-- Toolbar -->
+                        <p:toolbar>
+                            <p:toolbarGroup>
+                                <p:commandButton value="Add Staff" 
+                                               icon="pi pi-plus" 
+                                               styleClass="p-button-success"
+                                               oncomplete="PF('staffDialog').show()"
+                                               actionListener="#{staffController.prepareNewStaff}"
+                                               update=":staffForm"/>
+                            </p:toolbarGroup>
+                            
+                            <p:toolbarGroup align="right">
+                                <p:inputText placeholder="Search staff..." 
+                                           value="#{staffController.searchTerm}"
+                                           style="margin-right: 10px;"/>
+                                <p:commandButton value="Search" 
+                                               icon="pi pi-search"
+                                               actionListener="#{staffController.searchStaff}"
+                                               update="staffTable"/>
+                                <p:commandButton value="Clear" 
+                                               icon="pi pi-times"
+                                               styleClass="p-button-secondary"
+                                               actionListener="#{staffController.clearSearch}"
+                                               update="staffTable"/>
+                            </p:toolbarGroup>
+                        </p:toolbar>
+                        
+                        <!-- Staff Table -->
+                        <p:dataTable id="staffTable" 
+                                   value="#{staffController.staffList}" 
+                                   var="staff"
+                                   filteredValue="#{staffController.filteredStaff}"
+                                   paginator="true" 
+                                   rows="10"
+                                   paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                   currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                   rowsPerPageTemplate="5,10,25"
+                                   selectionMode="single" 
+                                   selection="#{staffController.selectedStaff}"
+                                   rowKey="#{staff.staffId}"
+                                   emptyMessage="No staff found">
+                            
+                            <p:column headerText="Employee ID" sortBy="#{staff.employeeId}" filterBy="#{staff.employeeId}">
+                                <h:outputText value="#{staff.employeeId}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Name" sortBy="#{staff.fullName}" filterBy="#{staff.fullName}">
+                                <h:outputText value="#{staff.fullName}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Position" sortBy="#{staff.position}" filterBy="#{staff.position}">
+                                <h:outputText value="#{staff.position}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Department" sortBy="#{staff.department.departmentName}" filterBy="#{staff.department.departmentName}">
+                                <h:outputText value="#{staff.department.departmentName}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Email" sortBy="#{staff.email}" filterBy="#{staff.email}">
+                                <h:outputText value="#{staff.email}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Status" sortBy="#{staff.status}" filterBy="#{staff.status}">
+                                <p:tag value="#{staff.status.displayName}" 
+                                     severity="#{staff.status == 'VERIFIED' ? 'success' : (staff.status == 'PENDING_VERIFICATION' ? 'warning' : 'danger')}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Active" sortBy="#{staff.active}">
+                                <p:selectBooleanCheckbox value="#{staff.active}" disabled="true"/>
+                            </p:column>
+                            
+                            <p:column headerText="Actions" exportable="false">
+                                <p:commandButton icon="pi pi-pencil" 
+                                               styleClass="p-button-rounded p-button-success p-mr-2"
+                                               oncomplete="PF('editStaffDialog').show()"
+                                               actionListener="#{staffController.prepareEditStaff(staff)}"
+                                               update=":editStaffForm"
+                                               title="Edit"/>
+                                
+                                <p:commandButton icon="pi pi-check" 
+                                               styleClass="p-button-rounded p-button-info p-mr-2"
+                                               actionListener="#{staffController.verifyStaff(staff)}"
+                                               update="staffTable"
+                                               title="Verify"
+                                               rendered="#{staff.status == 'PENDING_VERIFICATION'}">
+                                    <p:confirm header="Confirm Verification" 
+                                             message="Are you sure you want to verify this staff member?"
+                                             icon="pi pi-exclamation-triangle"/>
+                                </p:commandButton>
+                                
+                                <p:commandButton icon="pi pi-times" 
+                                               styleClass="p-button-rounded p-button-warning p-mr-2"
+                                               actionListener="#{staffController.rejectStaff(staff)}"
+                                               update="staffTable"
+                                               title="Reject"
+                                               rendered="#{staff.status == 'PENDING_VERIFICATION'}">
+                                    <p:confirm header="Confirm Rejection" 
+                                             message="Are you sure you want to reject this staff member?"
+                                             icon="pi pi-exclamation-triangle"/>
+                                </p:commandButton>
+                                
+                                <p:commandButton icon="#{staff.active ? 'pi pi-eye-slash' : 'pi pi-eye'}" 
+                                               styleClass="p-button-rounded #{staff.active ? 'p-button-secondary' : 'p-button-success'} p-mr-2"
+                                               actionListener="#{staffController.toggleStaffStatus(staff)}"
+                                               update="staffTable"
+                                               title="#{staff.active ? 'Deactivate' : 'Activate'}">
+                                    <p:confirm header="Confirm Status Change" 
+                                             message="Are you sure you want to #{staff.active ? 'deactivate' : 'activate'} this staff member?"
+                                             icon="pi pi-exclamation-triangle"/>
+                                </p:commandButton>
+                                
+                                <p:commandButton icon="pi pi-trash" 
+                                               styleClass="p-button-rounded p-button-danger"
+                                               oncomplete="PF('deleteStaffDialog').show()"
+                                               actionListener="#{staffController.prepareDeleteStaff(staff)}"
+                                               title="Delete"/>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Staff Dialog -->
+    <p:dialog header="Add New Staff" widgetVar="staffDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="600">
+        <h:form id="staffForm">
+            <div class="p-fluid">
+                <div class="p-field">
+                    <p:outputLabel for="firstName" value="First Name:"/>
+                    <p:inputText id="firstName" value="#{staffController.newStaff.firstName}" required="true"/>
+                </div>
+                
+                <div class="p-field">
+                    <p:outputLabel for="lastName" value="Last Name:"/>
+                    <p:inputText id="lastName" value="#{staffController.newStaff.lastName}" required="true"/>
+                </div>
+                
+                <div class="p-field">
+                    <p:outputLabel for="employeeId" value="Employee ID:"/>
+                    <p:inputText id="employeeId" value="#{staffController.newStaff.employeeId}" required="true"/>
+                </div>
+                
+                <div class="p-field">
+                    <p:outputLabel for="position" value="Position:"/>
+                    <p:inputText id="position" value="#{staffController.newStaff.position}" required="true"/>
+                </div>
+                
+                <div class="p-field">
+                    <p:outputLabel for="email" value="Email:"/>
+                    <p:inputText id="email" value="#{staffController.newStaff.email}" required="true"/>
+                </div>
+                
+                <div class="p-field">
+                    <p:outputLabel for="phoneNumber" value="Phone Number:"/>
+                    <p:inputText id="phoneNumber" value="#{staffController.newStaff.phoneNumber}" required="true"/>
+                </div>
+                
+                <div class="p-field">
+                    <p:outputLabel for="address" value="Address:"/>
+                    <p:inputTextarea id="address" value="#{staffController.newStaff.address}" rows="3"/>
+                </div>
+            </div>
+            
+            <div class="p-dialog-footer">
+                <p:commandButton value="Cancel" 
+                               icon="pi pi-times" 
+                               onclick="PF('staffDialog').hide()" 
+                               styleClass="p-button-text"/>
+                <p:commandButton value="Save" 
+                               icon="pi pi-check" 
+                               actionListener="#{staffController.createStaff}"
+                               update="staffTable :messages"
+                               styleClass="p-button-primary"/>
+            </div>
+        </h:form>
+    </p:dialog>
+
+    <!-- Edit Staff Dialog -->
+    <p:dialog header="Edit Staff" widgetVar="editStaffDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="600">
+        <h:form id="editStaffForm">
+            <div class="p-fluid">
+                <div class="p-field">
+                    <p:outputLabel for="editFirstName" value="First Name:"/>
+                    <p:inputText id="editFirstName" value="#{staffController.selectedStaff.firstName}" required="true"/>
+                </div>
+                
+                <div class="p-field">
+                    <p:outputLabel for="editLastName" value="Last Name:"/>
+                    <p:inputText id="editLastName" value="#{staffController.selectedStaff.lastName}" required="true"/>
+                </div>
+                
+                <div class="p-field">
+                    <p:outputLabel for="editEmployeeId" value="Employee ID:"/>
+                    <p:inputText id="editEmployeeId" value="#{staffController.selectedStaff.employeeId}" required="true"/>
+                </div>
+                
+                <div class="p-field">
+                    <p:outputLabel for="editPosition" value="Position:"/>
+                    <p:inputText id="editPosition" value="#{staffController.selectedStaff.position}" required="true"/>
+                </div>
+                
+                <div class="p-field">
+                    <p:outputLabel for="editEmail" value="Email:"/>
+                    <p:inputText id="editEmail" value="#{staffController.selectedStaff.email}" required="true"/>
+                </div>
+                
+                <div class="p-field">
+                    <p:outputLabel for="editPhoneNumber" value="Phone Number:"/>
+                    <p:inputText id="editPhoneNumber" value="#{staffController.selectedStaff.phoneNumber}" required="true"/>
+                </div>
+                
+                <div class="p-field">
+                    <p:outputLabel for="editAddress" value="Address:"/>
+                    <p:inputTextarea id="editAddress" value="#{staffController.selectedStaff.address}" rows="3"/>
+                </div>
+            </div>
+            
+            <div class="p-dialog-footer">
+                <p:commandButton value="Cancel" 
+                               icon="pi pi-times" 
+                               onclick="PF('editStaffDialog').hide()" 
+                               styleClass="p-button-text"/>
+                <p:commandButton value="Update" 
+                               icon="pi pi-check" 
+                               actionListener="#{staffController.updateStaff}"
+                               update="staffTable :messages"
+                               styleClass="p-button-primary"/>
+            </div>
+        </h:form>
+    </p:dialog>
+
+    <!-- Delete Confirmation Dialog -->
+    <p:confirmDialog widgetVar="deleteStaffDialog" 
+                   message="Are you sure you want to delete this staff member?" 
+                   header="Delete Confirmation" 
+                   severity="alert">
+        <p:commandButton value="Yes" 
+                       icon="pi pi-check" 
+                       actionListener="#{staffController.deleteStaff}"
+                       update="staffTable :messages"
+                       oncomplete="PF('deleteStaffDialog').hide()"
+                       styleClass="p-button-danger"/>
+        <p:commandButton value="No" 
+                       icon="pi pi-times" 
+                       onclick="PF('deleteStaffDialog').hide()" 
+                       styleClass="p-button-secondary"/>
+    </p:confirmDialog>
+
+    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+        <p:commandButton value="Yes" type="button" styleClass="p-button-danger p-confirm-dialog-yes"/>
+        <p:commandButton value="No" type="button" styleClass="p-button-secondary p-confirm-dialog-no"/>
+    </p:confirmDialog>
+
+    <p:growl id="messages" showDetail="true"/>
+</h:body>
+</html>

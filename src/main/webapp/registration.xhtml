@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+    <title>User Registration - HMS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <h:outputStylesheet library="css" name="custom.css"/>
+</h:head>
+
+<h:body>
+    <div class="layout-wrapper">
+        <!-- Header -->
+        <div class="layout-topbar">
+            <div class="layout-topbar-logo">
+                <h:link outcome="index">
+                    <i class="pi pi-heart-fill" style="font-size: 2rem; color: #e74c3c;"></i>
+                    <span>HMS</span>
+                </h:link>
+            </div>
+            
+            <div class="layout-topbar-menu">
+                <h:link outcome="index" styleClass="layout-topbar-button">
+                    <i class="pi pi-home"></i>
+                    <span>Dashboard</span>
+                </h:link>
+                <h:link outcome="registration" styleClass="layout-topbar-button active">
+                    <i class="pi pi-user-plus"></i>
+                    <span>Registration</span>
+                </h:link>
+                <h:link outcome="staff" styleClass="layout-topbar-button">
+                    <i class="pi pi-users"></i>
+                    <span>Staff</span>
+                </h:link>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="layout-main">
+            <div class="layout-content">
+                <div class="content-section">
+                    <div class="card">
+                        <h5>User Registration</h5>
+                        <p>Register new users for the Hospital Management System</p>
+                        
+                        <h:form id="registrationForm">
+                            <!-- Role Selection -->
+                            <div class="p-field">
+                                <p:outputLabel for="role" value="User Role:"/>
+                                <p:selectOneMenu id="role" value="#{registrationController.selectedRole}" 
+                                               style="width:100%">
+                                    <f:selectItems value="#{registrationController.roles}" var="role" 
+                                                 itemLabel="#{role}" itemValue="#{role}"/>
+                                    <p:ajax listener="#{registrationController.onRoleChange}" 
+                                          update="registrationForm"/>
+                                </p:selectOneMenu>
+                            </div>
+                            
+                            <!-- Basic User Information -->
+                            <div class="grid">
+                                <div class="col-12 md:col-6">
+                                    <div class="p-field">
+                                        <p:outputLabel for="username" value="Username:"/>
+                                        <p:inputText id="username" 
+                                                   value="#{registrationController.registrationDTO.username}" 
+                                                   required="true" style="width:100%">
+                                            <p:ajax event="blur" 
+                                                  listener="#{registrationController.validateUsername}" 
+                                                  update="messages"/>
+                                        </p:inputText>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 md:col-6">
+                                    <div class="p-field">
+                                        <p:outputLabel for="email" value="Email:"/>
+                                        <p:inputText id="email" 
+                                                   value="#{registrationController.registrationDTO.email}" 
+                                                   required="true" style="width:100%">
+                                            <p:ajax event="blur" 
+                                                  listener="#{registrationController.validateEmail}" 
+                                                  update="messages"/>
+                                        </p:inputText>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="p-field">
+                                <p:outputLabel for="password" value="Password:"/>
+                                <p:password id="password" 
+                                          value="#{registrationController.registrationDTO.password}" 
+                                          required="true" style="width:100%" feedback="true"/>
+                            </div>
+                            
+                            <!-- Personal Information -->
+                            <h6>Personal Information</h6>
+                            <div class="grid">
+                                <div class="col-12 md:col-6">
+                                    <div class="p-field">
+                                        <p:outputLabel for="firstName" value="First Name:"/>
+                                        <p:inputText id="firstName" 
+                                                   value="#{registrationController.registrationDTO.firstName}" 
+                                                   required="true" style="width:100%"/>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 md:col-6">
+                                    <div class="p-field">
+                                        <p:outputLabel for="lastName" value="Last Name:"/>
+                                        <p:inputText id="lastName" 
+                                                   value="#{registrationController.registrationDTO.lastName}" 
+                                                   required="true" style="width:100%"/>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="grid">
+                                <div class="col-12 md:col-6">
+                                    <div class="p-field">
+                                        <p:outputLabel for="phoneNumber" value="Phone Number:"/>
+                                        <p:inputText id="phoneNumber" 
+                                                   value="#{registrationController.registrationDTO.phoneNumber}" 
+                                                   required="true" style="width:100%"/>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 md:col-6">
+                                    <div class="p-field">
+                                        <p:outputLabel for="address" value="Address:"/>
+                                        <p:inputTextarea id="address" 
+                                                       value="#{registrationController.registrationDTO.address}" 
+                                                       rows="2" style="width:100%"/>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Patient Specific Fields -->
+                            <p:outputPanel rendered="#{registrationController.patientRole}">
+                                <h6>Patient Information</h6>
+                                <div class="grid">
+                                    <div class="col-12 md:col-4">
+                                        <div class="p-field">
+                                            <p:outputLabel for="dateOfBirth" value="Date of Birth:"/>
+                                            <p:datePicker id="dateOfBirth" 
+                                                        value="#{registrationController.registrationDTO.dateOfBirth}" 
+                                                        pattern="dd/MM/yyyy" style="width:100%"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12 md:col-4">
+                                        <div class="p-field">
+                                            <p:outputLabel for="gender" value="Gender:"/>
+                                            <p:selectOneMenu id="gender" 
+                                                           value="#{registrationController.registrationDTO.gender}" 
+                                                           style="width:100%">
+                                                <f:selectItem itemLabel="Select Gender" itemValue=""/>
+                                                <f:selectItems value="#{registrationController.genders}" 
+                                                             var="gender" itemLabel="#{gender}" itemValue="#{gender}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12 md:col-4">
+                                        <div class="p-field">
+                                            <p:outputLabel for="bloodType" value="Blood Type:"/>
+                                            <p:selectOneMenu id="bloodType" 
+                                                           value="#{registrationController.registrationDTO.bloodType}" 
+                                                           style="width:100%">
+                                                <f:selectItem itemLabel="Select Blood Type" itemValue=""/>
+                                                <f:selectItems value="#{registrationController.bloodTypes}" 
+                                                             var="bloodType" itemLabel="#{bloodType}" itemValue="#{bloodType}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid">
+                                    <div class="col-12 md:col-6">
+                                        <div class="p-field">
+                                            <p:outputLabel for="emergencyContact" value="Emergency Contact:"/>
+                                            <p:inputText id="emergencyContact" 
+                                                       value="#{registrationController.registrationDTO.emergencyContact}" 
+                                                       style="width:100%"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12 md:col-6">
+                                        <div class="p-field">
+                                            <p:outputLabel for="emergencyPhone" value="Emergency Phone:"/>
+                                            <p:inputText id="emergencyPhone" 
+                                                       value="#{registrationController.registrationDTO.emergencyPhone}" 
+                                                       style="width:100%"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid">
+                                    <div class="col-12 md:col-6">
+                                        <div class="p-field">
+                                            <p:outputLabel for="insuranceNumber" value="Insurance Number:"/>
+                                            <p:inputText id="insuranceNumber" 
+                                                       value="#{registrationController.registrationDTO.insuranceNumber}" 
+                                                       style="width:100%"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12 md:col-6">
+                                        <div class="p-field">
+                                            <p:outputLabel for="allergies" value="Allergies:"/>
+                                            <p:inputTextarea id="allergies" 
+                                                           value="#{registrationController.registrationDTO.allergies}" 
+                                                           rows="2" style="width:100%"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:outputPanel>
+                            
+                            <!-- Doctor Specific Fields -->
+                            <p:outputPanel rendered="#{registrationController.doctorRole}">
+                                <h6>Doctor Information</h6>
+                                <div class="grid">
+                                    <div class="col-12 md:col-6">
+                                        <div class="p-field">
+                                            <p:outputLabel for="specialization" value="Specialization:"/>
+                                            <p:inputText id="specialization" 
+                                                       value="#{registrationController.registrationDTO.specialization}" 
+                                                       required="true" style="width:100%"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12 md:col-6">
+                                        <div class="p-field">
+                                            <p:outputLabel for="licenseNumber" value="License Number:"/>
+                                            <p:inputText id="licenseNumber" 
+                                                       value="#{registrationController.registrationDTO.licenseNumber}" 
+                                                       required="true" style="width:100%">
+                                                <p:ajax event="blur" 
+                                                      listener="#{registrationController.validateLicenseNumber}" 
+                                                      update="messages"/>
+                                            </p:inputText>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid">
+                                    <div class="col-12 md:col-6">
+                                        <div class="p-field">
+                                            <p:outputLabel for="experience" value="Experience (Years):"/>
+                                            <p:inputNumber id="experience" 
+                                                         value="#{registrationController.registrationDTO.experience}" 
+                                                         decimalPlaces="0" minValue="0" style="width:100%"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12 md:col-6">
+                                        <div class="p-field">
+                                            <p:outputLabel for="doctorDepartment" value="Department:"/>
+                                            <p:selectOneMenu id="doctorDepartment" 
+                                                           value="#{registrationController.registrationDTO.departmentId}" 
+                                                           style="width:100%">
+                                                <f:selectItem itemLabel="Select Department" itemValue=""/>
+                                                <f:selectItems value="#{registrationController.departments}" 
+                                                             var="dept" itemLabel="#{dept.departmentName}" 
+                                                             itemValue="#{dept.departmentId}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-field">
+                                    <p:outputLabel for="qualifications" value="Qualifications:"/>
+                                    <p:inputTextarea id="qualifications" 
+                                                   value="#{registrationController.registrationDTO.qualifications}" 
+                                                   rows="3" style="width:100%"/>
+                                </div>
+                            </p:outputPanel>
+                            
+                            <!-- Staff Specific Fields -->
+                            <p:outputPanel rendered="#{registrationController.staffRole}">
+                                <h6>Staff Information</h6>
+                                <div class="grid">
+                                    <div class="col-12 md:col-6">
+                                        <div class="p-field">
+                                            <p:outputLabel for="position" value="Position:"/>
+                                            <p:inputText id="position" 
+                                                       value="#{registrationController.registrationDTO.position}" 
+                                                       required="true" style="width:100%"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12 md:col-6">
+                                        <div class="p-field">
+                                            <p:outputLabel for="employeeId" value="Employee ID:"/>
+                                            <p:inputText id="employeeId" 
+                                                       value="#{registrationController.registrationDTO.employeeId}" 
+                                                       required="true" style="width:100%">
+                                                <p:ajax event="blur" 
+                                                      listener="#{registrationController.validateEmployeeId}" 
+                                                      update="messages"/>
+                                            </p:inputText>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid">
+                                    <div class="col-12 md:col-4">
+                                        <div class="p-field">
+                                            <p:outputLabel for="hireDate" value="Hire Date:"/>
+                                            <p:datePicker id="hireDate" 
+                                                        value="#{registrationController.registrationDTO.hireDate}" 
+                                                        pattern="dd/MM/yyyy" style="width:100%"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12 md:col-4">
+                                        <div class="p-field">
+                                            <p:outputLabel for="salary" value="Salary:"/>
+                                            <p:inputNumber id="salary" 
+                                                         value="#{registrationController.registrationDTO.salary}" 
+                                                         symbol="$" decimalPlaces="2" minValue="0" style="width:100%"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12 md:col-4">
+                                        <div class="p-field">
+                                            <p:outputLabel for="staffDepartment" value="Department:"/>
+                                            <p:selectOneMenu id="staffDepartment" 
+                                                           value="#{registrationController.registrationDTO.departmentId}" 
+                                                           style="width:100%">
+                                                <f:selectItem itemLabel="Select Department" itemValue=""/>
+                                                <f:selectItems value="#{registrationController.departments}" 
+                                                             var="dept" itemLabel="#{dept.departmentName}" 
+                                                             itemValue="#{dept.departmentId}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-field">
+                                    <p:outputLabel for="notes" value="Notes:"/>
+                                    <p:inputTextarea id="notes" 
+                                                   value="#{registrationController.registrationDTO.notes}" 
+                                                   rows="3" style="width:100%"/>
+                                </div>
+                            </p:outputPanel>
+                            
+                            <!-- Submit Button -->
+                            <div class="p-field" style="margin-top: 2rem;">
+                                <p:commandButton value="Register User" 
+                                               icon="pi pi-user-plus" 
+                                               styleClass="p-button-primary p-button-lg"
+                                               actionListener="#{registrationController.registerUser}"
+                                               update="registrationForm messages"
+                                               style="width:100%"/>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p:growl id="messages" showDetail="true"/>
+</h:body>
+</html>

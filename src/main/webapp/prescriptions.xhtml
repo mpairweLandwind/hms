@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+    <title>Prescription Medications - HMS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <h:outputStylesheet library="css" name="custom.css"/>
+</h:head>
+
+<h:body>
+    <div class="layout-wrapper">
+        <!-- Header -->
+        <div class="layout-topbar">
+            <div class="layout-topbar-logo">
+                <h:link outcome="index">
+                    <i class="pi pi-heart-fill" style="font-size: 2rem; color: #e74c3c;"></i>
+                    <span>HMS</span>
+                </h:link>
+            </div>
+            
+            <div class="layout-topbar-menu">
+                <h:link outcome="index" styleClass="layout-topbar-button">
+                    <i class="pi pi-home"></i>
+                    <span>Dashboard</span>
+                </h:link>
+                <h:link outcome="staff" styleClass="layout-topbar-button">
+                    <i class="pi pi-users"></i>
+                    <span>Staff</span>
+                </h:link>
+                <h:link outcome="prescriptions" styleClass="layout-topbar-button active">
+                    <i class="pi pi-file-edit"></i>
+                    <span>Prescriptions</span>
+                </h:link>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="layout-main">
+            <div class="layout-content">
+                <div class="content-section">
+                    <div class="card">
+                        <h5>Prescription Medications</h5>
+                        
+                        <!-- Toolbar -->
+                        <p:toolbar>
+                            <p:toolbarGroup>
+                                <p:commandButton value="Add Prescription Medication" 
+                                               icon="pi pi-plus" 
+                                               styleClass="p-button-success"
+                                               oncomplete="PF('prescriptionMedicationDialog').show()"
+                                               actionListener="#{prescriptionMedicationController.prepareNewPrescriptionMedication}"
+                                               update=":prescriptionMedicationForm"/>
+                            </p:toolbarGroup>
+                            
+                            <p:toolbarGroup align="right">
+                                <p:commandButton value="Show All" 
+                                               icon="pi pi-list"
+                                               actionListener="#{prescriptionMedicationController.init}"
+                                               update="prescriptionMedicationTable"
+                                               styleClass="p-button-info"/>
+                                <p:commandButton value="Pending Only" 
+                                               icon="pi pi-clock"
+                                               actionListener="#{prescriptionMedicationController.loadPendingDispensals}"
+                                               update="prescriptionMedicationTable"
+                                               styleClass="p-button-warning"/>
+                            </p:toolbarGroup>
+                        </p:toolbar>
+                        
+                        <!-- Prescription Medications Table -->
+                        <p:dataTable id="prescriptionMedicationTable" 
+                                   value="#{prescriptionMedicationController.prescriptionMedicationList}" 
+                                   var="pm"
+                                   filteredValue="#{prescriptionMedicationController.filteredPrescriptionMedications}"
+                                   paginator="true" 
+                                   rows="10"
+                                   paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                   currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                   rowsPerPageTemplate="5,10,25"
+                                   selectionMode="single" 
+                                   selection="#{prescriptionMedicationController.selectedPrescriptionMedication}"
+                                   rowKey="#{pm.prescriptionMedicationId}"
+                                   emptyMessage="No prescription medications found">
+                            
+                            <p:column headerText="Prescription ID" sortBy="#{pm.prescription.prescriptionId}">
+                                <h:outputText value="#{pm.prescription.prescriptionId}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Patient" sortBy="#{pm.prescription.patient.fullName}" filterBy="#{pm.prescription.patient.fullName}">
+                                <h:outputText value="#{pm.prescription.patient.fullName}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Doctor" sortBy="#{pm.prescription.doctor.fullName}" filterBy="#{pm.prescription.doctor.fullName}">
+                                <h:outputText value="#{pm.prescription.doctor.fullName}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Medication" sortBy="#{pm.medication.medicationName}" filterBy="#{pm.medication.medicationName}">
+                                <h:outputText value="#{pm.medication.medicationName}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Quantity" sortBy="#{pm.quantity}">
+                                <h:outputText value="#{pm.quantity}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Dosage" sortBy="#{pm.dosage}" filterBy="#{pm.dosage}">
+                                <h:outputText value="#{pm.dosage}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Frequency" sortBy="#{pm.frequency}" filterBy="#{pm.frequency}">
+                                <h:outputText value="#{pm.frequency}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Total Price" sortBy="#{pm.totalPrice}">
+                                <h:outputText value="#{pm.totalPrice}">
+                                    <f:convertNumber type="currency" currencySymbol="$"/>
+                                </h:outputText>
+                            </p:column>
+                            
+                            <p:column headerText="Status" sortBy="#{pm.status}" filterBy="#{pm.status}">
+                                <p:tag value="#{pm.status}" 
+                                     severity="#{pm.status == 'DISPENSED' ? 'success' : (pm.status == 'PENDING' ? 'warning' : 'danger')}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Actions" exportable="false">
+                                <p:commandButton icon="pi pi-pencil" 
+                                               styleClass="p-button-rounded p-button-success p-mr-2"
+                                               oncomplete="PF('editPrescriptionMedicationDialog').show()"
+                                               actionListener="#{prescriptionMedicationController.prepareEditPrescriptionMedication(pm)}"
+                                               update=":editPrescriptionMedicationForm"
+                                               title="Edit"/>
+                                
+                                <p:commandButton icon="pi pi-check" 
+                                               styleClass="p-button-rounded p-button-info p-mr-2"
+                                               actionListener="#{prescriptionMedicationController.dispenseMedication(pm)}"
+                                               update="prescriptionMedicationTable :messages"
+                                               title="Dispense"
+                                               rendered="#{pm.status == 'PENDING'}">
+                                    <p:confirm header="Confirm Dispensing" 
+                                             message="Are you sure you want to dispense this medication?"
+                                             icon="pi pi-exclamation-triangle"/>
+                                </p:commandButton>
+                                
+                                <p:commandButton icon="pi pi-times" 
+                                               styleClass="p-button-rounded p-button-danger"
+                                               actionListener="#{prescriptionMedicationController.cancelMedication(pm)}"
+                                               update="prescriptionMedicationTable :messages"
+                                               title="Cancel"
+                                               rendered="#{pm.status == 'PENDING'}">
+                                    <p:confirm header="Confirm Cancellation" 
+                                             message="Are you sure you want to cancel this medication?"
+                                             icon="pi pi-exclamation-triangle"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Prescription Medication Dialog -->
+    <p:dialog header="Add Prescription Medication" widgetVar="prescriptionMedicationDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="700">
+        <h:form id="prescriptionMedicationForm">
+            <div class="p-fluid">
+                <div class="p-field">
+                    <p:outputLabel for="quantity" value="Quantity:"/>
+                    <p:inputNumber id="quantity" value="#{prescriptionMedicationController.newPrescriptionMedication.quantity}" 
+                                 decimalPlaces="0" minValue="1" required="true"/>
+                </div>
+                
+                <div class="p-field">
+                    <p:outputLabel for="dosage" value="Dosage:"/>
+                    <p:inputText id="dosage" value="#{prescriptionMedicationController.newPrescriptionMedication.dosage}" required="true"/>
+                </div>
+                
+                <div class="p-field">
+                    <p:outputLabel for="frequency" value="Frequency:"/>
+                    <p:inputText id="frequency" value="#{prescriptionMedicationController.newPrescriptionMedication.frequency}" required="true"/>
+                </div>
+                
+                <div class="p-field">
+                    <p:outputLabel for="durationDays" value="Duration (Days):"/>
+                    <p:inputNumber id="durationDays" value="#{prescriptionMedicationController.newPrescriptionMedication.durationDays}" 
+                                 decimalPlaces="0" minValue="1"/>
+                </div>
+                
+                <div class="p-field">
+                    <p:outputLabel for="instructions" value="Instructions:"/>
+                    <p:inputTextarea id="instructions" value="#{prescriptionMedicationController.newPrescriptionMedication.instructions}" rows="3"/>
+                </div>
+                
+                <div class="p-field">
+                    <p:outputLabel for="unitPrice" value="Unit Price:"/>
+                    <p:inputNumber id="unitPrice" value="#{prescriptionMedicationController.newPrescriptionMedication.unitPrice}" 
+                                 symbol="$" decimalPlaces="2" minValue="0"/>
+                </div>
+            </div>
+            
+            <div class="p-dialog-footer">
+                <p:commandButton value="Cancel" 
+                               icon="pi pi-times" 
+                               onclick="PF('prescriptionMedicationDialog').hide()" 
+                               styleClass="p-button-text"/>
+                <p:commandButton value="Save" 
+                               icon="pi pi-check" 
+                               actionListener="#{prescriptionMedicationController.createPrescriptionMedication}"
+                               update="prescriptionMedicationTable :messages"
+                               styleClass="p-button-primary"/>
+            </div>
+        </h:form>
+    </p:dialog>
+
+    <!-- Edit Prescription Medication Dialog -->
+    <p:dialog header="Edit Prescription Medication" widgetVar="editPrescriptionMedicationDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="700">
+        <h:form id="editPrescriptionMedicationForm">
+            <div class="p-fluid">
+                <div class="p-field">
+                    <p:outputLabel for="editQuantity" value="Quantity:"/>
+                    <p:inputNumber id="editQuantity" value="#{prescriptionMedicationController.selectedPrescriptionMedication.quantity}" 
+                                 decimalPlaces="0" minValue="1" required="true"/>
+                </div>
+                
+                <div class="p-field">
+                    <p:outputLabel for="editDosage" value="Dosage:"/>
+                    <p:inputText id="editDosage" value="#{prescriptionMedicationController.selectedPrescriptionMedication.dosage}" required="true"/>
+                </div>
+                
+                <div class="p-field">
+                    <p:outputLabel for="editFrequency" value="Frequency:"/>
+                    <p:inputText id="editFrequency" value="#{prescriptionMedicationController.selectedPrescriptionMedication.frequency}" required="true"/>
+                </div>
+                
+                <div class="p-field">
+                    <p:outputLabel for="editDurationDays" value="Duration (Days):"/>
+                    <p:inputNumber id="editDurationDays" value="#{prescriptionMedicationController.selectedPrescriptionMedication.durationDays}" 
+                                 decimalPlaces="0" minValue="1"/>
+                </div>
+                
+                <div class="p-field">
+                    <p:outputLabel for="editInstructions" value="Instructions:"/>
+                    <p:inputTextarea id="editInstructions" value="#{prescriptionMedicationController.selectedPrescriptionMedication.instructions}" rows="3"/>
+                </div>
+                
+                <div class="p-field">
+                    <p:outputLabel for="editUnitPrice" value="Unit Price:"/>
+                    <p:inputNumber id="editUnitPrice" value="#{prescriptionMedicationController.selectedPrescriptionMedication.unitPrice}" 
+                                 symbol="$" decimalPlaces="2" minValue="0"/>
+                </div>
+            </div>
+            
+            <div class="p-dialog-footer">
+                <p:commandButton value="Cancel" 
+                               icon="pi pi-times" 
+                               onclick="PF('editPrescriptionMedicationDialog').hide()" 
+                               styleClass="p-button-text"/>
+                <p:commandButton value="Update" 
+                               icon="pi pi-check" 
+                               actionListener="#{prescriptionMedicationController.updatePrescriptionMedication}"
+                               update="prescriptionMedicationTable :messages"
+                               styleClass="p-button-primary"/>
+            </div>
+        </h:form>
+    </p:dialog>
+
+    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+        <p:commandButton value="Yes" type="button" styleClass="p-button-danger p-confirm-dialog-yes"/>
+        <p:commandButton value="No" type="button" styleClass="p-button-secondary p-confirm-dialog-no"/>
+    </p:confirmDialog>
+
+    <p:growl id="messages" showDetail="true"/>
+</h:body>
+</html>
