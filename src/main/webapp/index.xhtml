@@ -1,5 +1,275 @@
-<html>
-<body>
-<h2>Hello World!</h2>
-</body>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="/WEB-INF/templates/main-layout.xhtml">
+    
+    <ui:define name="title">Welcome to HealthCare Plus - Professional Hospital Management</ui:define>
+    
+    <ui:define name="stylesheets">
+        <h:outputStylesheet library="css" name="welcome.css"/>
+        <h:outputStylesheet library="css" name="animations.css"/>
+    </ui:define>
+    
+    <ui:define name="header">
+        <header class="welcome-header" role="banner">
+            <div class="header-container">
+                <div class="logo">
+                    <i class="pi pi-heart-fill logo-icon" aria-hidden="true"></i>
+                    <div class="logo-text">
+                        <h1 class="brand-name">HealthCare<span class="brand-accent">Plus</span></h1>
+                        <p class="brand-tagline">Professional Hospital Management</p>
+                    </div>
+                </div>
+                
+                <nav class="header-nav" role="navigation">
+                    <a href="#features" class="nav-link" onclick="scrollToSection('features')">
+                        <i class="pi pi-info-circle" aria-hidden="true"></i>
+                        <span>Features</span>
+                    </a>
+                    <a href="#contact" class="nav-link" onclick="scrollToSection('contact')">
+                        <i class="pi pi-phone" aria-hidden="true"></i>
+                        <span>Contact</span>
+                    </a>
+                    <h:link outcome="/help" styleClass="nav-link">
+                        <i class="pi pi-question-circle" aria-hidden="true"></i>
+                        <span>Help</span>
+                    </h:link>
+                </nav>
+            </div>
+        </header>
+    </ui:define>
+    
+    <ui:define name="content">
+        <div class="welcome-content">
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <div class="hero-container">
+                    <!-- Left Side - Hero Content -->
+                    <div class="hero-left">
+                        <div class="hero-visual">
+                            <div class="medical-illustration">
+                                <div class="medical-cross">
+                                    <i class="pi pi-plus" aria-hidden="true"></i>
+                                </div>
+                                <div class="floating-elements">
+                                    <div class="floating-element element-1">
+                                        <i class="pi pi-calendar" aria-hidden="true"></i>
+                                        <span>Appointments</span>
+                                    </div>
+                                    <div class="floating-element element-2">
+                                        <i class="pi pi-file-edit" aria-hidden="true"></i>
+                                        <span>Records</span>
+                                    </div>
+                                    <div class="floating-element element-3">
+                                        <i class="pi pi-users" aria-hidden="true"></i>
+                                        <span>Staff</span>
+                                    </div>
+                                    <div class="floating-element element-4">
+                                        <i class="pi pi-shield" aria-hidden="true"></i>
+                                        <span>Secure</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="hero-content">
+                            <h2 class="hero-title">
+                                Your Health Journey
+                                <span class="highlight-text">Starts Here</span>
+                            </h2>
+                            <p class="hero-description">
+                                Experience seamless healthcare management with our comprehensive 
+                                digital platform. Connect with healthcare professionals, manage 
+                                appointments, and access your medical records securely.
+                            </p>
+                            
+                            <div class="trust-indicators">
+                                <div class="trust-item">
+                                    <div class="trust-icon">
+                                        <i class="pi pi-shield" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="trust-content">
+                                        <h4>HIPAA Compliant</h4>
+                                        <p>Your data is secure</p>
+                                    </div>
+                                </div>
+                                <div class="trust-item">
+                                    <div class="trust-icon">
+                                        <i class="pi pi-clock" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="trust-content">
+                                        <h4>24/7 Access</h4>
+                                        <p>Available anytime</p>
+                                    </div>
+                                </div>
+                                <div class="trust-item">
+                                    <div class="trust-icon">
+                                        <i class="pi pi-verified" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="trust-content">
+                                        <h4>Trusted by 10K+</h4>
+                                        <p>Patients nationwide</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Side - Authentication -->
+                    <div class="hero-right">
+                        <div class="auth-container">
+                            <!-- Login Form -->
+                            <div class="login-section">
+                                <div class="auth-header">
+                                    <h3 class="auth-title">Welcome Back</h3>
+                                    <p class="auth-subtitle">Sign in to access your healthcare portal</p>
+                                </div>
+
+                                <h:form id="loginForm" styleClass="auth-form">
+                                    <div class="form-group">
+                                        <p:outputLabel for="username" value="Username or Email" styleClass="form-label">
+                                            <i class="pi pi-user label-icon" aria-hidden="true"></i>
+                                        </p:outputLabel>
+                                        <p:inputText id="username" 
+                                                   value="#{authController.username}" 
+                                                   required="true" 
+                                                   placeholder="Enter your username or email"
+                                                   styleClass="form-input"
+                                                   autocomplete="username">
+                                            <p:ajax event="blur" update="loginMessages"/>
+                                        </p:inputText>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <p:outputLabel for="password" value="Password" styleClass="form-label">
+                                            <i class="pi pi-lock label-icon" aria-hidden="true"></i>
+                                        </p:outputLabel>
+                                        <p:password id="password" 
+                                                  value="#{authController.password}" 
+                                                  required="true" 
+                                                  placeholder="Enter your password"
+                                                  styleClass="form-input"
+                                                  autocomplete="current-password"
+                                                  feedback="false"
+                                                  toggleMask="true"/>
+                                    </div>
+
+                                    <div class="form-options">
+                                        <div class="checkbox-group">
+                                            <p:selectBooleanCheckbox id="rememberMe" 
+                                                                   value="#{authController.rememberMe}"
+                                                                   styleClass="custom-checkbox"/>
+                                            <p:outputLabel for="rememberMe" value="Remember me" styleClass="checkbox-label"/>
+                                        </div>
+                                        <p:commandLink value="Forgot password?" 
+                                                     styleClass="forgot-link"
+                                                     onclick="PF('forgotPasswordDialog').show(); return false;"/>
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <p:commandButton value="Sign In" 
+                                                       icon="pi pi-sign-in" 
+                                                       styleClass="btn btn-primary btn-full"
+                                                       action="#{authController.login}"
+                                                       update="loginForm loginMessages"
+                                                       onstart="showLoading('Signing in...')"
+                                                       oncomplete="hideLoading()"
+                                                       accesskey="s"/>
+                                    </div>
+
+                                    <p:messages id="loginMessages" showDetail="true" closable="true"/>
+                                </h:form>
+                            </div>
+
+                            <!-- Registration Options -->
+                            <div class="registration-section">
+                                <div class="auth-divider">
+                                    <span class="divider-text">New to HealthCare Plus?</span>
+                                </div>
+
+                                <div class="registration-options">
+                                    <p class="registration-prompt">Create your account and join our healthcare community</p>
+                                    
+                                    <div class="registration-buttons">
+                                        <h:link outcome="/views/registration/patient-registration" 
+                                               styleClass="btn btn-outline btn-full registration-btn">
+                                            <i class="pi pi-user-plus" aria-hidden="true"></i>
+                                            <span>Register as Patient</span>
+                                            <small>Book appointments, access medical records</small>
+                                        </h:link>
+                                        
+                                        <div class="professional-section">
+                                            <p class="professional-label">Healthcare Professional?</p>
+                                            <div class="professional-buttons">
+                                                <h:link outcome="/views/registration/doctor-registration" 
+                                                       styleClass="btn btn-secondary btn-small">
+                                                    <i class="pi pi-user-edit" aria-hidden="true"></i>
+                                                    <span>Doctor</span>
+                                                </h:link>
+                                                <h:link outcome="/views/registration/staff-registration" 
+                                                       styleClass="btn btn-secondary btn-small">
+                                                    <i class="pi pi-users" aria-hidden="true"></i>
+                                                    <span>Staff</span>
+                                                </h:link>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Stats -->
+                            <div class="quick-stats">
+                                <div class="stat-item">
+                                    <div class="stat-icon">
+                                        <i class="pi pi-users" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <span class="stat-number">10,000+</span>
+                                        <span class="stat-label">Active Patients</span>
+                                    </div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-icon">
+                                        <i class="pi pi-calendar" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <span class="stat-number">50,000+</span>
+                                        <span class="stat-label">Appointments</span>
+                                    </div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-icon">
+                                        <i class="pi pi-heart" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <span class="stat-number">99.9%</span>
+                                        <span class="stat-label">Satisfaction</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <ui:include src="/WEB-INF/includes/features-section.xhtml"/>
+
+            <!-- Contact Section -->
+            <ui:include src="/WEB-INF/includes/contact-section.xhtml"/>
+        </div>
+
+        <!-- Dialogs -->
+        <ui:include src="/WEB-INF/dialogs/forgot-password-dialog.xhtml"/>
+    </ui:define>
+    
+    <ui:define name="scripts">
+        <h:outputScript library="js" name="welcome.js"/>
+    </ui:define>
+    
+</ui:composition>
 </html>

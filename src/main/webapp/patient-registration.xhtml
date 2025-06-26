@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+    <title>Patient Registration - HMS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <h:outputStylesheet library="css" name="registration.css"/>
+</h:head>
+
+<h:body>
+    <div class="registration-container">
+        <!-- Header -->
+        <header class="registration-header">
+            <div class="header-content">
+                <h:link outcome="index" styleClass="logo">
+                    <i class="pi pi-heart-fill"></i>
+                    <span>HealthCare Plus</span>
+                </h:link>
+                <h:link outcome="index" styleClass="back-link">
+                    <i class="pi pi-arrow-left"></i>
+                    <span>Back to Home</span>
+                </h:link>
+            </div>
+        </header>
+
+        <!-- Registration Form -->
+        <div class="registration-content">
+            <div class="registration-card">
+                <div class="card-header">
+                    <div class="registration-icon">
+                        <i class="pi pi-user"></i>
+                    </div>
+                    <h2>Patient Registration</h2>
+                    <p>Join our healthcare community and access quality medical services</p>
+                </div>
+
+                <h:form id="patientRegistrationForm" styleClass="registration-form">
+                    <!-- Account Information -->
+                    <div class="form-section">
+                        <h3><i class="pi pi-lock"></i> Account Information</h3>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <p:outputLabel for="username" value="Username *"/>
+                                <p:inputText id="username" 
+                                           value="#{patientRegistrationController.registrationDTO.username}" 
+                                           required="true" 
+                                           placeholder="Choose a unique username">
+                                    <p:ajax event="blur" 
+                                          listener="#{patientRegistrationController.validateUsername}" 
+                                          update="messages"/>
+                                </p:inputText>
+                            </div>
+                            
+                            <div class="form-field">
+                                <p:outputLabel for="email" value="Email Address *"/>
+                                <p:inputText id="email" 
+                                           value="#{patientRegistrationController.registrationDTO.email}" 
+                                           required="true" 
+                                           placeholder="your.email@example.com">
+                                    <p:ajax event="blur" 
+                                          listener="#{patientRegistrationController.validateEmail}" 
+                                          update="messages"/>
+                                </p:inputText>
+                            </div>
+                        </div>
+                        
+                        <div class="form-field">
+                            <p:outputLabel for="password" value="Password *"/>
+                            <p:password id="password" 
+                                      value="#{patientRegistrationController.registrationDTO.password}" 
+                                      required="true" 
+                                      feedback="true"
+                                      placeholder="Create a strong password"/>
+                        </div>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <div class="form-section">
+                        <h3><i class="pi pi-user"></i> Personal Information</h3>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <p:outputLabel for="firstName" value="First Name *"/>
+                                <p:inputText id="firstName" 
+                                           value="#{patientRegistrationController.registrationDTO.firstName}" 
+                                           required="true" 
+                                           placeholder="Your first name"/>
+                            </div>
+                            
+                            <div class="form-field">
+                                <p:outputLabel for="lastName" value="Last Name *"/>
+                                <p:inputText id="lastName" 
+                                           value="#{patientRegistrationController.registrationDTO.lastName}" 
+                                           required="true" 
+                                           placeholder="Your last name"/>
+                            </div>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <p:outputLabel for="phoneNumber" value="Phone Number *"/>
+                                <p:inputText id="phoneNumber" 
+                                           value="#{patientRegistrationController.registrationDTO.phoneNumber}" 
+                                           required="true" 
+                                           placeholder="Your contact number"/>
+                            </div>
+                            
+                            <div class="form-field">
+                                <p:outputLabel for="dateOfBirth" value="Date of Birth"/>
+                                <p:datePicker id="dateOfBirth" 
+                                            value="#{patientRegistrationController.registrationDTO.dateOfBirth}" 
+                                            pattern="dd/MM/yyyy"
+                                            placeholder="Select your birth date"/>
+                            </div>
+                        </div>
+                        
+                        <div class="form-field">
+                            <p:outputLabel for="address" value="Address"/>
+                            <p:inputTextarea id="address" 
+                                           value="#{patientRegistrationController.registrationDTO.address}" 
+                                           rows="3" 
+                                           placeholder="Your complete address"/>
+                        </div>
+                    </div>
+
+                    <!-- Medical Information -->
+                    <div class="form-section">
+                        <h3><i class="pi pi-heart"></i> Medical Information</h3>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <p:outputLabel for="gender" value="Gender"/>
+                                <p:selectOneMenu id="gender" 
+                                               value="#{patientRegistrationController.registrationDTO.gender}">
+                                    <f:selectItem itemLabel="Select Gender" itemValue=""/>
+                                    <f:selectItems value="#{patientRegistrationController.genders}" 
+                                                 var="gender" 
+                                                 itemLabel="#{gender.displayName}" 
+                                                 itemValue="#{gender}"/>
+                                </p:selectOneMenu>
+                            </div>
+                            
+                            <div class="form-field">
+                                <p:outputLabel for="bloodType" value="Blood Type"/>
+                                <p:selectOneMenu id="bloodType" 
+                                               value="#{patientRegistrationController.registrationDTO.bloodType}">
+                                    <f:selectItem itemLabel="Select Blood Type" itemValue=""/>
+                                    <f:selectItems value="#{patientRegistrationController.bloodTypes}" 
+                                                 var="bloodType" 
+                                                 itemLabel="#{bloodType.displayName}" 
+                                                 itemValue="#{bloodType}"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <p:outputLabel for="emergencyContact" value="Emergency Contact Name"/>
+                                <p:inputText id="emergencyContact" 
+                                           value="#{patientRegistrationController.registrationDTO.emergencyContact}" 
+                                           placeholder="Emergency contact person"/>
+                            </div>
+                            
+                            <div class="form-field">
+                                <p:outputLabel for="emergencyPhone" value="Emergency Contact Phone"/>
+                                <p:inputText id="emergencyPhone" 
+                                           value="#{patientRegistrationController.registrationDTO.emergencyPhone}" 
+                                           placeholder="Emergency contact number"/>
+                            </div>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <p:outputLabel for="insuranceNumber" value="Insurance Number"/>
+                                <p:inputText id="insuranceNumber" 
+                                           value="#{patientRegistrationController.registrationDTO.insuranceNumber}" 
+                                           placeholder="Your insurance policy number"/>
+                            </div>
+                            
+                            <div class="form-field">
+                                <p:outputLabel for="allergies" value="Known Allergies"/>
+                                <p:inputTextarea id="allergies" 
+                                               value="#{patientRegistrationController.registrationDTO.allergies}" 
+                                               rows="2" 
+                                               placeholder="List any known allergies"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="form-actions">
+                        <p:commandButton value="Register as Patient" 
+                                       icon="pi pi-user-plus" 
+                                       styleClass="p-button-primary p-button-lg submit-btn"
+                                       actionListener="#{patientRegistrationController.registerPatient}"
+                                       update="patientRegistrationForm messages"/>
+                        <p:commandButton value="Cancel" 
+                                       icon="pi pi-times" 
+                                       styleClass="p-button-secondary p-button-lg"
+                                       action="index?faces-redirect=true"
+                                       immediate="true"/>
+                    </div>
+                </h:form>
+            </div>
+        </div>
+    </div>
+
+    <p:growl id="messages" showDetail="true"/>
+</h:body>
+</html>
