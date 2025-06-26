@@ -1,0 +1,31 @@
+package com.hms2.repository;
+
+import com.hms2.model.Billing;
+import com.hms2.model.Patient;
+import com.hms2.model.Appointment;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+public interface BillingRepository extends GenericRepository<Billing, Long> {
+    
+    Optional<Billing> findByInvoiceNumber(String invoiceNumber);
+    
+    List<Billing> findByPatient(Patient patient);
+    
+    List<Billing> findByAppointment(Appointment appointment);
+    
+    List<Billing> findByStatus(String status);
+    
+    List<Billing> findByPaymentMethod(String paymentMethod);
+    
+    List<Billing> findByDateRange(LocalDateTime startDate, LocalDateTime endDate);
+    
+    List<Billing> findOverdueBillings();
+    
+    List<Billing> findDeletedBillings();
+    
+    long countByStatus(String status);
+    
+    long countByPatient(Patient patient);
+}
