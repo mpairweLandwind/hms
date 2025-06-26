@@ -1,0 +1,324 @@
+/* Custom Hospital Management System Styles */
+
+.layout-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.layout-topbar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.layout-topbar-logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-decoration: none;
+  color: white;
+}
+
+.layout-topbar-logo a {
+  color: white;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.layout-topbar-menu {
+  display: flex;
+  gap: 1rem;
+}
+
+.layout-topbar-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.layout-topbar-button:hover,
+.layout-topbar-button.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  text-decoration: none;
+}
+
+.layout-main {
+  flex: 1;
+  background-color: #f8f9fa;
+}
+
+.layout-content {
+  padding: 2rem;
+}
+
+.content-section {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feature-intro {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.feature-intro h1 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-size: 2.5rem;
+}
+
+.feature-intro p {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.card h5 {
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+/* Statistics Cards */
+.surface-0 {
+  background: white;
+}
+
+.shadow-2 {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.border-round {
+  border-radius: 8px;
+}
+
+.border-1 {
+  border-width: 1px;
+  border-style: solid;
+}
+
+.border-50 {
+  border-color: #e5e7eb;
+}
+
+/* Grid System */
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -0.5rem;
+}
+
+.col-12 {
+  flex: 0 0 100%;
+  padding: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .md\:col-6 {
+    flex: 0 0 50%;
+  }
+
+  .md\:col-4 {
+    flex: 0 0 33.333333%;
+  }
+}
+
+@media (min-width: 992px) {
+  .lg\:col-3 {
+    flex: 0 0 25%;
+  }
+
+  .lg\:col-6 {
+    flex: 0 0 50%;
+  }
+}
+
+/* Utility Classes */
+.p-3 {
+  padding: 1rem;
+}
+
+.mb-3 {
+  margin-bottom: 1rem;
+}
+
+.p-mr-2 {
+  margin-right: 0.5rem;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.text-500 {
+  color: #6b7280;
+}
+
+.text-900 {
+  color: #111827;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.block {
+  display: block;
+}
+
+/* Color Classes */
+.text-green-500 {
+  color: #10b981;
+}
+
+.text-orange-500 {
+  color: #f59e0b;
+}
+
+.text-cyan-500 {
+  color: #06b6d4;
+}
+
+.bg-blue-100 {
+  background-color: #dbeafe;
+}
+
+.bg-orange-100 {
+  background-color: #fed7aa;
+}
+
+.bg-cyan-100 {
+  background-color: #cffafe;
+}
+
+.bg-green-100 {
+  background-color: #dcfce7;
+}
+
+.text-blue-500 {
+  color: #3b82f6;
+}
+
+/* PrimeFaces Customizations */
+.p-datatable .p-datatable-thead > tr > th {
+  background-color: #f8f9fa;
+  color: #495057;
+  font-weight: 600;
+}
+
+.p-button {
+  border-radius: 6px;
+}
+
+.p-dialog .p-dialog-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.p-toolbar {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.p-tag {
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .layout-topbar {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .layout-topbar-menu {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .layout-content {
+    padding: 1rem;
+  }
+
+  .feature-intro h1 {
+    font-size: 2rem;
+  }
+
+  .p-dialog {
+    width: 95% !important;
+  }
+}
+
+/* Loading and Animation */
+.p-datatable .p-datatable-loading-overlay {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.p-button:hover {
+  transform: translateY(-1px);
+  transition: transform 0.2s;
+}
+
+/* Custom Status Colors */
+.status-active {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-rejected {
+  background-color: #f8d7da;
+  color: #721c24;
+}

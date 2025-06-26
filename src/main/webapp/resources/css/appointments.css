@@ -1,0 +1,255 @@
+/* Appointment Management Styles */
+.appointments-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.page-title {
+  color: #2c3e50;
+  font-size: 2.2rem;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.page-title i {
+  color: #3498db;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Search Panel */
+.search-panel {
+  margin-bottom: 25px;
+}
+
+.search-panel .ui-panel-content {
+  padding: 20px;
+}
+
+/* Today's Appointments Panel */
+.today-appointments-panel {
+  margin-bottom: 25px;
+}
+
+.today-appointments-panel .ui-panel-titlebar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+}
+
+.today-appointments-panel .ui-panel-title {
+  color: white;
+  font-weight: 600;
+}
+
+/* All Appointments Panel */
+.all-appointments-panel .ui-panel-titlebar {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border: none;
+}
+
+.all-appointments-panel .ui-panel-title {
+  color: white;
+  font-weight: 600;
+}
+
+/* Appointments Table */
+.appointments-table {
+  width: 100%;
+}
+
+.appointments-table .ui-datatable-header {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  padding: 15px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.appointments-table .ui-datatable-data tr {
+  transition: all 0.3s ease;
+}
+
+.appointments-table .ui-datatable-data tr:hover {
+  background-color: #f8f9fa;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.appointments-table .ui-datatable-data td {
+  padding: 12px 8px;
+  border-bottom: 1px solid #dee2e6;
+  vertical-align: middle;
+}
+
+.appointments-table .ui-button {
+  margin-right: 5px;
+  padding: 6px 12px;
+}
+
+.appointments-table .ui-button-sm {
+  padding: 4px 8px;
+  font-size: 0.875rem;
+}
+
+/* Status Tags */
+.ui-tag {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Dialog Styles */
+.appointment-dialog .ui-dialog-content {
+  padding: 25px;
+}
+
+.appointment-dialog .p-grid {
+  margin: 0;
+}
+
+.appointment-dialog .p-col-12 {
+  padding: 10px 0;
+}
+
+.appointment-dialog .ui-outputlabel {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.required-field::after {
+  content: " *";
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #dee2e6;
+}
+
+/* Calendar Styles */
+.calendar-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.event-dialog .ui-dialog-content {
+  padding: 20px;
+}
+
+.event-details-grid {
+  width: 100%;
+}
+
+.event-details-grid td {
+  padding: 8px;
+  vertical-align: top;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .header-actions {
+    justify-content: center;
+  }
+
+  .appointments-table .ui-datatable-data td {
+    padding: 8px 4px;
+    font-size: 0.875rem;
+  }
+
+  .dialog-buttons {
+    flex-direction: column;
+  }
+
+  .dialog-buttons .ui-button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
+/* Animation Effects */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.appointments-container > * {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Loading States */
+.ui-datatable-loading {
+  position: relative;
+}
+
+.ui-datatable-loading::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Priority Indicators */
+.priority-routine {
+  background-color: #28a745;
+}
+
+.priority-urgent {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.priority-emergency {
+  background-color: #dc3545;
+}
