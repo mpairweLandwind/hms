@@ -1,0 +1,797 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <div class="enhanced-registration-container">
+        <!-- Role Selection Header -->
+        <div class="role-selection-header">
+            <h4 class="role-title">Choose Your Role</h4>
+            <p class="role-subtitle">Select how you'll be using HealthCare Plus</p>
+            
+            <div class="role-options">
+                <div class="role-option" onclick="selectRole('PATIENT')" id="patientRole">
+                    <div class="role-icon">
+                        <i class="pi pi-user" aria-hidden="true"></i>
+                    </div>
+                    <h5>Patient</h5>
+                    <p>Book appointments, access medical records</p>
+                </div>
+                
+                <div class="role-option" onclick="selectRole('DOCTOR')" id="doctorRole">
+                    <div class="role-icon">
+                        <i class="pi pi-user-edit" aria-hidden="true"></i>
+                    </div>
+                    <h5>Doctor</h5>
+                    <p>Manage patients, create prescriptions</p>
+                </div>
+                
+                <div class="role-option" onclick="selectRole('STAFF')" id="staffRole">
+                    <div class="role-icon">
+                        <i class="pi pi-users" aria-hidden="true"></i>
+                    </div>
+                    <h5>Staff</h5>
+                    <p>Administrative and support functions</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registration Form -->
+        <div class="registration-form-container">
+            <h:form id="enhancedRegistrationForm" styleClass="enhanced-registration-form">
+                <p:inputText id="selectedRole" value="#{registrationController.selectedRole}" 
+                           style="display: none;"/>
+                
+                <!-- Progress Indicator -->
+                <div class="progress-indicator">
+                    <div class="progress-step active" data-step="1">
+                        <span class="step-number">1</span>
+                        <span class="step-label">Account</span>
+                    </div>
+                    <div class="progress-step" data-step="2">
+                        <span class="step-number">2</span>
+                        <span class="step-label">Personal</span>
+                    </div>
+                    <div class="progress-step" data-step="3">
+                        <span class="step-number">3</span>
+                        <span class="step-label">Professional</span>
+                    </div>
+                </div>
+
+                <!-- Step 1: Account Information -->
+                <div class="form-step active" data-step="1">
+                    <div class="step-header">
+                        <h5>Account Information</h5>
+                        <p>Create your secure login credentials</p>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="regUsername" class="form-label">
+                                <i class="pi pi-user" aria-hidden="true"></i>
+                                Username *
+                            </label>
+                            <p:inputText id="regUsername" 
+                                       value="#{registrationController.registrationDTO.username}" 
+                                       required="true" 
+                                       placeholder="Choose a unique username"
+                                       styleClass="form-input">
+                                <p:ajax event="blur" 
+                                      listener="#{registrationController.validateUsername}" 
+                                      update="regMessages"/>
+                            </p:inputText>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="regEmail" class="form-label">
+                                <i class="pi pi-envelope" aria-hidden="true"></i>
+                                Email Address *
+                            </label>
+                            <p:inputText id="regEmail" 
+                                       value="#{registrationController.registrationDTO.email}" 
+                                       required="true" 
+                                       placeholder="your.email@example.com"
+                                       styleClass="form-input">
+                                <p:ajax event="blur" 
+                                      listener="#{registrationController.validateEmail}" 
+                                      update="regMessages"/>
+                            </p:inputText>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="regPassword" class="form-label">
+                            <i class="pi pi-lock" aria-hidden="true"></i>
+                            Password *
+                        </label>
+                        <p:password id="regPassword" 
+                                  value="#{registrationController.registrationDTO.password}" 
+                                  required="true" 
+                                  feedback="true"
+                                  placeholder="Create a strong password"
+                                  styleClass="form-input"
+                                  toggleMask="true"/>
+                    </div>
+                </div>
+
+                <!-- Step 2: Personal Information -->
+                <div class="form-step" data-step="2">
+                    <div class="step-header">
+                        <h5>Personal Information</h5>
+                        <p>Tell us about yourself</p>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="regFirstName" class="form-label">
+                                <i class="pi pi-user" aria-hidden="true"></i>
+                                First Name *
+                            </label>
+                            <p:inputText id="regFirstName" 
+                                       value="#{registrationController.registrationDTO.firstName}" 
+                                       required="true" 
+                                       placeholder="Your first name"
+                                       styleClass="form-input"/>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="regLastName" class="form-label">
+                                <i class="pi pi-user" aria-hidden="true"></i>
+                                Last Name *
+                            </label>
+                            <p:inputText id="regLastName" 
+                                       value="#{registrationController.registrationDTO.lastName}" 
+                                       required="true" 
+                                       placeholder="Your last name"
+                                       styleClass="form-input"/>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="regPhone" class="form-label">
+                                <i class="pi pi-phone" aria-hidden="true"></i>
+                                Phone Number *
+                            </label>
+                            <p:inputText id="regPhone" 
+                                       value="#{registrationController.registrationDTO.phoneNumber}" 
+                                       required="true" 
+                                       placeholder="Your contact number"
+                                       styleClass="form-input"/>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="regDateOfBirth" class="form-label">
+                                <i class="pi pi-calendar" aria-hidden="true"></i>
+                                Date of Birth
+                            </label>
+                            <p:datePicker id="regDateOfBirth" 
+                                        value="#{registrationController.registrationDTO.dateOfBirth}" 
+                                        pattern="dd/MM/yyyy"
+                                        placeholder="Select your birth date"
+                                        styleClass="form-input"/>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="regAddress" class="form-label">
+                            <i class="pi pi-map-marker" aria-hidden="true"></i>
+                            Address
+                        </label>
+                        <p:inputTextarea id="regAddress" 
+                                       value="#{registrationController.registrationDTO.address}" 
+                                       rows="3" 
+                                       placeholder="Your complete address"
+                                       styleClass="form-input"/>
+                    </div>
+                </div>
+
+                <!-- Step 3: Role-Specific Information -->
+                <div class="form-step" data-step="3">
+                    <!-- Patient Specific Fields -->
+                    <div class="role-specific-section" id="patientFields" style="display: none;">
+                        <div class="step-header">
+                            <h5>Medical Information</h5>
+                            <p>Help us provide better care</p>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="regGender" class="form-label">
+                                    <i class="pi pi-user" aria-hidden="true"></i>
+                                    Gender
+                                </label>
+                                <p:selectOneMenu id="regGender" 
+                                               value="#{registrationController.registrationDTO.gender}"
+                                               styleClass="form-input">
+                                    <f:selectItem itemLabel="Select Gender" itemValue=""/>
+                                    <f:selectItems value="#{registrationController.genders}" 
+                                                 var="gender" 
+                                                 itemLabel="#{gender}" 
+                                                 itemValue="#{gender}"/>
+                                </p:selectOneMenu>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="regBloodType" class="form-label">
+                                    <i class="pi pi-heart" aria-hidden="true"></i>
+                                    Blood Type
+                                </label>
+                                <p:selectOneMenu id="regBloodType" 
+                                               value="#{registrationController.registrationDTO.bloodType}"
+                                               styleClass="form-input">
+                                    <f:selectItem itemLabel="Select Blood Type" itemValue=""/>
+                                    <f:selectItems value="#{registrationController.bloodTypes}" 
+                                                 var="bloodType" 
+                                                 itemLabel="#{bloodType}" 
+                                                 itemValue="#{bloodType}"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="regEmergencyContact" class="form-label">
+                                    <i class="pi pi-phone" aria-hidden="true"></i>
+                                    Emergency Contact
+                                </label>
+                                <p:inputText id="regEmergencyContact" 
+                                           value="#{registrationController.registrationDTO.emergencyContact}" 
+                                           placeholder="Emergency contact name"
+                                           styleClass="form-input"/>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="regEmergencyPhone" class="form-label">
+                                    <i class="pi pi-phone" aria-hidden="true"></i>
+                                    Emergency Phone
+                                </label>
+                                <p:inputText id="regEmergencyPhone" 
+                                           value="#{registrationController.registrationDTO.emergencyPhone}" 
+                                           placeholder="Emergency contact number"
+                                           styleClass="form-input"/>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="regAllergies" class="form-label">
+                                <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+                                Known Allergies
+                            </label>
+                            <p:inputTextarea id="regAllergies" 
+                                           value="#{registrationController.registrationDTO.allergies}" 
+                                           rows="2" 
+                                           placeholder="List any known allergies"
+                                           styleClass="form-input"/>
+                        </div>
+                    </div>
+
+                    <!-- Doctor Specific Fields -->
+                    <div class="role-specific-section" id="doctorFields" style="display: none;">
+                        <div class="step-header">
+                            <h5>Professional Information</h5>
+                            <p>Your medical credentials and expertise</p>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="regSpecialization" class="form-label">
+                                    <i class="pi pi-bookmark" aria-hidden="true"></i>
+                                    Specialization *
+                                </label>
+                                <p:inputText id="regSpecialization" 
+                                           value="#{registrationController.registrationDTO.specialization}" 
+                                           placeholder="Your medical specialization"
+                                           styleClass="form-input"/>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="regLicenseNumber" class="form-label">
+                                    <i class="pi pi-id-card" aria-hidden="true"></i>
+                                    License Number *
+                                </label>
+                                <p:inputText id="regLicenseNumber" 
+                                           value="#{registrationController.registrationDTO.licenseNumber}" 
+                                           placeholder="Medical license number"
+                                           styleClass="form-input">
+                                    <p:ajax event="blur" 
+                                          listener="#{registrationController.validateLicenseNumber}" 
+                                          update="regMessages"/>
+                                </p:inputText>
+                            </div>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="regExperience" class="form-label">
+                                    <i class="pi pi-clock" aria-hidden="true"></i>
+                                    Experience (Years)
+                                </label>
+                                <p:inputNumber id="regExperience" 
+                                             value="#{registrationController.registrationDTO.experience}" 
+                                             decimalPlaces="0" 
+                                             minValue="0"
+                                             placeholder="Years of experience"
+                                             styleClass="form-input"/>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="regDoctorDepartment" class="form-label">
+                                    <i class="pi pi-building" aria-hidden="true"></i>
+                                    Department
+                                </label>
+                                <p:selectOneMenu id="regDoctorDepartment" 
+                                               value="#{registrationController.registrationDTO.departmentId}"
+                                               styleClass="form-input">
+                                    <f:selectItem itemLabel="Select Department" itemValue=""/>
+                                    <f:selectItems value="#{registrationController.departments}" 
+                                                 var="dept" 
+                                                 itemLabel="#{dept.departmentName}" 
+                                                 itemValue="#{dept.departmentId}"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="regQualifications" class="form-label">
+                                <i class="pi pi-book" aria-hidden="true"></i>
+                                Qualifications
+                            </label>
+                            <p:inputTextarea id="regQualifications" 
+                                           value="#{registrationController.registrationDTO.qualifications}" 
+                                           rows="3" 
+                                           placeholder="Your medical qualifications and certifications"
+                                           styleClass="form-input"/>
+                        </div>
+                    </div>
+
+                    <!-- Staff Specific Fields -->
+                    <div class="role-specific-section" id="staffFields" style="display: none;">
+                        <div class="step-header">
+                            <h5>Employment Information</h5>
+                            <p>Your role and department details</p>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="regPosition" class="form-label">
+                                    <i class="pi pi-briefcase" aria-hidden="true"></i>
+                                    Position *
+                                </label>
+                                <p:inputText id="regPosition" 
+                                           value="#{registrationController.registrationDTO.position}" 
+                                           placeholder="Your job position"
+                                           styleClass="form-input"/>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="regEmployeeId" class="form-label">
+                                    <i class="pi pi-id-card" aria-hidden="true"></i>
+                                    Employee ID *
+                                </label>
+                                <p:inputText id="regEmployeeId" 
+                                           value="#{registrationController.registrationDTO.employeeId}" 
+                                           placeholder="Your employee ID"
+                                           styleClass="form-input">
+                                    <p:ajax event="blur" 
+                                          listener="#{registrationController.validateEmployeeId}" 
+                                          update="regMessages"/>
+                                </p:inputText>
+                            </div>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="regHireDate" class="form-label">
+                                    <i class="pi pi-calendar" aria-hidden="true"></i>
+                                    Hire Date
+                                </label>
+                                <p:datePicker id="regHireDate" 
+                                            value="#{registrationController.registrationDTO.hireDate}" 
+                                            pattern="dd/MM/yyyy"
+                                            placeholder="Select hire date"
+                                            styleClass="form-input"/>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="regStaffDepartment" class="form-label">
+                                    <i class="pi pi-building" aria-hidden="true"></i>
+                                    Department
+                                </label>
+                                <p:selectOneMenu id="regStaffDepartment" 
+                                               value="#{registrationController.registrationDTO.departmentId}"
+                                               styleClass="form-input">
+                                    <f:selectItem itemLabel="Select Department" itemValue=""/>
+                                    <f:selectItems value="#{registrationController.departments}" 
+                                                 var="dept" 
+                                                 itemLabel="#{dept.departmentName}" 
+                                                 itemValue="#{dept.departmentId}"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Navigation -->
+                <div class="form-navigation">
+                    <p:commandButton value="Previous" 
+                                   icon="pi pi-chevron-left" 
+                                   styleClass="btn btn-secondary nav-btn prev-btn"
+                                   onclick="previousStep(); return false;"
+                                   style="display: none;"/>
+                    
+                    <p:commandButton value="Next" 
+                                   icon="pi pi-chevron-right" 
+                                   iconPos="right"
+                                   styleClass="btn btn-primary nav-btn next-btn"
+                                   onclick="nextStep(); return false;"/>
+                    
+                    <p:commandButton value="Create Account" 
+                                   icon="pi pi-user-plus" 
+                                   styleClass="btn btn-primary nav-btn submit-btn"
+                                   actionListener="#{registrationController.registerUser}"
+                                   update="enhancedRegistrationForm regMessages"
+                                   onstart="showLoading('Creating your account...')"
+                                   oncomplete="hideLoading()"
+                                   style="display: none;"/>
+                </div>
+
+                <p:messages id="regMessages" showDetail="true" closable="true"/>
+            </h:form>
+        </div>
+    </div>
+
+    <style>
+        /* Enhanced Registration Dialog Styles */
+        .enhanced-registration-container {
+            padding: 0;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .role-selection-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: var(--space-6);
+            text-align: center;
+        }
+
+        .role-title {
+            font-size: var(--font-2xl);
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-2);
+        }
+
+        .role-subtitle {
+            opacity: 0.9;
+            margin-bottom: var(--space-6);
+        }
+
+        .role-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-4);
+        }
+
+        .role-option {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-xl);
+            padding: var(--space-4);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            backdrop-filter: blur(10px);
+        }
+
+        .role-option:hover,
+        .role-option.selected {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .role-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-3);
+        }
+
+        .role-icon i {
+            font-size: var(--font-xl);
+            color: white;
+        }
+
+        .role-option h5 {
+            font-size: var(--font-lg);
+            font-weight: var(--font-semibold);
+            margin-bottom: var(--space-1);
+        }
+
+        .role-option p {
+            font-size: var(--font-sm);
+            opacity: 0.8;
+            margin: 0;
+        }
+
+        .registration-form-container {
+            padding: var(--space-6);
+        }
+
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: var(--space-8);
+            position: relative;
+        }
+
+        .progress-indicator::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 25%;
+            right: 25%;
+            height: 2px;
+            background: var(--gray-200);
+            z-index: 1;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-2);
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background: var(--gray-200);
+            color: var(--gray-600);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: var(--font-semibold);
+            transition: all var(--transition-fast);
+        }
+
+        .progress-step.active .step-number,
+        .progress-step.completed .step-number {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .step-label {
+            font-size: var(--font-sm);
+            color: var(--gray-600);
+            font-weight: var(--font-medium);
+        }
+
+        .progress-step.active .step-label,
+        .progress-step.completed .step-label {
+            color: var(--primary-color);
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .step-header {
+            text-align: center;
+            margin-bottom: var(--space-6);
+        }
+
+        .step-header h5 {
+            font-size: var(--font-xl);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+
+        .step-header p {
+            color: var(--gray-600);
+            margin: 0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: var(--space-8);
+            padding-top: var(--space-6);
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .nav-btn {
+            min-width: 120px;
+        }
+
+        .role-specific-section {
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .role-options {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-indicator {
+                flex-direction: column;
+                gap: var(--space-2);
+            }
+
+            .progress-indicator::before {
+                display: none;
+            }
+
+            .form-navigation {
+                flex-direction: column;
+                gap: var(--space-3);
+            }
+
+            .nav-btn {
+                width: 100%;
+            }
+        }
+    </style>
+
+    <script>
+        let currentStep = 1;
+        let selectedRole = '';
+
+        function selectRole(role) {
+            selectedRole = role;
+            
+            // Update visual selection
+            document.querySelectorAll('.role-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.getElementById(role.toLowerCase() + 'Role').classList.add('selected');
+            
+            // Update hidden field
+            document.getElementById('enhancedRegistrationForm:selectedRole').value = role;
+            
+            // Show/hide role-specific fields
+            document.querySelectorAll('.role-specific-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            if (role === 'PATIENT') {
+                document.getElementById('patientFields').style.display = 'block';
+            } else if (role === 'DOCTOR') {
+                document.getElementById('doctorFields').style.display = 'block';
+            } else if (role === 'STAFF') {
+                document.getElementById('staffFields').style.display = 'block';
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < 3) {
+                // Hide current step
+                document.querySelector(`[data-step="${currentStep}"]`).classList.remove('active');
+                
+                // Show next step
+                currentStep++;
+                document.querySelector(`[data-step="${currentStep}"]`).classList.add('active');
+                
+                // Update progress
+                updateProgress();
+                
+                // Update navigation buttons
+                updateNavigation();
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                // Hide current step
+                document.querySelector(`[data-step="${currentStep}"]`).classList.remove('active');
+                
+                // Show previous step
+                currentStep--;
+                document.querySelector(`[data-step="${currentStep}"]`).classList.add('active');
+                
+                // Update progress
+                updateProgress();
+                
+                // Update navigation buttons
+                updateNavigation();
+            }
+        }
+
+        function updateProgress() {
+            document.querySelectorAll('.progress-step').forEach((step, index) => {
+                if (index + 1 < currentStep) {
+                    step.classList.add('completed');
+                    step.classList.remove('active');
+                } else if (index + 1 === currentStep) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
+                } else {
+                    step.classList.remove('active', 'completed');
+                }
+            });
+        }
+
+        function updateNavigation() {
+            const prevBtn = document.querySelector('.prev-btn');
+            const nextBtn = document.querySelector('.next-btn');
+            const submitBtn = document.querySelector('.submit-btn');
+            
+            // Show/hide previous button
+            if (currentStep > 1) {
+                prevBtn.style.display = 'inline-flex';
+            } else {
+                prevBtn.style.display = 'none';
+            }
+            
+            // Show/hide next/submit button
+            if (currentStep === 3) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'inline-flex';
+            } else {
+                nextBtn.style.display = 'inline-flex';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNavigation();
+        });
+    </script>
+</ui:composition>

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="/WEB-INF/templates/dashboard-template.xhtml">
+    
+    <ui:define name="title">Admin Dashboard - Hospital Management System</ui:define>
+    
+    <ui:define name="page-header">
+        <div class="page-header-content">
+            <div class="page-title">
+                <h1><i class="pi pi-home"></i> Admin Dashboard</h1>
+                <p>Complete overview of hospital operations and management</p>
+            </div>
+            <div class="page-actions">
+                <p:commandButton value="Refresh" 
+                                 icon="pi pi-refresh"
+                                 action="#{adminDashboardController.refreshDashboard}"
+                                 update="@form"
+                                 styleClass="p-button-outlined"/>
+                <p:commandButton value="Export Report" 
+                                 icon="pi pi-download"
+                                 styleClass="p-button-primary"/>
+            </div>
+        </div>
+    </ui:define>
+    
+    <ui:define name="content">
+        <h:form id="adminDashboardForm">
+            
+            <!-- Key Performance Indicators -->
+            <div class="kpi-section">
+                <h2 class="section-title">Key Performance Indicators</h2>
+                <div class="kpi-grid">
+                    
+                    <!-- Total Patients -->
+                    <div class="kpi-card patients">
+                        <div class="kpi-icon">
+                            <i class="pi pi-users"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <h3>Total Patients</h3>
+                            <p class="kpi-value">#{adminDashboardController.systemStats['totalPatients']}</p>
+                            <span class="kpi-change positive">
+                                <i class="pi pi-arrow-up"></i>
+                                #{adminDashboardController.getGrowthPercentage('patients')} this month
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Total Revenue -->
+                    <div class="kpi-card revenue">
+                        <div class="kpi-icon">
+                            <i class="pi pi-dollar"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <h3>Total Revenue</h3>
+                            <p class="kpi-value">
+                                <h:outputText value="#{adminDashboardController.financialStats['totalRevenue']}">
+                                    <f:convertNumber type="currency" currencySymbol="$"/>
+                                </h:outputText>
+                            </p>
+                            <span class="kpi-change positive">
+                                <i class="pi pi-arrow-up"></i>
+                                +15.3% from last month
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Today's Appointments -->
+                    <div class="kpi-card appointments">
+                        <div class="kpi-icon">
+                            <i class="pi pi-calendar"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <h3>Today's Appointments</h3>
+                            <p class="kpi-value">#{adminDashboardController.appointmentStats['todaysAppointments']}</p>
+                            <span class="kpi-change neutral">
+                                <i class="pi pi-minus"></i>
+                                Same as yesterday
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Active Staff -->
+                    <div class="kpi-card staff">
+                        <div class="kpi-icon">
+                            <i class="pi pi-user-plus"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <h3>Active Staff</h3>
+                            <p class="kpi-value">#{adminDashboardController.userStats['activeStaff']}</p>
+                            <span class="kpi-change positive">
+                                <i class="pi pi-arrow-up"></i>
+                                +2 new this week
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Pending Bills -->
+                    <div class="kpi-card billing">
+                        <div class="kpi-icon">
+                            <i class="pi pi-credit-card"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <h3>Pending Amount</h3>
+                            <p class="kpi-value">
+                                <h:outputText value="#{adminDashboardController.financialStats['pendingAmount']}">
+                                    <f:convertNumber type="currency" currencySymbol="$"/>
+                                </h:outputText>
+                            </p>
+                            <span class="kpi-change negative">
+                                <i class="pi pi-arrow-down"></i>
+                                Needs attention
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- System Health -->
+                    <div class="kpi-card system">
+                        <div class="kpi-icon">
+                            <i class="pi pi-server"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <h3>System Health</h3>
+                            <p class="kpi-value">98.5%</p>
+                            <span class="kpi-change positive">
+                                <i class="pi pi-check-circle"></i>
+                                All systems operational
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Charts and Analytics -->
+            <div class="analytics-section">
+                <div class="analytics-grid">
+                    
+                    <!-- Revenue Chart -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Monthly Revenue Trend</h3>
+                            <div class="chart-controls">
+                                <p:selectOneMenu value="#{adminDashboardController.revenueChartPeriod}">
+                                    <f:selectItem itemLabel="Last 6 Months" itemValue="6m"/>
+                                    <f:selectItem itemLabel="Last Year" itemValue="1y"/>
+                                    <f:selectItem itemLabel="Last 2 Years" itemValue="2y"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                        <div class="chart-content">
+                            <p:chart type="line" 
+                                     model="#{adminDashboardController.revenueChartModel}" 
+                                     style="width: 100%; height: 300px;"
+                                     responsive="true"/>
+                        </div>
+                    </div>
+                    
+                    <!-- Appointment Statistics -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Appointment Status Distribution</h3>
+                        </div>
+                        <div class="chart-content">
+                            <p:chart type="doughnut" 
+                                     model="#{adminDashboardController.appointmentChartModel}" 
+                                     style="width: 100%; height: 300px;"
+                                     responsive="true"/>
+                        </div>
+                    </div>
+                    
+                    <!-- Department Performance -->
+                    <div class="chart-card full-width">
+                        <div class="chart-header">
+                            <h3>Department Performance</h3>
+                        </div>
+                        <div class="chart-content">
+                            <p:chart type="bar" 
+                                     model="#{adminDashboardController.departmentChartModel}" 
+                                     style="width: 100%; height: 400px;"
+                                     responsive="true"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Activities and Quick Actions -->
+            <div class="activities-section">
+                <div class="activities-grid">
+                    
+                    <!-- Recent Activities -->
+                    <div class="activity-card">
+                        <div class="card-header">
+                            <h3><i class="pi pi-history"></i> Recent Activities</h3>
+                            <h:link outcome="/views/admin/activity-log" value="View All"/>
+                        </div>
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <div class="activity-icon patient">
+                                    <i class="pi pi-user-plus"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <p class="activity-title">New patient registered</p>
+                                    <p class="activity-description">John Doe registered as a new patient</p>
+                                    <span class="activity-time">5 minutes ago</span>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon appointment">
+                                    <i class="pi pi-calendar"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <p class="activity-title">Appointment scheduled</p>
+                                    <p class="activity-description">Dr. Smith - Cardiology consultation</p>
+                                    <span class="activity-time">15 minutes ago</span>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon billing">
+                                    <i class="pi pi-credit-card"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <p class="activity-title">Payment received</p>
+                                    <p class="activity-description">Invoice #INV-2024001 paid - $250.00</p>
+                                    <span class="activity-time">1 hour ago</span>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon staff">
+                                    <i class="pi pi-users"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <p class="activity-title">Staff member added</p>
+                                    <p class="activity-description">Sarah Johnson joined as Nurse</p>
+                                    <span class="activity-time">2 hours ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="quick-actions-card">
+                        <div class="card-header">
+                            <h3><i class="pi pi-bolt"></i> Quick Actions</h3>
+                        </div>
+                        <div class="quick-actions-grid">
+                            <h:link outcome="/views/patients/patient-registration" styleClass="quick-action-item">
+                                <div class="quick-action-icon">
+                                    <i class="pi pi-user-plus"></i>
+                                </div>
+                                <span>Add Patient</span>
+                            </h:link>
+                            
+                            <h:link outcome="/views/appointments/appointment-booking" styleClass="quick-action-item">
+                                <div class="quick-action-icon">
+                                    <i class="pi pi-calendar-plus"></i>
+                                </div>
+                                <span>Book Appointment</span>
+                            </h:link>
+                            
+                            <h:link outcome="/views/billing/billing-create" styleClass="quick-action-item">
+                                <div class="quick-action-icon">
+                                    <i class="pi pi-credit-card"></i>
+                                </div>
+                                <span>Create Invoice</span>
+                            </h:link>
+                            
+                            <h:link outcome="/views/doctors/doctor-registration" styleClass="quick-action-item">
+                                <div class="quick-action-icon">
+                                    <i class="pi pi-user-plus"></i>
+                                </div>
+                                <span>Add Doctor</span>
+                            </h:link>
+                            
+                            <h:link outcome="/views/staff/staff-registration" styleClass="quick-action-item">
+                                <div class="quick-action-icon">
+                                    <i class="pi pi-users"></i>
+                                </div>
+                                <span>Add Staff</span>
+                            </h:link>
+                            
+                            <h:link outcome="/views/reports/generate-report" styleClass="quick-action-item">
+                                <div class="quick-action-icon">
+                                    <i class="pi pi-chart-bar"></i>
+                                </div>
+                                <span>Generate Report</span>
+                            </h:link>
+                        </div>
+                    </div>
+                    
+                    <!-- System Alerts -->
+                    <div class="alerts-card">
+                        <div class="card-header">
+                            <h3><i class="pi pi-exclamation-triangle"></i> System Alerts</h3>
+                        </div>
+                        <div class="alerts-list">
+                            <div class="alert-item warning">
+                                <i class="pi pi-exclamation-triangle"></i>
+                                <div class="alert-content">
+                                    <p class="alert-title">Overdue Payments</p>
+                                    <p class="alert-description">5 invoices are overdue</p>
+                                </div>
+                                <p:commandButton value="Review" 
+                                                 styleClass="p-button-sm p-button-warning"
+                                                 onclick="window.location.href='billing-list.xhtml?filter=overdue'"/>
+                            </div>
+                            
+                            <div class="alert-item info">
+                                <i class="pi pi-info-circle"></i>
+                                <div class="alert-content">
+                                    <p class="alert-title">System Backup</p>
+                                    <p class="alert-description">Scheduled backup completed successfully</p>
+                                </div>
+                                <span class="alert-time">2 hours ago</span>
+                            </div>
+                            
+                            <div class="alert-item success">
+                                <i class="pi pi-check-circle"></i>
+                                <div class="alert-content">
+                                    <p class="alert-title">Server Health</p>
+                                    <p class="alert-description">All systems running optimally</p>
+                                </div>
+                                <span class="alert-time">Just now</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </h:form>
+    </ui:define>
+    
+</ui:composition>
+</html>

@@ -1,0 +1,64 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <div class="form-grid">
+        <div class="form-group">
+            <p:outputLabel for="username" value="Username *" styleClass="form-label required">
+                <i class="pi pi-user label-icon" aria-hidden="true"></i>
+            </p:outputLabel>
+            <p:inputText id="username" 
+                       value="#{controller.registrationDTO.username}" 
+                       required="true" 
+                       placeholder="Choose a unique username"
+                       styleClass="form-input">
+                <p:ajax event="blur" 
+                      listener="#{controller.validateUsername}" 
+                      update="messages"/>
+            </p:inputText>
+        </div>
+        
+        <div class="form-group">
+            <p:outputLabel for="email" value="Email Address *" styleClass="form-label required">
+                <i class="pi pi-envelope label-icon" aria-hidden="true"></i>
+            </p:outputLabel>
+            <p:inputText id="email" 
+                       value="#{controller.registrationDTO.email}" 
+                       required="true" 
+                       placeholder="your.email@example.com"
+                       styleClass="form-input">
+                <p:ajax event="blur" 
+                      listener="#{controller.validateEmail}" 
+                      update="messages"/>
+            </p:inputText>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <p:outputLabel for="password" value="Password *" styleClass="form-label required">
+            <i class="pi pi-lock label-icon" aria-hidden="true"></i>
+        </p:outputLabel>
+        <p:password id="password" 
+                  value="#{controller.registrationDTO.password}" 
+                  required="true" 
+                  feedback="true"
+                  placeholder="Create a strong password"
+                  styleClass="form-input"
+                  toggleMask="true"/>
+    </div>
+    
+    <div class="form-group">
+        <p:outputLabel for="confirmPassword" value="Confirm Password *" styleClass="form-label required">
+            <i class="pi pi-lock label-icon" aria-hidden="true"></i>
+        </p:outputLabel>
+        <p:password id="confirmPassword" 
+                  value="#{controller.registrationDTO.confirmPassword}" 
+                  required="true" 
+                  placeholder="Confirm your password"
+                  styleClass="form-input"
+                  feedback="false"/>
+    </div>
+
+</ui:composition>

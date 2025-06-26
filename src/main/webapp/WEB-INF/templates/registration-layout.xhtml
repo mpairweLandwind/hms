@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="/WEB-INF/templates/main-layout.xhtml">
+    
+    <ui:define name="title">
+        <ui:insert name="pageTitle">Registration</ui:insert> - HealthCare Plus
+    </ui:define>
+    
+    <ui:define name="stylesheets">
+        <h:outputStylesheet library="css" name="registration.css"/>
+        <ui:insert name="additionalStyles"/>
+    </ui:define>
+    
+    <ui:define name="header">
+        <header class="registration-header" role="banner">
+            <div class="header-container">
+                <h:link outcome="/index" styleClass="logo-link">
+                    <div class="logo">
+                        <i class="pi pi-heart-fill logo-icon" aria-hidden="true"></i>
+                        <div class="logo-text">
+                            <span class="brand-name">HealthCare<span class="brand-accent">Plus</span></span>
+                            <span class="brand-tagline">Professional Hospital Management</span>
+                        </div>
+                    </div>
+                </h:link>
+                
+                <nav class="header-nav" role="navigation">
+                    <h:link outcome="/index" styleClass="nav-link">
+                        <i class="pi pi-home" aria-hidden="true"></i>
+                        <span>Home</span>
+                    </h:link>
+                    <h:link outcome="/help" styleClass="nav-link">
+                        <i class="pi pi-question-circle" aria-hidden="true"></i>
+                        <span>Help</span>
+                    </h:link>
+                </nav>
+            </div>
+        </header>
+    </ui:define>
+    
+    <ui:define name="content">
+        <div class="registration-container">
+            <!-- Registration Header -->
+            <div class="registration-hero">
+                <div class="hero-content">
+                    <div class="hero-icon">
+                        <ui:insert name="roleIcon">
+                            <i class="pi pi-user-plus" aria-hidden="true"></i>
+                        </ui:insert>
+                    </div>
+                    <h1 class="hero-title">
+                        <ui:insert name="heroTitle">Create Your Account</ui:insert>
+                    </h1>
+                    <p class="hero-subtitle">
+                        <ui:insert name="heroSubtitle">Join our healthcare community</ui:insert>
+                    </p>
+                </div>
+                
+                <!-- Progress Steps -->
+                <div class="progress-steps">
+                    <ui:insert name="progressSteps">
+                        <div class="step active">
+                            <span class="step-number">1</span>
+                            <span class="step-label">Account</span>
+                        </div>
+                        <div class="step">
+                            <span class="step-number">2</span>
+                            <span class="step-label">Personal</span>
+                        </div>
+                        <div class="step">
+                            <span class="step-number">3</span>
+                            <span class="step-label">Complete</span>
+                        </div>
+                    </ui:insert>
+                </div>
+            </div>
+            
+            <!-- Registration Form -->
+            <div class="registration-form-section">
+                <div class="form-container">
+                    <ui:insert name="registrationForm"/>
+                </div>
+                
+                <!-- Alternative Registration Options -->
+                <div class="alternative-options">
+                    <div class="divider">
+                        <span class="divider-text">Or register as</span>
+                    </div>
+                    <div class="role-links">
+                        <ui:insert name="alternativeRoles">
+                            <h:link outcome="/views/registration/patient-registration" 
+                                   styleClass="role-link #{roleType eq 'PATIENT' ? 'active' : ''}">
+                                <i class="pi pi-user" aria-hidden="true"></i>
+                                <span>Patient</span>
+                            </h:link>
+                            <h:link outcome="/views/registration/doctor-registration" 
+                                   styleClass="role-link #{roleType eq 'DOCTOR' ? 'active' : ''}">
+                                <i class="pi pi-user-edit" aria-hidden="true"></i>
+                                <span>Doctor</span>
+                            </h:link>
+                            <h:link outcome="/views/registration/staff-registration" 
+                                   styleClass="role-link #{roleType eq 'STAFF' ? 'active' : ''}">
+                                <i class="pi pi-users" aria-hidden="true"></i>
+                                <span>Staff</span>
+                            </h:link>
+                        </ui:insert>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+    
+    <ui:define name="scripts">
+        <h:outputScript library="js" name="registration.js"/>
+        <ui:insert name="additionalScripts"/>
+    </ui:define>
+    
+</ui:composition>
+</html>

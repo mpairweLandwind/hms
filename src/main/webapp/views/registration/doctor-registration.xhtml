@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="/WEB-INF/templates/registration-layout.xhtml">
+    
+    <ui:param name="roleType" value="DOCTOR"/>
+    <ui:param name="pageDescription" value="Register as a doctor to join our medical team and provide quality healthcare"/>
+    
+    <ui:define name="pageTitle">Doctor Registration</ui:define>
+    
+    <ui:define name="roleIcon">
+        <i class="pi pi-user-edit" aria-hidden="true"></i>
+    </ui:define>
+    
+    <ui:define name="heroTitle">Join Our Medical Team</ui:define>
+    
+    <ui:define name="heroSubtitle">
+        Register as a healthcare professional and be part of our mission to provide 
+        exceptional medical care to patients worldwide.
+    </ui:define>
+    
+    <ui:define name="progressSteps">
+        <div class="step active" data-step="1">
+            <span class="step-number">1</span>
+            <span class="step-label">Account</span>
+        </div>
+        <div class="step" data-step="2">
+            <span class="step-number">2</span>
+            <span class="step-label">Personal</span>
+        </div>
+        <div class="step" data-step="3">
+            <span class="step-number">3</span>
+            <span class="step-label">Professional</span>
+        </div>
+    </ui:define>
+    
+    <ui:define name="registrationForm">
+        <h:form id="doctorRegistrationForm" styleClass="registration-form">
+            
+            <!-- Step 1: Account Information -->
+            <div class="form-step active" data-step="1">
+                <div class="step-header">
+                    <h3>Create Your Account</h3>
+                    <p>Set up your secure professional login</p>
+                </div>
+                
+                <ui:include src="/WEB-INF/includes/account-fields.xhtml">
+                    <ui:param name="controller" value="#{doctorRegistrationController}"/>
+                </ui:include>
+            </div>
+
+            <!-- Step 2: Personal Information -->
+            <div class="form-step" data-step="2">
+                <div class="step-header">
+                    <h3>Personal Information</h3>
+                    <p>Your personal details</p>
+                </div>
+                
+                <ui:include src="/WEB-INF/includes/personal-fields.xhtml">
+                    <ui:param name="controller" value="#{doctorRegistrationController}"/>
+                </ui:include>
+            </div>
+
+            <!-- Step 3: Professional Information -->
+            <div class="form-step" data-step="3">
+                <div class="step-header">
+                    <h3>Professional Credentials</h3>
+                    <p>Your medical qualifications and expertise</p>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <p:outputLabel for="specialization" value="Medical Specialization *" styleClass="form-label required">
+                            <i class="pi pi-bookmark label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:inputText id="specialization" 
+                                   value="#{doctorRegistrationController.registrationDTO.specialization}" 
+                                   required="true"
+                                   placeholder="e.g., Cardiology, Pediatrics, Surgery"
+                                   styleClass="form-input"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="licenseNumber" value="Medical License Number *" styleClass="form-label required">
+                            <i class="pi pi-id-card label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:inputText id="licenseNumber" 
+                                   value="#{doctorRegistrationController.registrationDTO.licenseNumber}" 
+                                   required="true"
+                                   placeholder="Your medical license number"
+                                   styleClass="form-input">
+                            <p:ajax event="blur" 
+                                  listener="#{doctorRegistrationController.validateLicenseNumber}" 
+                                  update="messages"/>
+                        </p:inputText>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <p:outputLabel for="experience" value="Years of Experience" styleClass="form-label">
+                            <i class="pi pi-clock label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:inputNumber id="experience" 
+                                     value="#{doctorRegistrationController.registrationDTO.experience}" 
+                                     decimalPlaces="0" 
+                                     minValue="0"
+                                     maxValue="50"
+                                     placeholder="Years of medical practice"
+                                     styleClass="form-input"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="department" value="Department" styleClass="form-label">
+                            <i class="pi pi-building label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:selectOneMenu id="department" 
+                                       value="#{doctorRegistrationController.registrationDTO.departmentId}"
+                                       styleClass="form-input">
+                            <f:selectItem itemLabel="Select Department" itemValue=""/>
+                            <f:selectItems value="#{doctorRegistrationController.departments}" 
+                                         var="dept" 
+                                         itemLabel="#{dept.departmentName}" 
+                                         itemValue="#{dept.departmentId}"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <p:outputLabel for="qualifications" value="Medical Qualifications" styleClass="form-label">
+                        <i class="pi pi-book label-icon" aria-hidden="true"></i>
+                    </p:outputLabel>
+                    <p:inputTextarea id="qualifications" 
+                                   value="#{doctorRegistrationController.registrationDTO.qualifications}" 
+                                   rows="4" 
+                                   placeholder="List your medical degrees, certifications, and achievements"
+                                   styleClass="form-input"/>
+                </div>
+                
+                <!-- Document Upload Section -->
+                <div class="document-upload-section">
+                    <h4>Required Documents</h4>
+                    <p class="upload-note">Please upload the following documents for verification:</p>
+                    
+                    <div class="upload-grid">
+                        <div class="upload-item">
+                            <p:outputLabel value="Medical License" styleClass="upload-label"/>
+                            <p:fileUpload id="licenseUpload"
+                                        mode="simple"
+                                        skinSimple="true"
+                                        label="Choose File"
+                                        accept=".pdf,.jpg,.jpeg,.png"
+                                        styleClass="upload-input"/>
+                            <small class="upload-help">PDF, JPG, or PNG format</small>
+                        </div>
+                        
+                        <div class="upload-item">
+                            <p:outputLabel value="Medical Degree" styleClass="upload-label"/>
+                            <p:fileUpload id="degreeUpload"
+                                        mode="simple"
+                                        skinSimple="true"
+                                        label="Choose File"
+                                        accept=".pdf,.jpg,.jpeg,.png"
+                                        styleClass="upload-input"/>
+                            <small class="upload-help">PDF, JPG, or PNG format</small>
+                        </div>
+                        
+                        <div class="upload-item">
+                            <p:outputLabel value="CV/Resume" styleClass="upload-label"/>
+                            <p:fileUpload id="cvUpload"
+                                        mode="simple"
+                                        skinSimple="true"
+                                        label="Choose File"
+                                        accept=".pdf,.doc,.docx"
+                                        styleClass="upload-input"/>
+                            <small class="upload-help">PDF or Word document</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <p:selectBooleanCheckbox id="acceptTerms" 
+                                               value="#{doctorRegistrationController.registrationDTO.acceptTerms}"
+                                               required="true"
+                                               styleClass="custom-checkbox"/>
+                        <p:outputLabel for="acceptTerms" styleClass="checkbox-label">
+                            I agree to the <h:link value="Terms of Service" outcome="/terms"/> and 
+                            <h:link value="Privacy Policy" outcome="/privacy"/>
+                        </p:outputLabel>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <p:selectBooleanCheckbox id="confirmAccuracy" 
+                                               value="#{doctorRegistrationController.registrationDTO.confirmAccuracy}"
+                                               required="true"
+                                               styleClass="custom-checkbox"/>
+                        <p:outputLabel for="confirmAccuracy" styleClass="checkbox-label">
+                            I confirm that all professional information provided is accurate and up-to-date
+                        </p:outputLabel>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="form-navigation">
+                <p:commandButton value="Previous" 
+                               icon="pi pi-chevron-left" 
+                               styleClass="btn btn-secondary nav-btn prev-btn"
+                               onclick="previousStep(); return false;"
+                               style="display: none;"/>
+                
+                <p:commandButton value="Next" 
+                               icon="pi pi-chevron-right" 
+                               iconPos="right"
+                               styleClass="btn btn-primary nav-btn next-btn"
+                               onclick="nextStep(); return false;"/>
+                
+                <p:commandButton value="Submit Application" 
+                               icon="pi pi-send" 
+                               styleClass="btn btn-primary nav-btn submit-btn"
+                               action="#{doctorRegistrationController.registerDoctor}"
+                               update="doctorRegistrationForm messages"
+                               onstart="showLoading('Submitting your application...')"
+                               oncomplete="hideLoading(); handleRegistrationComplete(args);"
+                               style="display: none;"/>
+            </div>
+
+            <p:messages id="messages" showDetail="true" closable="true"/>
+        </h:form>
+    </ui:define>
+    
+    <ui:define name="alternativeRoles">
+        <h:link outcome="/views/registration/patient-registration" styleClass="role-link">
+            <i class="pi pi-user" aria-hidden="true"></i>
+            <span>Patient</span>
+        </h:link>
+        <h:link outcome="/views/registration/staff-registration" styleClass="role-link">
+            <i class="pi pi-users" aria-hidden="true"></i>
+            <span>Staff</span>
+        </h:link>
+    </ui:define>
+    
+    <ui:define name="additionalScripts">
+        <script>
+            function handleRegistrationComplete(args) {
+                if (args.validationFailed) {
+                    return;
+                }
+                
+                if (args.success) {
+                    showSuccessMessage('Doctor application submitted successfully! We will review your credentials and contact you within 2-3 business days.');
+                    setTimeout(() => {
+                        window.location.href = '/index.xhtml';
+                    }, 5000);
+                }
+            }
+        </script>
+    </ui:define>
+    
+</ui:composition>
+</html>
