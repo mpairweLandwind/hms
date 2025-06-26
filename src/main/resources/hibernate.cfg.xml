@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <!-- Database connection settings -->
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/hms</property>
+        <property name="hibernate.connection.username">alien</property>
+        <property name="hibernate.connection.password">alien123.com</property>
+
+        <!-- Connection pool settings -->
+        <property name="hibernate.connection.pool_size">10</property>
+        <property name="hibernate.c3p0.min_size">5</property>
+        <property name="hibernate.c3p0.max_size">20</property>
+        <property name="hibernate.c3p0.timeout">300</property>
+        <property name="hibernate.c3p0.max_statements">50</property>
+        <property name="hibernate.c3p0.idle_test_period">3000</property>
+
+        <!-- SQL dialect -->
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+
+        <!-- Enable Hibernate's automatic session context management -->
+        <property name="hibernate.current_session_context_class">thread</property>
+
+        <!-- Disable the second-level cache -->
+        <property name="hibernate.cache.use_second_level_cache">false</property>
+        <property name="hibernate.cache.use_query_cache">false</property>
+
+        <!-- Echo all executed SQL to stdout -->
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
+
+        <!-- Drop and re-create the database schema on startup -->
+        <property name="hibernate.hbm2ddl.auto">update</property>
+
+        <!-- Enable statistics -->
+        <property name="hibernate.generate_statistics">true</property>
+
+        <!-- Entity mappings -->
+        <mapping class="com.hms2.model.User"/>
+        <mapping class="com.hms2.model.Patient"/>
+        <mapping class="com.hms2.model.Doctor"/>
+        <mapping class="com.hms2.model.Staff"/>
+        <mapping class="com.hms2.model.Department"/>
+        <mapping class="com.hms2.model.Appointment"/>
+        <mapping class="com.hms2.model.MedicalRecord"/>
+        <mapping class="com.hms2.model.Prescription"/>
+        <mapping class="com.hms2.model.Medication"/>
+        <mapping class="com.hms2.model.PrescriptionMedication"/>
+        <mapping class="com.hms2.model.Billing"/>
+    </session-factory>
+</hibernate-configuration>
