@@ -1,17 +1,24 @@
 package com.hms2.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "prescriptions")
 public class Prescription extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "prescription_seq")
-    @SequenceGenerator(name = "prescription_seq", sequenceName = "prescription_seq", allocationSize = 1)
     @Column(name = "prescription_id")
     private Long prescriptionId;
 
@@ -165,5 +172,12 @@ public class Prescription extends BaseEntity {
 
     public void setPrescriptionMedications(List<PrescriptionMedication> prescriptionMedications) {
         this.prescriptionMedications = prescriptionMedications;
+    }
+
+    public Medication getMedication() {
+        if (prescriptionMedications != null && !prescriptionMedications.isEmpty()) {
+            return prescriptionMedications.get(0).getMedication();
+        }
+        return null;
     }
 }

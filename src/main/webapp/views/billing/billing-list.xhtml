@@ -40,7 +40,7 @@
                     </div>
                     <div class="stat-content">
                         <h3>Total Revenue</h3>
-                        <p class="stat-value">$#{billingService.calculateTotalRevenue()}</p>
+                        <p class="stat-value">$#{billingController.calculateTotalRevenue()}</p>
                         <span class="stat-change positive">+12.5% from last month</span>
                     </div>
                 </div>
@@ -51,8 +51,8 @@
                     </div>
                     <div class="stat-content">
                         <h3>Pending Amount</h3>
-                        <p class="stat-value">$#{billingService.calculatePendingAmount()}</p>
-                        <span class="stat-change">#{billingService.countByStatus('PENDING')} invoices</span>
+                        <p class="stat-value">$#{billingController.calculatePendingAmount()}</p>
+                        <span class="stat-change">#{billingController.getPendingBillingCount()} invoices</span>
                     </div>
                 </div>
                 
@@ -62,7 +62,7 @@
                     </div>
                     <div class="stat-content">
                         <h3>Overdue</h3>
-                        <p class="stat-value">#{billingService.countByStatus('OVERDUE')}</p>
+                        <p class="stat-value">#{billingController.getOverdueBillingCount()}</p>
                         <span class="stat-change negative">Requires attention</span>
                     </div>
                 </div>
@@ -73,7 +73,7 @@
                     </div>
                     <div class="stat-content">
                         <h3>Paid This Month</h3>
-                        <p class="stat-value">#{billingService.countByStatus('PAID')}</p>
+                        <p class="stat-value">#{billingController.getPaidBillingCount()}</p>
                         <span class="stat-change positive">Great performance!</span>
                     </div>
                 </div>
@@ -332,7 +332,7 @@
                                      icon="pi pi-save"
                                      action="#{billingController.createBilling}"
                                      update="billingForm:billingTable"
-                                     oncomplete="if (args && !args.validationFailed) PF('newBillingDialog').hide()"
+                                     oncomplete="if (args &amp;&amp; !args.validationFailed) PF('newBillingDialog').hide()"
                                      styleClass="p-button-primary"/>
                     <p:commandButton value="Cancel" 
                                      icon="pi pi-times"
@@ -400,7 +400,7 @@
                                      icon="pi pi-credit-card"
                                      action="#{billingController.processPayment}"
                                      update="billingForm:billingTable"
-                                     oncomplete="if (args && !args.validationFailed) PF('paymentDialog').hide()"
+                                     oncomplete="if (args &amp;&amp; !args.validationFailed) PF('paymentDialog').hide()"
                                      styleClass="p-button-success"/>
                     <p:commandButton value="Cancel" 
                                      icon="pi pi-times"

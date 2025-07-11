@@ -1,341 +1,722 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:c="http://java.sun.com/jsp/jstl/core">
 
-<ui:composition template="/WEB-INF/templates/dashboard-template.xhtml">
-    
-    <ui:define name="title">Admin Dashboard - Hospital Management System</ui:define>
-    
-    <ui:define name="page-header">
-        <div class="page-header-content">
-            <div class="page-title">
-                <h1><i class="pi pi-home"></i> Admin Dashboard</h1>
-                <p>Complete overview of hospital operations and management</p>
-            </div>
-            <div class="page-actions">
-                <p:commandButton value="Refresh" 
-                                 icon="pi pi-refresh"
-                                 action="#{adminDashboardController.refreshDashboard}"
-                                 update="@form"
-                                 styleClass="p-button-outlined"/>
-                <p:commandButton value="Export Report" 
-                                 icon="pi pi-download"
-                                 styleClass="p-button-primary"/>
-            </div>
+<h:head>
+    <title>Administrative Dashboard - Hospital Management System</title>
+    <h:outputStylesheet library="css" name="dashboard.css" />
+    <h:outputStylesheet library="css" name="components.css" />
+    <h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            background: #007bff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .header-content h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .header-content p {
+            color: #6c757d;
+            font-size: 14px;
+            margin: 4px 0 0 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .overview-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .overview-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        .overview-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #007bff, #0056b3);
+        }
+
+        .card-header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .card-header-info h3 {
+            font-size: 16px;
+            font-weight: 500;
+            color: #495057;
+            margin: 0;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: #f8f9fa;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #007bff;
+            font-size: 20px;
+        }
+
+        .card-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .card-change {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .card-change.positive {
+            color: #28a745;
+        }
+
+        .card-change.negative {
+            color: #dc3545;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .management-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 32px;
+            overflow: hidden;
+        }
+
+        .management-header {
+            padding: 24px;
+            border-bottom: 1px solid #e9ecef;
+            background: #f8f9fa;
+        }
+
+        .management-header h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .management-content {
+            padding: 0;
+        }
+
+        .ui-tabs {
+            border: none !important;
+            background: transparent !important;
+        }
+
+        .ui-tabs .ui-tabs-nav {
+            background: #f8f9fa !important;
+            border: none !important;
+            border-bottom: 1px solid #e9ecef !important;
+            padding: 0 24px !important;
+        }
+
+        .ui-tabs .ui-tabs-nav li {
+            border: none !important;
+            background: transparent !important;
+            margin-right: 8px !important;
+        }
+
+        .ui-tabs .ui-tabs-nav li a {
+            background: transparent !important;
+            border: none !important;
+            color: #6c757d !important;
+            padding: 16px 20px !important;
+            font-weight: 500 !important;
+            border-radius: 8px 8px 0 0 !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .ui-tabs .ui-tabs-nav li.ui-tabs-selected a,
+        .ui-tabs .ui-tabs-nav li a:hover {
+            background: white !important;
+            color: #007bff !important;
+            border-bottom: 2px solid #007bff !important;
+        }
+
+        .ui-tabs .ui-tabs-panels {
+            background: white !important;
+            border: none !important;
+            padding: 24px !important;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .ui-inputfield {
+            border: 2px solid #e9ecef !important;
+            border-radius: 8px !important;
+            padding: 12px 16px !important;
+            font-size: 14px !important;
+            transition: border-color 0.2s ease !important;
+        }
+
+        .ui-inputfield:focus {
+            border-color: #007bff !important;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1) !important;
+        }
+
+        .ui-datatable {
+            border: none !important;
+            border-radius: 12px !important;
+            overflow: hidden !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+        }
+
+        .ui-datatable .ui-datatable-header {
+            background: #f8f9fa !important;
+            border: none !important;
+            padding: 16px 20px !important;
+            font-weight: 600 !important;
+            color: #2c3e50 !important;
+        }
+
+        .ui-datatable .ui-datatable-thead>tr>th {
+            background: #f8f9fa !important;
+            border: none !important;
+            border-bottom: 2px solid #e9ecef !important;
+            padding: 16px 20px !important;
+            font-weight: 600 !important;
+            color: #495057 !important;
+            font-size: 14px !important;
+        }
+
+        .ui-datatable .ui-datatable-tbody>tr>td {
+            border: none !important;
+            border-bottom: 1px solid #f1f3f4 !important;
+            padding: 16px 20px !important;
+            font-size: 14px !important;
+        }
+
+        .ui-datatable .ui-datatable-tbody>tr:hover {
+            background: #f8f9fa !important;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .data-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .data-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+        }
+
+        .card-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        .chart-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .chart-placeholder i {
+            font-size: 48px;
+            color: #6c757d;
+            margin-bottom: 16px;
+        }
+
+        .chart-placeholder p {
+            font-size: 16px;
+            font-weight: 500;
+            color: #495057;
+            margin: 0 0 8px 0;
+        }
+
+        .chart-placeholder small {
+            color: #6c757d;
+        }
+
+        .activity-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .activity-group {
+            margin-bottom: 24px;
+        }
+
+        .activity-group h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: #e9ecef;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .activity-icon i {
+            color: #6c757d;
+            font-size: 16px;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0 0 4px 0;
+            font-size: 14px;
+        }
+
+        .activity-description {
+            color: #6c757d;
+            margin: 0 0 4px 0;
+            font-size: 13px;
+        }
+
+        .activity-time {
+            color: #868e96;
+            font-size: 12px;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            padding: 24px;
+        }
+
+        .action-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 16px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #495057;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .action-item:hover {
+            background: white;
+            border-color: #007bff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        .action-icon {
+            width: 56px;
+            height: 56px;
+            background: #007bff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .action-item:hover .action-icon {
+            background: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .action-icon i {
+            color: white;
+            font-size: 24px;
+        }
+
+        .action-item span {
+            font-weight: 500;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .ui-button {
+            border-radius: 8px !important;
+            font-weight: 500 !important;
+            padding: 10px 20px !important;
+            border: 2px solid transparent !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .ui-button-outlined {
+            border: 2px solid #007bff !important;
+            color: #007bff !important;
+            background: transparent !important;
+        }
+
+        .ui-button-outlined:hover {
+            background: #007bff !important;
+            color: white !important;
+        }
+
+        .ui-button-primary,
+        .ui-button-success,
+        .ui-button-secondary {
+            border: 2px solid #007bff !important;
+            background: #007bff !important;
+            color: white !important;
+        }
+
+        .ui-button-primary:hover,
+        .ui-button-success:hover,
+        .ui-button-secondary:hover {
+            background: #0056b3 !important;
+            border-color: #0056b3 !important;
+            transform: translateY(-1px);
+        }
+
+        .ui-button-danger {
+            background: #dc3545 !important;
+            border-color: #dc3545 !important;
+        }
+
+        .ui-button-danger:hover {
+            background: #c82333 !important;
+            border-color: #c82333 !important;
+        }
+
+        .ui-selectonemenu {
+            border: 2px solid #e9ecef !important;
+            border-radius: 8px !important;
+            background: white !important;
+        }
+
+        .ui-selectonemenu:hover {
+            border-color: #007bff !important;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 16px;
+            }
+
+            .admin-header {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            }
+        }
+
+        .action-icons-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: flex-start;
+            min-width: 110px;
+        }
+        .action-icon-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: transparent;
+            border: none;
+            transition: background 0.2s;
+            cursor: pointer;
+            position: relative;
+            margin-right: 2px;
+            z-index: 2;
+        }
+        .action-icon-btn:last-child {
+            margin-right: 0;
+        }
+        .action-icon-btn:hover {
+            background: #e9ecef;
+        }
+        .action-icon-btn .pi {
+            font-size: 1.2rem;
+            color: #495057;
+            transition: color 0.2s;
+        }
+        .action-icon-btn:hover .pi {
+            color: #007bff;
+        }
+        .action-icon-btn[title]:hover::after {
+            content: attr(title);
+            position: absolute;
+            left: 50%;
+            top: 110%;
+            transform: translateX(-50%);
+            background: #222;
+            color: #fff;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+            z-index: 10;
+            opacity: 0.95;
+            pointer-events: none;
+        }
+        .ui-row-editor {
+            min-width: 70px !important;
+            display: flex !important;
+            gap: 6px !important;
+            justify-content: flex-start !important;
+            align-items: center !important;
+            z-index: 3 !important;
+            background: none !important;
+            border: none !important;
+        }
+        .ui-row-editor .ui-icon {
+            margin-right: 2px;
+        }
+        .ui-row-editor .ui-icon:last-child {
+            margin-right: 0;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 32px;
+            color: #2c3e50;
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .sidebar-link i {
+            font-size: 1.2rem;
+        }
+        .sidebar-link.active, .sidebar-link:hover {
+            background: #e9f2ff;
+            color: #007bff !important;
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <div class="admin-layout" style="display: flex; min-height: 100vh;">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" style="width: 240px; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-right: 32px; padding: 32px 0 24px 0; display: flex; flex-direction: column; align-items: center;">
+            <div class="sidebar-logo" style="margin-bottom: 32px;">
+                <span style="font-size: 2rem; font-weight: bold; color: #007bff;">HMS</span>
+                </div>
+            <nav class="sidebar-nav" style="width: 100%;">
+                <ul style="list-style: none; padding: 0; margin: 0; width: 100%;">
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/admin-dashboard.xhtml" styleClass="sidebar-link active">
+                            <i class="pi pi-home"></i> Dashboard
+                        </h:link>
+                    </li>
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/sections/patient-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-users"></i> Patients
+                        </h:link>
+                    </li>
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/sections/doctor-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-id-card"></i> Doctors
+                        </h:link>
+                    </li>
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/sections/staff-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-id-card"></i> Staff
+                        </h:link>
+                    </li>
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/sections/user-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-user"></i> Users
+                        </h:link>
+                    </li>
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/sections/department-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-building"></i> Departments
+                        </h:link>
+                    </li>
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/sections/billing-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-credit-card"></i> Billing
+                        </h:link>
+                    </li>
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/sections/appointment-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-calendar"></i> Appointments
+                        </h:link>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        <!-- Main Content -->
+        <div class="admin-container" style="flex: 1;">
+            <ui:include src="sections/dashboard-section.xhtml"/>
         </div>
-    </ui:define>
-    
-    <ui:define name="content">
-        <h:form id="adminDashboardForm">
-            
-            <!-- Key Performance Indicators -->
-            <div class="kpi-section">
-                <h2 class="section-title">Key Performance Indicators</h2>
-                <div class="kpi-grid">
-                    
-                    <!-- Total Patients -->
-                    <div class="kpi-card patients">
-                        <div class="kpi-icon">
-                            <i class="pi pi-users"></i>
-                        </div>
-                        <div class="kpi-content">
-                            <h3>Total Patients</h3>
-                            <p class="kpi-value">#{adminDashboardController.systemStats['totalPatients']}</p>
-                            <span class="kpi-change positive">
-                                <i class="pi pi-arrow-up"></i>
-                                #{adminDashboardController.getGrowthPercentage('patients')} this month
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <!-- Total Revenue -->
-                    <div class="kpi-card revenue">
-                        <div class="kpi-icon">
-                            <i class="pi pi-dollar"></i>
-                        </div>
-                        <div class="kpi-content">
-                            <h3>Total Revenue</h3>
-                            <p class="kpi-value">
-                                <h:outputText value="#{adminDashboardController.financialStats['totalRevenue']}">
-                                    <f:convertNumber type="currency" currencySymbol="$"/>
-                                </h:outputText>
-                            </p>
-                            <span class="kpi-change positive">
-                                <i class="pi pi-arrow-up"></i>
-                                +15.3% from last month
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <!-- Today's Appointments -->
-                    <div class="kpi-card appointments">
-                        <div class="kpi-icon">
-                            <i class="pi pi-calendar"></i>
-                        </div>
-                        <div class="kpi-content">
-                            <h3>Today's Appointments</h3>
-                            <p class="kpi-value">#{adminDashboardController.appointmentStats['todaysAppointments']}</p>
-                            <span class="kpi-change neutral">
-                                <i class="pi pi-minus"></i>
-                                Same as yesterday
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <!-- Active Staff -->
-                    <div class="kpi-card staff">
-                        <div class="kpi-icon">
-                            <i class="pi pi-user-plus"></i>
-                        </div>
-                        <div class="kpi-content">
-                            <h3>Active Staff</h3>
-                            <p class="kpi-value">#{adminDashboardController.userStats['activeStaff']}</p>
-                            <span class="kpi-change positive">
-                                <i class="pi pi-arrow-up"></i>
-                                +2 new this week
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <!-- Pending Bills -->
-                    <div class="kpi-card billing">
-                        <div class="kpi-icon">
-                            <i class="pi pi-credit-card"></i>
-                        </div>
-                        <div class="kpi-content">
-                            <h3>Pending Amount</h3>
-                            <p class="kpi-value">
-                                <h:outputText value="#{adminDashboardController.financialStats['pendingAmount']}">
-                                    <f:convertNumber type="currency" currencySymbol="$"/>
-                                </h:outputText>
-                            </p>
-                            <span class="kpi-change negative">
-                                <i class="pi pi-arrow-down"></i>
-                                Needs attention
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <!-- System Health -->
-                    <div class="kpi-card system">
-                        <div class="kpi-icon">
-                            <i class="pi pi-server"></i>
-                        </div>
-                        <div class="kpi-content">
-                            <h3>System Health</h3>
-                            <p class="kpi-value">98.5%</p>
-                            <span class="kpi-change positive">
-                                <i class="pi pi-check-circle"></i>
-                                All systems operational
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Charts and Analytics -->
-            <div class="analytics-section">
-                <div class="analytics-grid">
-                    
-                    <!-- Revenue Chart -->
-                    <div class="chart-card">
-                        <div class="chart-header">
-                            <h3>Monthly Revenue Trend</h3>
-                            <div class="chart-controls">
-                                <p:selectOneMenu value="#{adminDashboardController.revenueChartPeriod}">
-                                    <f:selectItem itemLabel="Last 6 Months" itemValue="6m"/>
-                                    <f:selectItem itemLabel="Last Year" itemValue="1y"/>
-                                    <f:selectItem itemLabel="Last 2 Years" itemValue="2y"/>
-                                </p:selectOneMenu>
-                            </div>
-                        </div>
-                        <div class="chart-content">
-                            <p:chart type="line" 
-                                     model="#{adminDashboardController.revenueChartModel}" 
-                                     style="width: 100%; height: 300px;"
-                                     responsive="true"/>
-                        </div>
-                    </div>
-                    
-                    <!-- Appointment Statistics -->
-                    <div class="chart-card">
-                        <div class="chart-header">
-                            <h3>Appointment Status Distribution</h3>
-                        </div>
-                        <div class="chart-content">
-                            <p:chart type="doughnut" 
-                                     model="#{adminDashboardController.appointmentChartModel}" 
-                                     style="width: 100%; height: 300px;"
-                                     responsive="true"/>
-                        </div>
-                    </div>
-                    
-                    <!-- Department Performance -->
-                    <div class="chart-card full-width">
-                        <div class="chart-header">
-                            <h3>Department Performance</h3>
-                        </div>
-                        <div class="chart-content">
-                            <p:chart type="bar" 
-                                     model="#{adminDashboardController.departmentChartModel}" 
-                                     style="width: 100%; height: 400px;"
-                                     responsive="true"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Recent Activities and Quick Actions -->
-            <div class="activities-section">
-                <div class="activities-grid">
-                    
-                    <!-- Recent Activities -->
-                    <div class="activity-card">
-                        <div class="card-header">
-                            <h3><i class="pi pi-history"></i> Recent Activities</h3>
-                            <h:link outcome="/views/admin/activity-log" value="View All"/>
-                        </div>
-                        <div class="activity-list">
-                            <div class="activity-item">
-                                <div class="activity-icon patient">
-                                    <i class="pi pi-user-plus"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <p class="activity-title">New patient registered</p>
-                                    <p class="activity-description">John Doe registered as a new patient</p>
-                                    <span class="activity-time">5 minutes ago</span>
-                                </div>
-                            </div>
-                            
-                            <div class="activity-item">
-                                <div class="activity-icon appointment">
-                                    <i class="pi pi-calendar"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <p class="activity-title">Appointment scheduled</p>
-                                    <p class="activity-description">Dr. Smith - Cardiology consultation</p>
-                                    <span class="activity-time">15 minutes ago</span>
-                                </div>
-                            </div>
-                            
-                            <div class="activity-item">
-                                <div class="activity-icon billing">
-                                    <i class="pi pi-credit-card"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <p class="activity-title">Payment received</p>
-                                    <p class="activity-description">Invoice #INV-2024001 paid - $250.00</p>
-                                    <span class="activity-time">1 hour ago</span>
-                                </div>
-                            </div>
-                            
-                            <div class="activity-item">
-                                <div class="activity-icon staff">
-                                    <i class="pi pi-users"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <p class="activity-title">Staff member added</p>
-                                    <p class="activity-description">Sarah Johnson joined as Nurse</p>
-                                    <span class="activity-time">2 hours ago</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Quick Actions -->
-                    <div class="quick-actions-card">
-                        <div class="card-header">
-                            <h3><i class="pi pi-bolt"></i> Quick Actions</h3>
-                        </div>
-                        <div class="quick-actions-grid">
-                            <h:link outcome="/views/patients/patient-registration" styleClass="quick-action-item">
-                                <div class="quick-action-icon">
-                                    <i class="pi pi-user-plus"></i>
-                                </div>
-                                <span>Add Patient</span>
-                            </h:link>
-                            
-                            <h:link outcome="/views/appointments/appointment-booking" styleClass="quick-action-item">
-                                <div class="quick-action-icon">
-                                    <i class="pi pi-calendar-plus"></i>
-                                </div>
-                                <span>Book Appointment</span>
-                            </h:link>
-                            
-                            <h:link outcome="/views/billing/billing-create" styleClass="quick-action-item">
-                                <div class="quick-action-icon">
-                                    <i class="pi pi-credit-card"></i>
-                                </div>
-                                <span>Create Invoice</span>
-                            </h:link>
-                            
-                            <h:link outcome="/views/doctors/doctor-registration" styleClass="quick-action-item">
-                                <div class="quick-action-icon">
-                                    <i class="pi pi-user-plus"></i>
-                                </div>
-                                <span>Add Doctor</span>
-                            </h:link>
-                            
-                            <h:link outcome="/views/staff/staff-registration" styleClass="quick-action-item">
-                                <div class="quick-action-icon">
-                                    <i class="pi pi-users"></i>
-                                </div>
-                                <span>Add Staff</span>
-                            </h:link>
-                            
-                            <h:link outcome="/views/reports/generate-report" styleClass="quick-action-item">
-                                <div class="quick-action-icon">
-                                    <i class="pi pi-chart-bar"></i>
-                                </div>
-                                <span>Generate Report</span>
-                            </h:link>
-                        </div>
-                    </div>
-                    
-                    <!-- System Alerts -->
-                    <div class="alerts-card">
-                        <div class="card-header">
-                            <h3><i class="pi pi-exclamation-triangle"></i> System Alerts</h3>
-                        </div>
-                        <div class="alerts-list">
-                            <div class="alert-item warning">
-                                <i class="pi pi-exclamation-triangle"></i>
-                                <div class="alert-content">
-                                    <p class="alert-title">Overdue Payments</p>
-                                    <p class="alert-description">5 invoices are overdue</p>
-                                </div>
-                                <p:commandButton value="Review" 
-                                                 styleClass="p-button-sm p-button-warning"
-                                                 onclick="window.location.href='billing-list.xhtml?filter=overdue'"/>
-                            </div>
-                            
-                            <div class="alert-item info">
-                                <i class="pi pi-info-circle"></i>
-                                <div class="alert-content">
-                                    <p class="alert-title">System Backup</p>
-                                    <p class="alert-description">Scheduled backup completed successfully</p>
-                                </div>
-                                <span class="alert-time">2 hours ago</span>
-                            </div>
-                            
-                            <div class="alert-item success">
-                                <i class="pi pi-check-circle"></i>
-                                <div class="alert-content">
-                                    <p class="alert-title">Server Health</p>
-                                    <p class="alert-description">All systems running optimally</p>
-                                </div>
-                                <span class="alert-time">Just now</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-        </h:form>
-    </ui:define>
-    
-</ui:composition>
+    </div>
+</h:body>
+
 </html>

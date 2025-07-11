@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+    <title>User Management - Hospital Management System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="#{request.contextPath}/resources/css/base.css"/>
+    <link rel="stylesheet" href="#{request.contextPath}/resources/css/dashboard.css"/>
+    <link rel="stylesheet" href="#{request.contextPath}/resources/css/components.css"/>
+    <link rel="stylesheet" href="#{request.contextPath}/resources/css/user-management.css"/>
+
+</h:head>
+
+<h:body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-logo">
+                <span>HMS</span>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <h:link outcome="/views/dashboard/admin-dashboard.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-home"></i> Dashboard
+                        </h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="/views/dashboard/sections/patient-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-users"></i> Patients
+                        </h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="/views/dashboard/sections/doctor-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-id-card"></i> Doctors
+                        </h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="/views/dashboard/sections/staff-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-id-card"></i> Staff
+                        </h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="/views/dashboard/sections/user-management.xhtml" styleClass="sidebar-link active">
+                            <i class="pi pi-user"></i> Users
+                        </h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="/views/dashboard/sections/department-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-building"></i> Departments
+                        </h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="/views/dashboard/sections/billing-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-credit-card"></i> Billing
+                        </h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="/views/dashboard/sections/appointment-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-calendar"></i> Appointments
+                        </h:link>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="admin-container">
+            <header class="admin-header" style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 24px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <button type="button" style="background: #f7f8fa; border: none; border-radius: 6px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; margin-right: 8px;">
+                        <i class="pi pi-angle-left" style="font-size: 1.3rem; color: #6c757d;"></i>
+                    </button>
+                    <span style="font-size: 1.1rem; font-weight: 500; color: #555; letter-spacing: 1px;"> USER MANAGEMENT DASHBOARD</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 24px; flex: 1; justify-content: flex-end;">
+                    <i class="pi pi-search" style="font-size: 1.2rem; color: #6c757d; cursor: pointer;"></i>
+                    <span style="position: relative;">
+                        <i class="pi pi-bell" style="font-size: 1.2rem; color: #6c757d; cursor: pointer;"></i>
+                        <span style="position: absolute; top: -6px; right: -8px; background: #007bff; color: white; font-size: 11px; border-radius: 8px; padding: 0 5px; min-width: 16px; text-align: center;">5</span>
+                    </span>
+                    <h:form id="userMenuForm" style="margin: 0;">
+                        <p:overlayPanel id="userMenuPanel" for="userMenuAvatar" hideEffect="fade" showEffect="fade" style="min-width: 180px;">
+                            <div style="padding: 8px 0;">
+                                <p:commandLink style="display: flex; align-items: center; gap: 10px; padding: 8px 16px; color: #333; text-decoration: none;" action="#">
+                                    <img src="#{request.contextPath}/resources/images/user.png" alt="Profile" style="width:18px;height:18px;border-radius:50%;border:1px solid #e9ecef;object-fit:cover;"/> Profile
+                                </p:commandLink>
+                                <p:commandLink style="display: flex; align-items: center; gap: 10px; padding: 8px 16px; color: #333; text-decoration: none;" action="#">
+                                    <i class="pi pi-cog" style="color: #007bff;"></i> Settings
+                                </p:commandLink>
+                                <p:divider style="margin: 4px 0;"/>
+                                <p:commandButton value="Logout" icon="pi pi-sign-out" action="#{authController.logout}" immediate="true" styleClass="ui-button-flat" style="width: 100%; text-align: left; color: #d9534f; padding: 8px 16px; background: none; border: none;" ajax="false"/>
+                            </div>
+                        </p:overlayPanel>
+                        <p:commandLink id="userMenuAvatar" style="display: flex; align-items: center; gap: 8px;">
+                            <img src="#{request.contextPath}/resources/images/user.png" alt="User" style="width:32px;height:32px;border-radius:50%;border:1px solid #e9ecef;object-fit:cover;"/>
+                            <span style="font-weight: 500; color: #2c3e50;">#{authController.currentUserName}</span>
+                        </p:commandLink>
+                    </h:form>
+                </div>
+            </header>
+
+            <div class="management-section">
+                <div class="management-header">
+                    <h3 id="user-management-title">User Management</h3>
+                </div>
+                <div class="management-content">
+                    <h:form id="userForm" aria-labelledby="user-management-title">
+                        <p:messages id="userMessages" showDetail="true" closable="true" />
+                        <p:tabView id="userTabView" aria-label="User Management Tabs">
+                            
+                            <!-- View Users Tab -->
+                            <p:tab title="View Users" id="viewUsersTab" aria-label="View Users">
+                                <p:dataTable id="allUsersTable"
+                                             value="#{adminDashboardController.allUsers}"
+                                             var="user"
+                                             styleClass="ui-datatable"
+                                             aria-label="All Users Table"
+                                             paginator="true"
+                                             rows="10"
+                                             paginatorPosition="bottom"
+                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             rowsPerPageTemplate="5,10,20,50"
+                                             selection="#{adminDashboardController.selectedUser}"
+                                             selectionMode="single"
+                                             rowKey="#{user.id}">
+                                    
+                                    <p:ajax event="rowSelect" listener="#{adminDashboardController.onUserRowSelect}" update=":editUserForm" oncomplete="PF('editUserDialog').show()"/>
+                                    
+                                    <p:column headerText="Username" style="width: 25%;">
+                                        <h:outputText value="#{user.username}"/>
+                                    </p:column>
+                                    
+                                    <p:column headerText="Email" style="width: 35%;">
+                                        <h:outputText value="#{user.email}"/>
+                                    </p:column>
+                                    
+                                    <p:column headerText="Role" style="width: 20%;">
+                                        <h:outputText value="#{user.role.displayName}"/>
+                                    </p:column>
+                                    
+                                    <p:column headerText="Status" style="width: 10%;">
+                                        <span class="status-badge #{user.isDeleted ? 'deleted' : 'active'}">
+                                            #{user.isDeleted ? 'Deleted' : 'Active'}
+                                        </span>
+                                    </p:column>
+                                    
+                                    <p:column headerText="Actions" style="width: 10%; text-align: center;">
+                                        <div class="action-icons-container">
+                                            <p:commandButton icon="pi pi-pencil" 
+                                                           title="Edit User" 
+                                                           actionListener="#{adminDashboardController.editUser(user)}" 
+                                                           styleClass="action-btn edit-btn" 
+                                                           aria-label="Edit User"
+                                                           update="@form"
+                                                           oncomplete="PF('editUserDialog').show()"/>
+                                            
+                                            <p:commandButton icon="pi pi-trash" 
+                                                           title="Delete User" 
+                                                           action="#{adminDashboardController.deleteUserById(user.id)}" 
+                                                           styleClass="action-btn delete-btn" 
+                                                           aria-label="Delete User"
+                                                           update="@form"
+                                                           ajax="false"
+                                                           immediate="true"
+                                                           onclick="return confirm('Are you sure you want to delete this user?')"
+                                                           rendered="#{not empty user.id}"/>
+                                        </div>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                            
+                            <!-- Add User Tab -->
+                            <p:tab title="Add User" id="addUserTab" aria-label="Add User">
+                                <p:messages id="addUserMessages" showDetail="true" closable="true" />
+                                <div class="ui-panel">
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <h:outputLabel for="newUsername" value="Username:" styleClass="form-label required"/>
+                                            <h:inputText id="newUsername" 
+                                                       value="#{adminDashboardController.newUser.username}" 
+                                                       required="true" 
+                                                       aria-required="true" 
+                                                       styleClass="ui-inputfield" 
+                                                       aria-label="New Username">
+                                                <p:ajax event="blur" update="usernameMsg createUserBtn addUserMessages"/>
+                                            </h:inputText>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <h:outputLabel for="newEmail" value="Email:" styleClass="form-label required"/>
+                                            <h:inputText id="newEmail" 
+                                                       value="#{adminDashboardController.newUser.email}" 
+                                                       required="true" 
+                                                       aria-required="true" 
+                                                       styleClass="ui-inputfield" 
+                                                       type="email"
+                                                       aria-label="New Email">
+                                                <p:ajax event="blur" update="emailMsg createUserBtn addUserMessages"/>
+                                            </h:inputText>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <h:outputLabel for="newPassword" value="Password:" styleClass="form-label required"/>
+                                            <h:inputSecret id="newPassword" 
+                                                         value="#{adminDashboardController.newUserPassword}" 
+                                                         required="true" 
+                                                         aria-required="true" 
+                                                         styleClass="ui-inputfield" 
+                                                         aria-label="New Password"/>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <h:outputLabel for="newRole" value="Role:" styleClass="form-label required"/>
+                                            <p:selectOneMenu id="newRole" 
+                                                           value="#{adminDashboardController.newUser.role}" 
+                                                           required="true" 
+                                                           aria-required="true" 
+                                                           styleClass="ui-inputfield" 
+                                                           aria-label="New Role">
+                                                <f:selectItem itemLabel="Select Role" itemValue=""/>
+                                                <f:selectItems value="#{adminDashboardController.userRoles}" var="role" itemLabel="#{role.displayName}" itemValue="#{role}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                        
+                                        <div class="form-group" style="text-align: center; margin-top: 24px;">
+                                            <h:commandButton id="createUserBtn" 
+                                                           value="Create User" 
+                                                           action="#{adminDashboardController.createUser}" 
+                                                           styleClass="ui-button-primary" 
+                                                           style="width: 100%; max-width: 200px;"
+                                                           disabled="#{!adminDashboardController.isUsernameAvailable(adminDashboardController.newUser.username) or !adminDashboardController.isEmailAvailable(adminDashboardController.newUser.email)}" 
+                                                           aria-label="Create User" 
+                                                           ajax="false"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:tab>
+                            
+                            <!-- Deleted Users Tab -->
+                            <p:tab title="Deleted Users" id="deletedUsersTab" aria-label="Show Deleted or Restore Users">
+                                <p:dataTable id="deletedUsersTable" 
+                                           value="#{adminDashboardController.deletedUsers}" 
+                                           var="user" 
+                                           styleClass="ui-datatable" 
+                                           aria-label="Deleted Users Table"
+                                           paginator="true"
+                                           rows="10"
+                                           paginatorPosition="bottom">
+                                    <p:column headerText="Username">#{user.username}</p:column>
+                                    <p:column headerText="Email">#{user.email}</p:column>
+                                    <p:column headerText="Role">#{user.role.displayName}</p:column>
+                                    <p:column headerText="Actions" style="text-align: center;">
+                                        <div class="action-icons-container">
+                                            <p:commandButton value="Restore" 
+                                                           icon="pi pi-undo" 
+                                                           action="#{adminDashboardController.restoreUser(user)}" 
+                                                           update="@form" 
+                                                           styleClass="action-btn restore-btn" 
+                                                           aria-label="Restore User" 
+                                                           ajax="false"
+                                                           immediate="true"/>
+                                        </div>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                        </p:tabView>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Dialog -->
+    <p:dialog header="Edit User" 
+              widgetVar="editUserDialog" 
+              modal="true" 
+              showEffect="fade" 
+              hideEffect="fade" 
+              resizable="false" 
+              draggable="false"
+              styleClass="edit-user-dialog"
+              aria-label="Edit User Dialog"
+              style="min-width: 700px; width: 100%; max-width: 900px;">
+        
+        <h:form id="editUserForm">
+            <p:messages id="editUserMessages" showDetail="true" closable="true" />
+            <div class="form-grid two-column-grid">
+                <div class="form-group">
+                    <h:outputLabel for="editUsername" value="Username:" styleClass="form-label required"/>
+                    <h:inputText id="editUsername" 
+                               value="#{adminDashboardController.editingUser.username}" 
+                               required="true" 
+                               aria-required="true" 
+                               styleClass="ui-inputfield" 
+                               aria-label="Edit Username"/>
+                </div>
+                <div class="form-group">
+                    <h:outputLabel for="editEmail" value="Email:" styleClass="form-label required"/>
+                    <h:inputText id="editEmail" 
+                               value="#{adminDashboardController.editingUser.email}" 
+                               required="true" 
+                               aria-required="true" 
+                               styleClass="ui-inputfield" 
+                               type="email"
+                               aria-label="Edit Email"/>
+                </div>
+                <div class="form-group">
+                    <h:outputLabel for="editRole" value="Role:" styleClass="form-label required"/>
+                    <p:selectOneMenu id="editRole" 
+                                   value="#{adminDashboardController.editingUser.role}" 
+                                   required="true" 
+                                   aria-required="true" 
+                                   styleClass="ui-inputfield" 
+                                   aria-label="Edit Role">
+                        <f:selectItems value="#{adminDashboardController.userRoles}" var="role" itemLabel="#{role.displayName}" itemValue="#{role}"/>
+                    </p:selectOneMenu>
+                </div>
+                <div class="form-group">
+                    <h:outputLabel for="editPassword" value="New Password (optional):" styleClass="form-label"/>
+                    <h:inputSecret id="editPassword" 
+                                 value="#{adminDashboardController.newUserPassword}" 
+                                 styleClass="ui-inputfield" 
+                                 aria-label="New Password"
+                                 placeholder="Enter new password to change"/>
+                </div>
+                <div class="form-group" style="grid-column: 1 / span 2; text-align: right; margin-top: 24px;">
+                    <p:commandButton value="Update User" 
+                                   action="#{adminDashboardController.updateUser}" 
+                                   styleClass="ui-button-primary" 
+                                   aria-label="Update User"
+                                   update="@form"
+                                   oncomplete="PF('editUserDialog').hide()"/>
+                    <p:commandButton value="Cancel" 
+                                   onclick="PF('editUserDialog').hide()" 
+                                   styleClass="ui-button-secondary" 
+                                   aria-label="Cancel Edit"
+                                   style="margin-left: 8px;"/>
+                </div>
+            </div>
+        </h:form>
+    </p:dialog>
+    <style>
+        .edit-user-dialog .form-grid.two-column-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px 32px;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .edit-user-dialog .form-group {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        .edit-user-dialog .form-group[style*="grid-column"] {
+            grid-column: 1 / span 2;
+        }
+        @media (max-width: 700px) {
+            .edit-user-dialog .form-grid.two-column-grid {
+                grid-template-columns: 1fr;
+            }
+            .edit-user-dialog .form-group[style*="grid-column"] {
+                grid-column: 1 / span 1;
+            }
+        }
+    </style>
+
+    <!-- JavaScript for enhanced functionality -->
+    <script type="text/javascript">
+        // Enhanced user experience functions
+        function confirmDelete(message) {
+            return confirm(message || 'Are you sure you want to delete this user?');
+        }
+        
+        function showSuccessMessage(message) {
+            // You can implement a custom success message display here
+            console.log('Success:', message);
+        }
+        
+        function showErrorMessage(message) {
+            // You can implement a custom error message display here
+            console.error('Error:', message);
+        }
+        
+        // Enhanced accessibility
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add keyboard navigation for action buttons
+            const actionButtons = document.querySelectorAll('.action-btn');
+            actionButtons.forEach(button => {
+                button.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.click();
+                    }
+                });
+            });
+            
+            // Add focus management for dialogs
+            const dialogs = document.querySelectorAll('.ui-dialog');
+            dialogs.forEach(dialog => {
+                dialog.addEventListener('shown', function() {
+                    const firstInput = this.querySelector('input, select, textarea');
+                    if (firstInput) {
+                        firstInput.focus();
+                    }
+                });
+            });
+        });
+    </script>
+</h:body>
+</html> 

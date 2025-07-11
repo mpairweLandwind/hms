@@ -9,15 +9,10 @@ import java.util.List;
 @Table(name = "patients")
 public class Patient extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "patient_seq")
-    @SequenceGenerator(name = "patient_seq", sequenceName = "patient_seq", allocationSize = 1)
-    @Column(name = "patient_id")
-    private Long patientId;
-
     // One-to-one relationship with User
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @NotNull(message = "User is required")
     private User user;
 
     @NotBlank(message = "First name is required")
@@ -32,7 +27,7 @@ public class Patient extends BaseEntity {
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email should be valid")
-    @Column(name = "email", nullable = false, unique = true, length = 100)
+    @Column(name = "email", nullable = false, length = 100)
     private String email;
 
     @NotBlank(message = "Phone number is required")
@@ -75,17 +70,17 @@ public class Patient extends BaseEntity {
     @Column(name = "active", nullable = false)
     private Boolean active = true;
 
-    // One-to-many relationships
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // One-to-many relationships with optimized cascade
+    @OneToMany(mappedBy = "patient", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private List<Appointment> appointments;
 
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "patient", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private List<MedicalRecord> medicalRecords;
 
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "patient", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private List<Prescription> prescriptions;
 
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "patient", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private List<Billing> billings;
 
     // Constructors
@@ -116,20 +111,17 @@ public class Patient extends BaseEntity {
     }
 
     // Getters and setters
-    public Long getPatientId() {
-        return patientId;
-    }
-
-    public void setPatientId(Long patientId) {
-        this.patientId = patientId;
-    }
-
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    // Backward compatibility method
+    public Long getPatientId() {
+        return getId();
     }
 
     public String getFirstName() {
@@ -237,7 +229,7 @@ public class Patient extends BaseEntity {
     }
 
     public boolean isActive() {
-        return Boolean.TRUE.equals(active);
+        return active != null && active && super.isActive();
     }
 
     public List<Appointment> getAppointments() {
@@ -270,5 +262,26 @@ public class Patient extends BaseEntity {
 
     public void setBillings(List<Billing> billings) {
         this.billings = billings;
+    }
+
+    public Doctor getPrimaryDoctor() {
+        if (appointments != null && !appointments.isEmpty()) {
+            // Sort appointments by date in descending order to find the most recent one
+            appointments.sort((a1, a2) -> a2.getAppointmentDateTime().compareTo(a1.getAppointmentDateTime()));
+            // Return the doctor from the most recent appointment
+            return appointments.get(0).getDoctor();
+        }
+        return null; // Or handle as needed if there are no appointments
+    }
+
+    @Override
+    public String toString() {
+        return "Patient{" +
+                "id=" + getId() +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", active=" + active +
+                '}';
     }
 }

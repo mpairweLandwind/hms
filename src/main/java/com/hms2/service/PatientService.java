@@ -1,46 +1,51 @@
 package com.hms2.service;
 
-import com.hms2.model.Patient;
 import java.util.List;
-import java.util.Optional;
+
+import com.hms2.model.Doctor;
+import com.hms2.model.Patient;
 
 public interface PatientService {
-    
-    Patient createPatient(Patient patient);
-    
-    Patient updatePatient(Patient patient);
-    
-    void deletePatient(Long patientId);
-    
-    void restorePatient(Long patientId);
-    
-    void permanentlyDeletePatient(Long patientId);
-    
-    Optional<Patient> getPatientById(Long patientId);
-    
-    List<Patient> getAllPatients();
-    
+
+    // Basic CRUD operations
+    Patient save(Patient patient);
+    Patient update(Patient patient);
+    void delete(Long id);
+    Patient findOne(Long id);
+    List<Patient> findAll();
+
+    // Soft Delete operations
+    void softDelete(Long id);
+    void restore(Long id);
     List<Patient> getDeletedPatients();
-    
-    List<Patient> getActivePatients();
-    
-    List<Patient> getInactivePatients();
-    
-    Optional<Patient> getPatientByEmail(String email);
-    
+    void permanentlyDelete(Long id);
+
+    // Additional methods for compatibility
+    Patient createPatient(Patient patient);
+    Patient updatePatient(Patient patient);
+    void deletePatient(Long patientId);
+    Patient getPatientById(Long patientId);
+    List<Patient> getAllPatients();
+    Patient findById(Long patientId);
+
+    // Business methods
+    Patient getPatientByEmail(String email);
     List<Patient> searchPatientsByName(String name);
-    
     List<Patient> getPatientsByBloodType(String bloodType);
-    
-    List<Patient> getPatientsByGender(String gender);
-    
+    List<Patient> getRecentPatientsByDoctor(Doctor doctor);
+    long getTotalPatientCountByDoctor(Doctor doctor);
+    List<Patient> getActivePatients();
+    List<Patient> getInactivePatients();
     void activatePatient(Long patientId);
-    
     void deactivatePatient(Long patientId);
-    
-    long getPatientCountByGender(String gender);
-    
+    long getTotalPatientCount();
     long getActivePatientCount();
+    long getNewPatientsThisMonth();
+    boolean hasAllergies(Long patientId);
+    int calculateAge(Long patientId);
     
-    boolean isEmailUnique(String email);
+    /**
+     * Find patient by user ID
+     */
+    Patient findByUserId(Long userId);
 }

@@ -11,6 +11,7 @@ public interface DepartmentService {
     Department updateDepartment(Department department);
     
     void deleteDepartment(Long departmentId);
+
     
     void restoreDepartment(Long departmentId);
     
@@ -33,4 +34,6 @@ public interface DepartmentService {
     long getDepartmentCountByStatus(String status);
     
     boolean isDepartmentNameUnique(String departmentName);
+
+    List<Department> findAll();
 }

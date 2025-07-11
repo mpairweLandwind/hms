@@ -1,19 +1,21 @@
 package com.hms2.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "departments")
 public class Department extends BaseEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "department_seq")
-    @SequenceGenerator(name = "department_seq", sequenceName = "department_seq", allocationSize = 1)
-    @Column(name = "department_id")
-    private Long departmentId;
-
     @NotBlank(message = "Department name is required")
     @Size(max = 100, message = "Department name must not exceed 100 characters")
     @Column(name = "department_name", nullable = false, unique = true, length = 100)
@@ -27,12 +29,14 @@ public class Department extends BaseEntity {
     @Column(name = "location", length = 100)
     private String location;
 
-    @Pattern(regexp = "\\d{10,15}", message = "Phone number must be 10-15 digits")
-    @Column(name = "phone_number", length = 15)
+    @NotBlank(message = "Phone number is required")
+    @Pattern(regexp = "^[+]?[0-9]{10,15}$", message = "Phone number must be 10-15 digits (can start with + for international numbers)")
+    @Column(name = "phone_number", nullable = false, length = 20)
     private String phoneNumber;
 
-    @Email(message = "Email should be valid")
-    @Column(name = "email", length = 100)
+    @NotBlank(message = "Email is required")
+    @Email(message = "Please enter a valid email address")
+    @Column(name = "email", nullable = false, length = 100)
     private String email;
 
     @Pattern(regexp = "ACTIVE|INACTIVE|UNDER_MAINTENANCE", 
@@ -58,7 +62,7 @@ public class Department extends BaseEntity {
 
     // Business methods
     public boolean isActive() {
-        return "ACTIVE".equals(status) && !isDeleted();
+        return "ACTIVE".equals(status);  //&& !isDeleted();
     }
 
     public void activate() {
@@ -74,14 +78,6 @@ public class Department extends BaseEntity {
     }
 
     // Getters and setters
-    public Long getDepartmentId() {
-        return departmentId;
-    }
-
-    public void setDepartmentId(Long departmentId) {
-        this.departmentId = departmentId;
-    }
-
     public String getDepartmentName() {
         return departmentName;
     }

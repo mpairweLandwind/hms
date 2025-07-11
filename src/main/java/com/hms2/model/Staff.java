@@ -1,23 +1,36 @@
 package com.hms2.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.Date;
+
+import com.hms2.enums.StaffStatus;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "staff")
 public class Staff extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "staff_seq")
-    @SequenceGenerator(name = "staff_seq", sequenceName = "staff_seq", allocationSize = 1)
-    @Column(name = "staff_id")
-    private Long staffId;
-
     // One-to-one relationship with User
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @NotNull(message = "User is required")
     private User user;
 
     @NotBlank(message = "First name is required")
@@ -32,7 +45,7 @@ public class Staff extends BaseEntity {
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email should be valid")
-    @Column(name = "email", nullable = false, unique = true, length = 100)
+    @Column(name = "email", nullable = false, length = 100)
     private String email;
 
     @NotBlank(message = "Phone number is required")
@@ -123,14 +136,6 @@ public class Staff extends BaseEntity {
     }
 
     // Getters and setters
-    public Long getStaffId() {
-        return staffId;
-    }
-
-    public void setStaffId(Long staffId) {
-        this.staffId = staffId;
-    }
-
     public User getUser() {
         return user;
     }
@@ -236,7 +241,7 @@ public class Staff extends BaseEntity {
     }
 
     public boolean isActive() {
-        return Boolean.TRUE.equals(active);
+        return active != null && active && super.isActive();
     }
 
     public Department getDepartment() {
@@ -245,5 +250,24 @@ public class Staff extends BaseEntity {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    // Backward compatibility method
+    public Long getStaffId() {
+        return getId();
+    }
+
+    @Override
+    public String toString() {
+        return "Staff{" +
+                "id=" + getId() +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", position='" + position + '\'' +
+                ", employeeId='" + employeeId + '\'' +
+                ", status=" + status +
+                ", active=" + active +
+                '}';
     }
 }

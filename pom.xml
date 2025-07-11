@@ -36,6 +36,27 @@
             <version>${jakarta.faces.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <version>4.0.1</version> 
+        </dependency>
+
+
+            <dependency>
+                <groupId>org.omnifaces</groupId>
+                <artifactId>omnifaces</artifactId>
+                <version>4.3</version>
+            </dependency>
+
+
+
+<!--        <dependency>-->
+<!--            <groupId>jakarta.faces</groupId>-->
+<!--            <artifactId>jakarta.faces-api</artifactId>-->
+<!--            <version>4.0.1</version>-->
+<!--        </dependency>-->
+
         <!-- PrimeFaces -->
         <dependency>
             <groupId>org.primefaces</groupId>
@@ -92,6 +113,12 @@
 <artifactId>weld-servlet-core</artifactId>
 <version>${weld.version}</version>
 </dependency>
+
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>jakarta.el</artifactId>
+            <version>4.0.2</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -115,6 +142,8 @@
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
+            
+
         </plugins>
     </build>
 </project>

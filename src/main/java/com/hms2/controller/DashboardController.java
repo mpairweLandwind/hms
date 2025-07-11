@@ -1,6 +1,6 @@
 package com.hms2.controller;
 
-import com.hms2.model.StaffStatus;
+import com.hms2.enums.StaffStatus;
 import com.hms2.service.StaffService;
 import com.hms2.service.PrescriptionMedicationService;
 import org.slf4j.Logger;

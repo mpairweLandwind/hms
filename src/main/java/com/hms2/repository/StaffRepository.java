@@ -1,7 +1,7 @@
 package com.hms2.repository;
 
 import com.hms2.model.Staff;
-import com.hms2.model.StaffStatus;
+import com.hms2.enums.StaffStatus;
 import com.hms2.model.Department;
 import java.util.List;
 import java.util.Optional;

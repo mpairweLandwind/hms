@@ -14,24 +14,20 @@
         
         <h:form id="rescheduleAppointmentForm">
             <p:messages id="messages" showDetail="true" closable="true" />
-            
-            <div class="current-appointment" rendered="#{not empty appointmentController.selectedAppointment}">
+            <p:outputPanel rendered="#{not empty appointmentController.selectedAppointment}" styleClass="current-appointment">
                 <h4>Current Appointment Details:</h4>
                 <div class="appointment-info">
                     <p><strong>Patient:</strong> #{appointmentController.selectedAppointment.patientName}</p>
                     <p><strong>Doctor:</strong> #{appointmentController.selectedAppointment.doctorName}</p>
-                    <p><strong>Current Date & Time:</strong> 
+                    <p><strong>Current Date &amp; Time:</strong>
                         <h:outputText value="#{appointmentController.selectedAppointment.appointmentDate}">
                             <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
                         </h:outputText>
                     </p>
                 </div>
-            </div>
-            
             <hr style="margin: 20px 0;" />
-            
-            <h4>Select New Date & Time:</h4>
-            
+            <h4>Select New Date &amp; Time:</h4>
+            </p:outputPanel>
             <div class="p-grid">
                 <!-- New Date Selection -->
                 <div class="p-col-12 p-md-6">

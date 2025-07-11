@@ -8,7 +8,7 @@
 <ui:composition template="/WEB-INF/templates/registration-layout.xhtml">
     
     <ui:param name="roleType" value="DOCTOR"/>
-    <ui:param name="pageDescription" value="Register as a doctor to join our medical team and provide quality healthcare"/>
+    <ui:param name="pageDescription" value="Doctor registration for healthcare professionals"/>
     
     <ui:define name="pageTitle">Doctor Registration</ui:define>
     
@@ -16,11 +16,10 @@
         <i class="pi pi-user-edit" aria-hidden="true"></i>
     </ui:define>
     
-    <ui:define name="heroTitle">Join Our Medical Team</ui:define>
+    <ui:define name="heroTitle">Doctor Registration</ui:define>
     
     <ui:define name="heroSubtitle">
-        Register as a healthcare professional and be part of our mission to provide 
-        exceptional medical care to patients worldwide.
+        Register as a healthcare professional to provide medical services
     </ui:define>
     
     <ui:define name="progressSteps">
@@ -40,17 +39,86 @@
     
     <ui:define name="registrationForm">
         <h:form id="doctorRegistrationForm" styleClass="registration-form">
+            <p:messages id="doctorMessages" showDetail="true" showSummary="true" autoUpdate="true" styleClass="form-messages"/>
+            <h:messages id="doctorGlobalMessages" globalOnly="true" />
+            <h:inputHidden id="doctorFormUniqueToken" value="#{doctorRegistrationController.formToken}" />
             
             <!-- Step 1: Account Information -->
             <div class="form-step active" data-step="1">
                 <div class="step-header">
-                    <h3>Create Your Account</h3>
-                    <p>Set up your secure professional login</p>
+                    <h3>Account Information</h3>
+                    <p>Create your secure login credentials</p>
                 </div>
                 
-                <ui:include src="/WEB-INF/includes/account-fields.xhtml">
-                    <ui:param name="controller" value="#{doctorRegistrationController}"/>
-                </ui:include>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <p:outputLabel for="username" value="Username *" styleClass="form-label required">
+                            <i class="pi pi-user label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:inputText id="username" 
+                                   value="#{doctorRegistrationController.registrationDTO.username}" 
+                                   required="true" 
+                                   placeholder="Choose a username"
+                                   styleClass="form-input"
+                                   maxlength="50">
+                            <f:validateLength minimum="3" maximum="50"/>
+                            <f:validateRegex pattern="^[a-zA-Z0-9_]{3,50}$" 
+                                           message="Username must be 3-50 characters (letters, numbers, underscores only)"/>
+                        </p:inputText>
+                        <p:message for="username" styleClass="field-error" showDetail="true" showSummary="false"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="email" value="Email Address *" styleClass="form-label required">
+                            <i class="pi pi-envelope label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:inputText id="email" 
+                                   value="#{doctorRegistrationController.registrationDTO.email}" 
+                                   required="true" 
+                                   placeholder="Enter your email address"
+                                   styleClass="form-input"
+                                   maxlength="100">
+                            <f:validateRegex pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" 
+                                           message="Please enter a valid email address"/>
+                        </p:inputText>
+                        <p:message for="email" styleClass="field-error" showDetail="true" showSummary="false"/>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <p:outputLabel for="password" value="Password *" styleClass="form-label required">
+                            <i class="pi pi-lock label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:password id="password" 
+                                  value="#{doctorRegistrationController.registrationDTO.password}" 
+                                  required="true" 
+                                  placeholder="Create a password"
+                                  styleClass="form-input"
+                                  feedback="true"
+                                  toggleMask="true">
+                            <f:validateLength minimum="6" maximum="50"/>
+                            <f:validateRegex pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&amp;])[A-Za-z\d@$!%*?&amp;]{6,50}$"
+                                           message="Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"/>
+                        </p:password>
+                        <p:message for="password" styleClass="field-error" showDetail="true" showSummary="false"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="confirmPassword" value="Confirm Password *" styleClass="form-label required">
+                            <i class="pi pi-lock label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:password id="confirmPassword" 
+                                  value="#{doctorRegistrationController.registrationDTO.confirmPassword}" 
+                                  required="true" 
+                                  placeholder="Confirm your password"
+                                  styleClass="form-input"
+                                  feedback="false">
+                            <f:validateLength minimum="6" maximum="50"/>
+                        </p:password>
+                        <p:message for="confirmPassword" styleClass="field-error" showDetail="true" showSummary="false"/>
+                    </div>
+                </div>
             </div>
 
             <!-- Step 2: Personal Information -->
@@ -60,9 +128,75 @@
                     <p>Your personal details</p>
                 </div>
                 
-                <ui:include src="/WEB-INF/includes/personal-fields.xhtml">
-                    <ui:param name="controller" value="#{doctorRegistrationController}"/>
-                </ui:include>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <p:outputLabel for="firstName" value="First Name *" styleClass="form-label required">
+                            <i class="pi pi-user label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:inputText id="firstName" 
+                                   value="#{doctorRegistrationController.registrationDTO.firstName}" 
+                                   required="true" 
+                                   placeholder="Enter your first name"
+                                   styleClass="form-input"
+                                   maxlength="50">
+                            <f:validateLength maximum="50"/>
+                            <f:validateRegex pattern="^[A-Za-z\s]{2,50}$" 
+                                           message="First name must be 2-50 letters and spaces only"/>
+                        </p:inputText>
+                        <p:message for="firstName" styleClass="field-error" showDetail="true" showSummary="false"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="lastName" value="Last Name *" styleClass="form-label required">
+                            <i class="pi pi-user label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:inputText id="lastName" 
+                                   value="#{doctorRegistrationController.registrationDTO.lastName}" 
+                                   required="true" 
+                                   placeholder="Enter your last name"
+                                   styleClass="form-input"
+                                   maxlength="50">
+                            <f:validateLength maximum="50"/>
+                            <f:validateRegex pattern="^[A-Za-z\s]{2,50}$" 
+                                           message="Last name must be 2-50 letters and spaces only"/>
+                        </p:inputText>
+                        <p:message for="lastName" styleClass="field-error" showDetail="true" showSummary="false"/>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <p:outputLabel for="phoneNumber" value="Phone Number *" styleClass="form-label required">
+                            <i class="pi pi-phone label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:inputText id="phoneNumber" 
+                                   value="#{doctorRegistrationController.registrationDTO.phoneNumber}" 
+                                   required="true" 
+                                   placeholder="Enter your phone number"
+                                   styleClass="form-input"
+                                   maxlength="20">
+                            <f:validateRegex pattern="^[+]?[0-9]{10,15}$" 
+                                           message="Phone number must be 10-15 digits with optional + prefix"/>
+                        </p:inputText>
+                        <p:message for="phoneNumber" styleClass="field-error" showDetail="true" showSummary="false"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="address" value="Address" styleClass="form-label">
+                            <i class="pi pi-map-marker label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:inputTextarea id="address" 
+                                       value="#{doctorRegistrationController.registrationDTO.address}" 
+                                       rows="3" 
+                                       placeholder="Enter your address"
+                                       styleClass="form-input"
+                                       maxlength="255">
+                            <f:validateRegex pattern="^[A-Za-z0-9\s,\.\-_]{0,255}$" 
+                                           message="Address can contain letters, numbers, spaces, commas, periods, hyphens, and underscores only"/>
+                        </p:inputTextarea>
+                        <p:message for="address" styleClass="field-error" showDetail="true" showSummary="false"/>
+                    </div>
+                </div>
             </div>
 
             <!-- Step 3: Professional Information -->
@@ -75,13 +209,19 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <p:outputLabel for="specialization" value="Medical Specialization *" styleClass="form-label required">
-                            <i class="pi pi-bookmark label-icon" aria-hidden="true"></i>
+                            <i class="pi pi-briefcase label-icon" aria-hidden="true"></i>
                         </p:outputLabel>
                         <p:inputText id="specialization" 
                                    value="#{doctorRegistrationController.registrationDTO.specialization}" 
                                    required="true"
                                    placeholder="e.g., Cardiology, Pediatrics, Surgery"
-                                   styleClass="form-input"/>
+                                   styleClass="form-input"
+                                   maxlength="100">
+                            <f:validateLength maximum="100"/>
+                            <f:validateRegex pattern="^[A-Za-z\s]{2,100}$" 
+                                           message="Specialization must be 2-100 letters and spaces only"/>
+                        </p:inputText>
+                        <p:message for="specialization" styleClass="field-error" showDetail="true" showSummary="false"/>
                     </div>
                     
                     <div class="form-group">
@@ -92,96 +232,75 @@
                                    value="#{doctorRegistrationController.registrationDTO.licenseNumber}" 
                                    required="true"
                                    placeholder="Your medical license number"
-                                   styleClass="form-input">
-                            <p:ajax event="blur" 
-                                  listener="#{doctorRegistrationController.validateLicenseNumber}" 
-                                  update="messages"/>
+                                   styleClass="form-input"
+                                   maxlength="50">
+                            <f:validateLength maximum="50"/>
+                            <f:validateRegex pattern="^[A-Za-z0-9\-_]{5,50}$" 
+                                           message="License number must be 5-50 characters (letters, numbers, hyphens, underscores)"/>
                         </p:inputText>
+                        <p:message for="licenseNumber" styleClass="field-error" showDetail="true" showSummary="false"/>
                     </div>
                 </div>
                 
                 <div class="form-grid">
                     <div class="form-group">
-                        <p:outputLabel for="experience" value="Years of Experience" styleClass="form-label">
-                            <i class="pi pi-clock label-icon" aria-hidden="true"></i>
+                        <p:outputLabel for="qualifications" value="Qualifications *" styleClass="form-label required">
+                            <i class="pi pi-graduation-cap label-icon" aria-hidden="true"></i>
                         </p:outputLabel>
-                        <p:inputNumber id="experience" 
-                                     value="#{doctorRegistrationController.registrationDTO.experience}" 
-                                     decimalPlaces="0" 
-                                     minValue="0"
-                                     maxValue="50"
-                                     placeholder="Years of medical practice"
-                                     styleClass="form-input"/>
+                        <p:inputTextarea id="qualifications" 
+                                       value="#{doctorRegistrationController.registrationDTO.qualifications}" 
+                                       required="true"
+                                       rows="3" 
+                                       placeholder="e.g., MBBS, MD, PhD, Board Certification"
+                                       styleClass="form-input"
+                                       maxlength="200">
+                            <f:validateLength maximum="200"/>
+                            <f:validateRegex pattern="^[A-Za-z0-9\s,\.\-_]{2,200}$" 
+                                           message="Qualifications must be 2-200 characters (letters, numbers, spaces, commas, periods, hyphens, underscores)"/>
+                        </p:inputTextarea>
+                        <p:message for="qualifications" styleClass="field-error" showDetail="true" showSummary="false"/>
                     </div>
                     
                     <div class="form-group">
-                        <p:outputLabel for="department" value="Department" styleClass="form-label">
-                            <i class="pi pi-building label-icon" aria-hidden="true"></i>
+                        <p:outputLabel for="experience" value="Years of Experience *" styleClass="form-label required">
+                            <i class="pi pi-clock label-icon" aria-hidden="true"></i>
                         </p:outputLabel>
-                        <p:selectOneMenu id="department" 
-                                       value="#{doctorRegistrationController.registrationDTO.departmentId}"
-                                       styleClass="form-input">
-                            <f:selectItem itemLabel="Select Department" itemValue=""/>
-                            <f:selectItems value="#{doctorRegistrationController.departments}" 
-                                         var="dept" 
-                                         itemLabel="#{dept.departmentName}" 
-                                         itemValue="#{dept.departmentId}"/>
-                        </p:selectOneMenu>
+                        <p:inputText id="experience" 
+                                   value="#{doctorRegistrationController.registrationDTO.experience}" 
+                                   required="true"
+                                   placeholder="Number of years"
+                                   styleClass="form-input"
+                                   maxlength="2">
+                            <f:validateLongRange minimum="0" maximum="99"/>
+                        </p:inputText>
+                        <p:message for="experience" styleClass="field-error" showDetail="true" showSummary="false"/>
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <p:outputLabel for="qualifications" value="Medical Qualifications" styleClass="form-label">
-                        <i class="pi pi-book label-icon" aria-hidden="true"></i>
+                    <p:outputLabel for="department" value="Department *" styleClass="form-label required">
+                        <i class="pi pi-building label-icon" aria-hidden="true"></i>
                     </p:outputLabel>
-                    <p:inputTextarea id="qualifications" 
-                                   value="#{doctorRegistrationController.registrationDTO.qualifications}" 
-                                   rows="4" 
-                                   placeholder="List your medical degrees, certifications, and achievements"
-                                   styleClass="form-input"/>
+                    <p:selectOneMenu id="department" 
+                                   value="#{doctorRegistrationController.registrationDTO.department}" 
+                                   required="true"
+                                   styleClass="form-input">
+                        <f:selectItem itemLabel="Select Department" itemValue=""/>
+                        <f:selectItem itemLabel="Cardiology" itemValue="Cardiology"/>
+                        <f:selectItem itemLabel="Neurology" itemValue="Neurology"/>
+                        <f:selectItem itemLabel="Orthopedics" itemValue="Orthopedics"/>
+                        <f:selectItem itemLabel="Pediatrics" itemValue="Pediatrics"/>
+                        <f:selectItem itemLabel="Surgery" itemValue="Surgery"/>
+                        <f:selectItem itemLabel="Emergency Medicine" itemValue="Emergency Medicine"/>
+                        <f:selectItem itemLabel="Internal Medicine" itemValue="Internal Medicine"/>
+                        <f:selectItem itemLabel="Radiology" itemValue="Radiology"/>
+                        <f:selectItem itemLabel="Oncology" itemValue="Oncology"/>
+                        <f:selectItem itemLabel="Psychiatry" itemValue="Psychiatry"/>
+                    </p:selectOneMenu>
+                    <p:message for="department" styleClass="field-error" showDetail="true" showSummary="false"/>
                 </div>
                 
-                <!-- Document Upload Section -->
-                <div class="document-upload-section">
-                    <h4>Required Documents</h4>
-                    <p class="upload-note">Please upload the following documents for verification:</p>
-                    
-                    <div class="upload-grid">
-                        <div class="upload-item">
-                            <p:outputLabel value="Medical License" styleClass="upload-label"/>
-                            <p:fileUpload id="licenseUpload"
-                                        mode="simple"
-                                        skinSimple="true"
-                                        label="Choose File"
-                                        accept=".pdf,.jpg,.jpeg,.png"
-                                        styleClass="upload-input"/>
-                            <small class="upload-help">PDF, JPG, or PNG format</small>
-                        </div>
-                        
-                        <div class="upload-item">
-                            <p:outputLabel value="Medical Degree" styleClass="upload-label"/>
-                            <p:fileUpload id="degreeUpload"
-                                        mode="simple"
-                                        skinSimple="true"
-                                        label="Choose File"
-                                        accept=".pdf,.jpg,.jpeg,.png"
-                                        styleClass="upload-input"/>
-                            <small class="upload-help">PDF, JPG, or PNG format</small>
-                        </div>
-                        
-                        <div class="upload-item">
-                            <p:outputLabel value="CV/Resume" styleClass="upload-label"/>
-                            <p:fileUpload id="cvUpload"
-                                        mode="simple"
-                                        skinSimple="true"
-                                        label="Choose File"
-                                        accept=".pdf,.doc,.docx"
-                                        styleClass="upload-input"/>
-                            <small class="upload-help">PDF or Word document</small>
-                        </div>
-                    </div>
-                </div>
-                
+                <!-- Terms and Conditions -->
                 <div class="form-group">
                     <div class="checkbox-group">
                         <p:selectBooleanCheckbox id="acceptTerms" 
@@ -190,79 +309,116 @@
                                                styleClass="custom-checkbox"/>
                         <p:outputLabel for="acceptTerms" styleClass="checkbox-label">
                             I agree to the <h:link value="Terms of Service" outcome="/terms"/> and 
-                            <h:link value="Privacy Policy" outcome="/privacy"/>
+                            <h:link value="Privacy Policy" outcome="/privacy"/> *
                         </p:outputLabel>
+                        <p:message for="acceptTerms" styleClass="field-error" showDetail="true" showSummary="false"/>
                     </div>
                 </div>
                 
                 <div class="form-group">
                     <div class="checkbox-group">
-                        <p:selectBooleanCheckbox id="confirmAccuracy" 
-                                               value="#{doctorRegistrationController.registrationDTO.confirmAccuracy}"
+                        <p:selectBooleanCheckbox id="acceptPrivacy" 
+                                               value="#{doctorRegistrationController.registrationDTO.acceptPrivacy}"
                                                required="true"
                                                styleClass="custom-checkbox"/>
-                        <p:outputLabel for="confirmAccuracy" styleClass="checkbox-label">
-                            I confirm that all professional information provided is accurate and up-to-date
+                        <p:outputLabel for="acceptPrivacy" styleClass="checkbox-label">
+                            I consent to the processing of my personal data for healthcare purposes *
                         </p:outputLabel>
+                        <p:message for="acceptPrivacy" styleClass="field-error" showDetail="true" showSummary="false"/>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <p:selectBooleanCheckbox id="professionalConsent" 
+                                               value="#{doctorRegistrationController.registrationDTO.professionalConsent}"
+                                               required="true"
+                                               styleClass="custom-checkbox"/>
+                        <p:outputLabel for="professionalConsent" styleClass="checkbox-label">
+                            I confirm that all provided credentials and information are accurate and current *
+                        </p:outputLabel>
+                        <p:message for="professionalConsent" styleClass="field-error" showDetail="true" showSummary="false"/>
                     </div>
                 </div>
             </div>
 
             <!-- Navigation Buttons -->
-            <div class="form-navigation">
-                <p:commandButton value="Previous" 
-                               icon="pi pi-chevron-left" 
-                               styleClass="btn btn-secondary nav-btn prev-btn"
-                               onclick="previousStep(); return false;"
-                               style="display: none;"/>
-                
-                <p:commandButton value="Next" 
-                               icon="pi pi-chevron-right" 
-                               iconPos="right"
-                               styleClass="btn btn-primary nav-btn next-btn"
-                               onclick="nextStep(); return false;"/>
-                
-                <p:commandButton value="Submit Application" 
-                               icon="pi pi-send" 
-                               styleClass="btn btn-primary nav-btn submit-btn"
-                               action="#{doctorRegistrationController.registerDoctor}"
-                               update="doctorRegistrationForm messages"
-                               onstart="showLoading('Submitting your application...')"
-                               oncomplete="hideLoading(); handleRegistrationComplete(args);"
-                               style="display: none;"/>
+            <div class="form-navigation" id="form-navigation">
+                <button type="button" class="btn btn-secondary nav-btn prev-btn" style="display:none;">Previous</button>
+                <button type="button" class="btn btn-primary nav-btn next-btn">Next</button>
+                <p:commandButton 
+                value="Create Doctor Account"
+                action="#{doctorRegistrationController.registerDoctor}"
+                ajax="false"
+                styleClass="btn btn-primary nav-btn submit-btn"
+                style="display:none;" />
             </div>
-
-            <p:messages id="messages" showDetail="true" closable="true"/>
         </h:form>
-    </ui:define>
-    
-    <ui:define name="alternativeRoles">
-        <h:link outcome="/views/registration/patient-registration" styleClass="role-link">
-            <i class="pi pi-user" aria-hidden="true"></i>
-            <span>Patient</span>
-        </h:link>
-        <h:link outcome="/views/registration/staff-registration" styleClass="role-link">
-            <i class="pi pi-users" aria-hidden="true"></i>
-            <span>Staff</span>
-        </h:link>
-    </ui:define>
-    
-    <ui:define name="additionalScripts">
+        
+        <!-- Loading Dialog -->
+        <p:dialog id="loadingDialog" 
+                 widgetVar="loadingDialog" 
+                 modal="true" 
+                 showHeader="false" 
+                 draggable="false" 
+                 resizable="false"
+                 styleClass="loading-dialog">
+            <div class="loading-content">
+                <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
+                <p>Creating your account...</p>
+            </div>
+        </p:dialog>
+
+        <!-- Multi-step navigation script -->
         <script>
-            function handleRegistrationComplete(args) {
-                if (args.validationFailed) {
-                    return;
+        document.addEventListener('DOMContentLoaded', function() {
+            let currentStep = 1;
+            const totalSteps = 3;
+
+            function showStep(step) {
+                for (let i = 1; i &lt;= totalSteps; i++) {
+                    document.querySelector('.form-step[data-step="' + i + '"]').classList.remove('active');
                 }
-                
-                if (args.success) {
-                    showSuccessMessage('Doctor application submitted successfully! We will review your credentials and contact you within 2-3 business days.');
-                    setTimeout(() => {
-                        window.location.href = '/index.xhtml';
-                    }, 5000);
-                }
+                document.querySelector('.form-step[data-step="' + step + '"]').classList.add('active');
+                document.querySelector('.prev-btn').style.display = (step > 1) ? '' : 'none';
+                document.querySelector('.next-btn').style.display = (step &lt; totalSteps) ? '' : 'none';
+                document.querySelector('.submit-btn').style.display = (step === totalSteps) ? '' : 'none';
             }
+
+            document.querySelector('.prev-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (currentStep > 1) {
+                    currentStep--;
+                    showStep(currentStep);
+                }
+            });
+
+            document.querySelector('.next-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (currentStep &lt; totalSteps) {
+                    currentStep++;
+                    showStep(currentStep);
+                }
+            });
+
+            showStep(currentStep);
+        });
         </script>
     </ui:define>
     
+    <ui:define name="alternativeRoles">
+        <div class="alternative-roles">
+            <p>Register as:</p>
+            <div class="role-links">
+                <h:link value="Patient" outcome="/views/registration/patient-registration" styleClass="role-link patient-link">
+                    <i class="pi pi-user"></i>
+                </h:link>
+                <h:link value="Staff" outcome="/views/registration/staff-registration" styleClass="role-link staff-link">
+                    <i class="pi pi-users"></i>
+                </h:link>
+            </div>
+        </div>
+    </ui:define>
+  
 </ui:composition>
 </html>

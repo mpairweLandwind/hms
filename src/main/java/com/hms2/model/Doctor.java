@@ -1,22 +1,37 @@
 package com.hms2.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import java.util.List;
+
+import com.hms2.enums.DoctorStatus;
+import com.hms2.converter.DoctorStatusConverter; // <--- Import your converter
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Convert; // <--- Import the @Convert annotation
+
+// Jakarta Validation constraints (keep these as they are for bean validation)
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "doctors")
-public class Doctor extends BaseEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "doctor_seq")
-    @SequenceGenerator(name = "doctor_seq", sequenceName = "doctor_seq", allocationSize = 1)
-    @Column(name = "doctor_id")
-    private Long doctorId;
+public class Doctor extends BaseEntity { // Assuming BaseEntity handles ID and timestamps (like createdAt, updatedAt)
 
     // One-to-one relationship with User
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @NotNull(message = "User is required")
     private User user;
 
     @NotBlank(message = "First name is required")
@@ -31,7 +46,7 @@ public class Doctor extends BaseEntity {
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email should be valid")
-    @Column(name = "email", nullable = false, unique = true, length = 100)
+    @Column(name = "email", nullable = false, length = 100)
     private String email;
 
     @NotBlank(message = "Phone number is required")
@@ -61,10 +76,10 @@ public class Doctor extends BaseEntity {
     @Column(name = "qualifications", length = 500)
     private String qualifications;
 
-    @Pattern(regexp = "PENDING_VERIFICATION|VERIFIED|REJECTED|SUSPENDED|TERMINATED",
-             message = "Status must be PENDING_VERIFICATION, VERIFIED, REJECTED, SUSPENDED, or TERMINATED")
-    @Column(name = "status", length = 20)
-    private String status = "PENDING_VERIFICATION";
+ 
+    @Convert(converter = DoctorStatusConverter.class) // <--- Use your custom converter
+    @Column(name = "status", nullable = false, length = 30) // <--- Ensure length is sufficient for display text
+    private DoctorStatus status = DoctorStatus.PENDING_VERIFICATION; // Default value
 
     @Column(name = "active", nullable = false)
     private Boolean active = true;
@@ -74,62 +89,39 @@ public class Doctor extends BaseEntity {
     @JoinColumn(name = "department_id")
     private Department department;
 
-    // One-to-many relationships
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // One-to-many relationships with optimized cascade
+    @OneToMany(mappedBy = "doctor", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private List<Appointment> appointments;
 
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "doctor", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private List<MedicalRecord> medicalRecords;
 
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "doctor", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private List<Prescription> prescriptions;
 
     // Constructors
-    public Doctor() {}
+    public Doctor() {
+        // Default constructor
+    }
 
-    public Doctor(String firstName, String lastName, String email, String specialization, String licenseNumber) {
+    // Ensure your constructors align with your actual needs
+    public Doctor(String firstName, String lastName, String email, String specialization, String licenseNumber, User user, Department department) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.specialization = specialization;
         this.licenseNumber = licenseNumber;
+        this.user = user; // Associate with User
+        this.department = department; // Associate with Department
+        this.status = DoctorStatus.PENDING_VERIFICATION; // Set default status for new Doctor
+        this.active = true;
+        // BaseEntity fields (createdAt, updatedAt) will be handled by lifecycle callbacks
     }
+
 
     // Business methods
     public String getFullName() {
         return "Dr. " + firstName + " " + lastName;
-    }
-
-    public boolean isVerified() {
-        return "VERIFIED".equals(status);
-    }
-
-    public boolean isPendingVerification() {
-        return "PENDING_VERIFICATION".equals(status);
-    }
-
-    public void verify() {
-        this.status = "VERIFIED";
-        this.active = true;
-    }
-
-    public void reject() {
-        this.status = "REJECTED";
-        this.active = false;
-    }
-
-    public void suspend() {
-        this.status = "SUSPENDED";
-        this.active = false;
-    }
-
-    // Getters and setters
-    public Long getDoctorId() {
-        return doctorId;
-    }
-
-    public void setDoctorId(Long doctorId) {
-        this.doctorId = doctorId;
     }
 
     public User getUser() {
@@ -212,11 +204,12 @@ public class Doctor extends BaseEntity {
         this.qualifications = qualifications;
     }
 
-    public String getStatus() {
+    // Getter and Setter for status are crucial for Hibernate/JPA
+    public DoctorStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(DoctorStatus status) {
         this.status = status;
     }
 
@@ -229,7 +222,7 @@ public class Doctor extends BaseEntity {
     }
 
     public boolean isActive() {
-        return Boolean.TRUE.equals(active);
+        return active != null && active && super.isActive(); // Assuming BaseEntity has an isActive
     }
 
     public Department getDepartment() {
@@ -262,5 +255,24 @@ public class Doctor extends BaseEntity {
 
     public void setPrescriptions(List<Prescription> prescriptions) {
         this.prescriptions = prescriptions;
+    }
+
+    // Backward compatibility method
+    public Long getDoctorId() {
+        return getId(); // Assuming getId() comes from BaseEntity
+    }
+
+    @Override
+    public String toString() {
+        return "Doctor{" +
+                "id=" + getId() + // Assuming getId() from BaseEntity
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", specialization='" + specialization + '\'' +
+                ", licenseNumber='" + licenseNumber + '\'' +
+                ", status=" + status.getText() + // <--- Use getText() for readable output
+                ", active=" + active +
+                '}';
     }
 }

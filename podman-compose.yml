@@ -1,0 +1,28 @@
+
+version : '3.8'
+services:
+  db:
+    image: postgres:latest
+    container_name: my_postgres_db
+    environment:
+        POSTGRES_USER: alien
+        POSTGRES_PASSWORD: alien123.com
+        POSTGRES_DB: hms
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "6543:5432"
+
+  webapp:
+    build: .
+    container_name: hms_webapp
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      POSTGRES_USER: alien
+      POSTGRES_PASSWORD: alien123.com
+      POSTGRES_DB: hms
+volumes:
+    pgdata:

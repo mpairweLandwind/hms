@@ -8,6 +8,9 @@
         <!-- Database connection settings -->
         <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
         <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/hms</property>
+        <!-- Uncomment the following line if using Docker or a different host -->
+<!--        <property name="hibernate.connection.url">jdbc:postgresql://db:5432/hms</property>-->
+
         <property name="hibernate.connection.username">alien</property>
         <property name="hibernate.connection.password">alien123.com</property>
 
@@ -30,26 +33,20 @@
         <property name="hibernate.cache.use_query_cache">false</property>
 
         <!-- Echo all executed SQL to stdout -->
-        <property name="hibernate.show_sql">true</property>
-        <property name="hibernate.format_sql">true</property>
+        <!-- <property name="hibernate.show_sql">false</property>
+        <property name="hibernate.format_sql">false</property> -->
 
-        <!-- Drop and re-create the database schema on startup -->
+        <!--  This will drop and recreate all tables and constraints on every startup (dev only) -->
         <property name="hibernate.hbm2ddl.auto">update</property>
+        <!-- For production, ensure you have backups and use migrations for critical changes -->
+
+        <!-- Additional schema management properties -->
+        <property name="hibernate.hbm2ddl.import_files">/import.sql</property>
+        <property name="hibernate.hbm2ddl.import_files_sql_extractor">org.hibernate.tool.schema.internal.script.MultiLineSqlScriptExtractor</property>
 
         <!-- Enable statistics -->
-        <property name="hibernate.generate_statistics">true</property>
+        <property name="hibernate.generate_statistics">false</property>
 
-        <!-- Entity mappings -->
-        <mapping class="com.hms2.model.User"/>
-        <mapping class="com.hms2.model.Patient"/>
-        <mapping class="com.hms2.model.Doctor"/>
-        <mapping class="com.hms2.model.Staff"/>
-        <mapping class="com.hms2.model.Department"/>
-        <mapping class="com.hms2.model.Appointment"/>
-        <mapping class="com.hms2.model.MedicalRecord"/>
-        <mapping class="com.hms2.model.Prescription"/>
-        <mapping class="com.hms2.model.Medication"/>
-        <mapping class="com.hms2.model.PrescriptionMedication"/>
-        <mapping class="com.hms2.model.Billing"/>
+      
     </session-factory>
 </hibernate-configuration>

@@ -1,7 +1,12 @@
 package com.hms2.dto.user;
 
-import jakarta.validation.constraints.*;
-import java.util.Date;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 public class DoctorRegistrationDTO {
     
@@ -30,9 +35,8 @@ public class DoctorRegistrationDTO {
     @Size(max = 50, message = "Last name must not exceed 50 characters")
     private String lastName;
     
-    @NotBlank(message = "Phone number is required")
-    @Pattern(regexp = "\\d{10,15}", message = "Phone number must be 10-15 digits")
-    private String phoneNumber;
+       @NotBlank(message = "Phone number is required")
+       private String phoneNumber;
     
     @Size(max = 255, message = "Address must not exceed 255 characters")
     private String address;
@@ -46,37 +50,77 @@ public class DoctorRegistrationDTO {
     @Size(max = 50, message = "License number must not exceed 50 characters")
     private String licenseNumber;
     
-    @Min(value = 0, message = "Experience must be non-negative")
-    @Max(value = 50, message = "Experience cannot exceed 50 years")
-    private Integer experience;
-    
-    @Size(max = 500, message = "Qualifications must not exceed 500 characters")
+    @NotBlank(message = "Qualifications is required")
+    @Size(max = 200, message = "Qualifications must not exceed 200 characters")
     private String qualifications;
     
-    private Long departmentId;
+    @Min(value = 0, message = "Experience must be non-negative")
+    @Max(value = 99, message = "Experience cannot exceed 99 years")
+    private Integer experience;
     
-    // Professional documents (file uploads would be handled separately)
-    private String medicalLicensePath;
-    private String degreeCertificatePath;
-    private String cvPath;
+    @NotBlank(message = "Department is required")
+    private String department;
     
     // Terms and conditions
-    @AssertTrue(message = "You must accept the terms and conditions")
-    private boolean acceptTerms = false;
-    
-    @AssertTrue(message = "You must accept the privacy policy")
-    private boolean acceptPrivacy = false;
-    
-    @AssertTrue(message = "You must confirm the accuracy of professional information")
-    private boolean confirmAccuracy = false;
-    
+    private boolean acceptTerms;
+    private boolean acceptPrivacy;
+    private boolean professionalConsent;
+
     // Constructors
     public DoctorRegistrationDTO() {}
     
     // Validation methods
     @AssertTrue(message = "Passwords do not match")
     public boolean isPasswordMatching() {
-        return password != null && password.equals(confirmPassword);
+        boolean match = password != null && password.equals(confirmPassword);
+        System.err.println("isPasswordMatching: " + match);
+        return match;
+    }
+    
+    @AssertTrue(message = "You must accept the terms and conditions")
+    public boolean isTermsAccepted() { 
+        System.err.println("isTermsAccepted: " + acceptTerms);
+        return acceptTerms; 
+    }
+    
+    @AssertTrue(message = "You must accept the privacy policy")
+    public boolean isPrivacyAccepted() { 
+        System.err.println("isPrivacyAccepted: " + acceptPrivacy);
+        return acceptPrivacy; 
+    }
+    
+    @AssertTrue(message = "You must confirm the accuracy of professional information")
+    public boolean isProfessionalConsentGiven() { 
+        System.err.println("isProfessionalConsentGiven: " + professionalConsent);
+        return professionalConsent; 
+    }
+    
+    // Getters and setters for terms
+    public boolean isAcceptTerms() { 
+        return acceptTerms; 
+    }
+    
+    public void setAcceptTerms(boolean acceptTerms) { 
+        System.err.println("setAcceptTerms: " + acceptTerms);
+        this.acceptTerms = acceptTerms; 
+    }
+    
+    public boolean isAcceptPrivacy() { 
+        return acceptPrivacy; 
+    }
+    
+    public void setAcceptPrivacy(boolean acceptPrivacy) { 
+        System.err.println("setAcceptPrivacy: " + acceptPrivacy);
+        this.acceptPrivacy = acceptPrivacy; 
+    }
+    
+    public boolean isProfessionalConsent() { 
+        return professionalConsent; 
+    }
+    
+    public void setProfessionalConsent(boolean professionalConsent) { 
+        System.err.println("setProfessionalConsent: " + professionalConsent);
+        this.professionalConsent = professionalConsent; 
     }
     
     // Getters and setters
@@ -85,6 +129,7 @@ public class DoctorRegistrationDTO {
     }
     
     public void setUsername(String username) {
+        System.err.println("setUsername: " + username);
         this.username = username;
     }
     
@@ -93,6 +138,7 @@ public class DoctorRegistrationDTO {
     }
     
     public void setEmail(String email) {
+        System.err.println("setEmail: " + email);
         this.email = email;
     }
     
@@ -101,6 +147,7 @@ public class DoctorRegistrationDTO {
     }
     
     public void setPassword(String password) {
+        System.err.println("setPassword: " + password);
         this.password = password;
     }
     
@@ -109,6 +156,7 @@ public class DoctorRegistrationDTO {
     }
     
     public void setConfirmPassword(String confirmPassword) {
+        System.err.println("setConfirmPassword: " + confirmPassword);
         this.confirmPassword = confirmPassword;
     }
     
@@ -117,6 +165,7 @@ public class DoctorRegistrationDTO {
     }
     
     public void setFirstName(String firstName) {
+        System.err.println("setFirstName: " + firstName);
         this.firstName = firstName;
     }
     
@@ -125,6 +174,7 @@ public class DoctorRegistrationDTO {
     }
     
     public void setLastName(String lastName) {
+        System.err.println("setLastName: " + lastName);
         this.lastName = lastName;
     }
     
@@ -133,6 +183,7 @@ public class DoctorRegistrationDTO {
     }
     
     public void setPhoneNumber(String phoneNumber) {
+        System.err.println("setPhoneNumber: " + phoneNumber);
         this.phoneNumber = phoneNumber;
     }
     
@@ -141,6 +192,7 @@ public class DoctorRegistrationDTO {
     }
     
     public void setAddress(String address) {
+        System.err.println("setAddress: " + address);
         this.address = address;
     }
     
@@ -149,6 +201,7 @@ public class DoctorRegistrationDTO {
     }
     
     public void setSpecialization(String specialization) {
+        System.err.println("setSpecialization: " + specialization);
         this.specialization = specialization;
     }
     
@@ -157,15 +210,8 @@ public class DoctorRegistrationDTO {
     }
     
     public void setLicenseNumber(String licenseNumber) {
+        System.err.println("setLicenseNumber: " + licenseNumber);
         this.licenseNumber = licenseNumber;
-    }
-    
-    public Integer getExperience() {
-        return experience;
-    }
-    
-    public void setExperience(Integer experience) {
-        this.experience = experience;
     }
     
     public String getQualifications() {
@@ -173,62 +219,25 @@ public class DoctorRegistrationDTO {
     }
     
     public void setQualifications(String qualifications) {
+        System.err.println("setQualifications: " + qualifications);
         this.qualifications = qualifications;
     }
     
-    public Long getDepartmentId() {
-        return departmentId;
+    public Integer getExperience() {
+        return experience;
     }
     
-    public void setDepartmentId(Long departmentId) {
-        this.departmentId = departmentId;
+    public void setExperience(Integer experience) {
+        System.err.println("setExperience: " + experience);
+        this.experience = experience;
     }
     
-    public String getMedicalLicensePath() {
-        return medicalLicensePath;
+    public String getDepartment() {
+        return department;
     }
     
-    public void setMedicalLicensePath(String medicalLicensePath) {
-        this.medicalLicensePath = medicalLicensePath;
-    }
-    
-    public String getDegreeCertificatePath() {
-        return degreeCertificatePath;
-    }
-    
-    public void setDegreeCertificatePath(String degreeCertificatePath) {
-        this.degreeCertificatePath = degreeCertificatePath;
-    }
-    
-    public String getCvPath() {
-        return cvPath;
-    }
-    
-    public void setCvPath(String cvPath) {
-        this.cvPath = cvPath;
-    }
-    
-    public boolean isAcceptTerms() {
-        return acceptTerms;
-    }
-    
-    public void setAcceptTerms(boolean acceptTerms) {
-        this.acceptTerms = acceptTerms;
-    }
-    
-    public boolean isAcceptPrivacy() {
-        return acceptPrivacy;
-    }
-    
-    public void setAcceptPrivacy(boolean acceptPrivacy) {
-        this.acceptPrivacy = acceptPrivacy;
-    }
-    
-    public boolean isConfirmAccuracy() {
-        return confirmAccuracy;
-    }
-    
-    public void setConfirmAccuracy(boolean confirmAccuracy) {
-        this.confirmAccuracy = confirmAccuracy;
+    public void setDepartment(String department) {
+        System.err.println("setDepartment: " + department);
+        this.department = department;
     }
 }

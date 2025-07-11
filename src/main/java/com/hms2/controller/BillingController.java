@@ -1,28 +1,31 @@
 package com.hms2.controller;
 
-import com.hms2.model.Billing;
-import com.hms2.model.Patient;
-import com.hms2.model.Appointment;
-import com.hms2.service.BillingService;
-import com.hms2.service.PatientService;
-import com.hms2.service.AppointmentService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.ViewScoped;
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hms2.model.Appointment;
+import com.hms2.model.Billing;
+import com.hms2.model.Patient;
+import com.hms2.service.AppointmentService;
+import com.hms2.service.BillingService;
+import com.hms2.service.PatientService;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.enterprise.context.RequestScoped;
+
 @Named("billingController")
-@ViewScoped
-public class BillingController implements Serializable {
+@RequestScoped
+public class BillingController {
     
     private static final Logger logger = LoggerFactory.getLogger(BillingController.class);
     
@@ -180,6 +183,64 @@ public class BillingController implements Serializable {
         startDateFilter = null;
         endDateFilter = null;
         loadData();
+    }
+    
+    // Statistics methods for dashboard
+    public BigDecimal calculateTotalRevenue() {
+        try {
+            return billings.stream()
+                .filter(b -> "PAID".equals(b.getStatus()))
+                .map(Billing::getTotalAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        } catch (Exception e) {
+            logger.error("Error calculating total revenue", e);
+            return BigDecimal.ZERO;
+        }
+    }
+    
+    public BigDecimal calculatePendingAmount() {
+        try {
+            return billings.stream()
+                .filter(b -> "PENDING".equals(b.getStatus()) || "PARTIALLY_PAID".equals(b.getStatus()))
+                .map(Billing::getBalanceAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        } catch (Exception e) {
+            logger.error("Error calculating pending amount", e);
+            return BigDecimal.ZERO;
+        }
+    }
+    
+    public long getPendingBillingCount() {
+        try {
+            return billings.stream()
+                .filter(b -> "PENDING".equals(b.getStatus()))
+                .count();
+        } catch (Exception e) {
+            logger.error("Error counting pending billings", e);
+            return 0;
+        }
+    }
+    
+    public long getOverdueBillingCount() {
+        try {
+            return billings.stream()
+                .filter(b -> "OVERDUE".equals(b.getStatus()) || b.isOverdue())
+                .count();
+        } catch (Exception e) {
+            logger.error("Error counting overdue billings", e);
+            return 0;
+        }
+    }
+    
+    public long getPaidBillingCount() {
+        try {
+            return billings.stream()
+                .filter(b -> "PAID".equals(b.getStatus()))
+                .count();
+        } catch (Exception e) {
+            logger.error("Error counting paid billings", e);
+            return 0;
+        }
     }
     
     private void clearPaymentForm() {

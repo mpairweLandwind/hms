@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+    <title>Staff Dashboard - Hospital Management System</title>
+    <h:outputStylesheet library="css" name="dashboard.css" />
+    <h:outputStylesheet library="css" name="components.css" />
+    <h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .header-content h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .header-content p {
+            color: #6c757d;
+            font-size: 14px;
+            margin: 4px 0 0 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .overview-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .overview-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        .overview-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b35, #f7931e);
+        }
+
+        .card-header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .card-header-info h3 {
+            font-size: 16px;
+            font-weight: 500;
+            color: #495057;
+            margin: 0;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: #f8f9fa;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ff6b35;
+            font-size: 20px;
+        }
+
+        .card-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .card-change {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .card-change.positive {
+            color: #28a745;
+        }
+
+        .card-change.negative {
+            color: #dc3545;
+        }
+
+        .card-change.warning {
+            color: #ffc107;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .management-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 32px;
+            overflow: hidden;
+        }
+
+        .management-header {
+            padding: 24px;
+            border-bottom: 1px solid #e9ecef;
+            background: #f8f9fa;
+        }
+
+        .management-header h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .management-content {
+            padding: 0;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .data-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .data-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+        }
+
+        .card-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .quick-action-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .quick-action-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+            border-color: #ff6b35;
+        }
+
+        .quick-action-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            margin: 0 auto 12px;
+        }
+
+        .quick-action-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+
+        .quick-action-desc {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .task-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 32px;
+            overflow: hidden;
+        }
+
+        .task-item {
+            padding: 16px 24px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-priority {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .task-priority.high {
+            background: #dc3545;
+        }
+
+        .task-priority.medium {
+            background: #ffc107;
+        }
+
+        .task-priority.low {
+            background: #28a745;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 2px;
+        }
+
+        .task-desc {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .task-time {
+            font-size: 12px;
+            color: #6c757d;
+            text-align: right;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .status-badge.scheduled {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-badge.completed {
+            background: #e8f5e8;
+            color: #388e3c;
+        }
+
+        .status-badge.cancelled {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        .status-badge.pending {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-badge.paid {
+            background: #e8f5e8;
+            color: #388e3c;
+        }
+
+        .status-badge.overdue {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        .ui-tabs {
+            border: none !important;
+            background: transparent !important;
+        }
+
+        .ui-tabs .ui-tabs-nav {
+            background: #f8f9fa !important;
+            border: none !important;
+            border-bottom: 1px solid #e9ecef !important;
+            padding: 0 24px !important;
+        }
+
+        .ui-tabs .ui-tabs-nav li {
+            border: none !important;
+            background: transparent !important;
+            margin-right: 8px !important;
+        }
+
+        .ui-tabs .ui-tabs-nav li a {
+            background: transparent !important;
+            border: none !important;
+            color: #6c757d !important;
+            padding: 16px 20px !important;
+            font-weight: 500 !important;
+            border-radius: 8px 8px 0 0 !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .ui-tabs .ui-tabs-nav li.ui-tabs-selected a,
+        .ui-tabs .ui-tabs-nav li a:hover {
+            background: white !important;
+            color: #ff6b35 !important;
+            border-bottom: 2px solid #ff6b35 !important;
+        }
+
+        .ui-tabs .ui-tabs-panels {
+            background: white !important;
+            border: none !important;
+            padding: 24px !important;
+        }
+
+        .ui-datatable {
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        .ui-datatable .ui-datatable-header {
+            background: transparent !important;
+            border: none !important;
+            padding: 0 0 16px 0 !important;
+        }
+
+        .ui-datatable .ui-datatable-thead > tr > th {
+            background: #f8f9fa !important;
+            border: none !important;
+            border-bottom: 1px solid #e9ecef !important;
+            color: #495057 !important;
+            font-weight: 600 !important;
+            padding: 12px 16px !important;
+        }
+
+        .ui-datatable .ui-datatable-tbody > tr {
+            border: none !important;
+            transition: background-color 0.2s ease !important;
+        }
+
+        .ui-datatable .ui-datatable-tbody > tr:hover {
+            background: #f8f9fa !important;
+        }
+
+        .ui-datatable .ui-datatable-tbody > tr > td {
+            border: none !important;
+            border-bottom: 1px solid #e9ecef !important;
+            padding: 12px 16px !important;
+            vertical-align: middle !important;
+        }
+
+        .ui-button {
+            border-radius: 8px !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .ui-button-primary {
+            background: linear-gradient(135deg, #ff6b35, #f7931e) !important;
+            border: none !important;
+        }
+
+        .ui-button-outlined {
+            border: 2px solid #ff6b35 !important;
+            color: #ff6b35 !important;
+            background: transparent !important;
+        }
+
+        .ui-button-outlined:hover {
+            background: #ff6b35 !important;
+            color: white !important;
+        }
+
+        .ui-button-success {
+            background: #28a745 !important;
+            border: none !important;
+        }
+
+        .ui-button-warning {
+            background: #ffc107 !important;
+            border: none !important;
+            color: #212529 !important;
+        }
+
+        .ui-button-danger {
+            background: #dc3545 !important;
+            border: none !important;
+        }
+
+        .ui-button-info {
+            background: #17a2b8 !important;
+            border: none !important;
+        }
+
+        .operational-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .metric-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .metric-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: conic-gradient(#ff6b35 0deg, #ff6b35 var(--percentage), #e9ecef var(--percentage), #e9ecef 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            position: relative;
+        }
+
+        .metric-circle::before {
+            content: attr(data-value);
+            position: absolute;
+            font-size: 18px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 16px;
+            }
+            
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .operational-metrics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <div class="admin-container">
+        <!-- Header -->
+        <div class="admin-header">
+            <div class="header-brand">
+                <div class="brand-logo">ST</div>
+                <div class="header-content">
+                    <h1>Staff Dashboard</h1>
+                    <p>Welcome, #{staffDashboardController.currentStaff.firstName} #{staffDashboardController.currentStaff.lastName} - #{staffDashboardController.currentStaff.position}</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <span style="display: flex; align-items: center; gap: 8px;">
+                    <img src="#{request.contextPath}/resources/images/user.png" alt="User" style="width:32px;height:32px;border-radius:50%;border:1px solid #e9ecef;"/>
+                    <span style="font-weight: 500; color: #2c3e50;">#{authController.currentUserName}</span>
+                </span>
+                <h:form>
+                    <h:commandButton value="Logout" action="#{authController.logout}" immediate="true" styleClass="ui-button-danger"/>
+                </h:form>
+            </div>
+        </div>
+
+        <h:form id="staffDashboardForm">
+            <!-- Quick Actions -->
+            <div class="quick-actions-grid">
+                <div class="quick-action-card" onclick="window.location.href='#{request.contextPath}/views/registration/patient-registration.xhtml'">
+                    <div class="quick-action-icon">
+                        <i class="pi pi-user-plus"></i>
+                    </div>
+                    <div class="quick-action-title">Register Patient</div>
+                    <div class="quick-action-desc">Add new patient records</div>
+                </div>
+                
+                <div class="quick-action-card" onclick="window.location.href='#{request.contextPath}/views/appointments/appointments.xhtml'">
+                    <div class="quick-action-icon">
+                        <i class="pi pi-calendar-plus"></i>
+                    </div>
+                    <div class="quick-action-title">Schedule Appointment</div>
+                    <div class="quick-action-desc">Book patient appointments</div>
+                </div>
+                
+                <div class="quick-action-card" onclick="window.location.href='#{request.contextPath}/views/billing/billing.xhtml'">
+                    <div class="quick-action-icon">
+                        <i class="pi pi-credit-card"></i>
+                    </div>
+                    <div class="quick-action-title">Process Payment</div>
+                    <div class="quick-action-desc">Handle billing transactions</div>
+                </div>
+                
+                <div class="quick-action-card" onclick="window.location.href='#{request.contextPath}/views/patients/patients.xhtml'">
+                    <div class="quick-action-icon">
+                        <i class="pi pi-search"></i>
+                    </div>
+                    <div class="quick-action-title">Patient Search</div>
+                    <div class="quick-action-desc">Find patient information</div>
+                </div>
+            </div>
+
+            <!-- Overview Metrics -->
+            <h2 class="section-title"><i class="pi pi-chart-line"></i> Operational Overview</h2>
+            <div class="overview-grid">
+                <div class="overview-card">
+                    <div class="card-header-info">
+                        <h3>Today's Appointments</h3>
+                        <div class="card-icon"><i class="pi pi-calendar"></i></div>
+                    </div>
+                    <div class="card-value">#{staffDashboardController.totalAppointmentsToday}</div>
+                    <div class="card-change positive">
+                        <i class="pi pi-clock"></i>
+                        #{staffDashboardController.completedAppointmentsToday} completed
+                    </div>
+                </div>
+                
+                <div class="overview-card">
+                    <div class="card-header-info">
+                        <h3>Patients Today</h3>
+                        <div class="card-icon"><i class="pi pi-users"></i></div>
+                    </div>
+                    <div class="card-value">#{staffDashboardController.totalPatientsToday}</div>
+                    <div class="card-change positive">
+                        <i class="pi pi-user-plus"></i>
+                        #{staffDashboardController.newPatientsThisMonthCount} new this month
+                    </div>
+                </div>
+                
+                <div class="overview-card">
+                    <div class="card-header-info">
+                        <h3>Pending Bills</h3>
+                        <div class="card-icon"><i class="pi pi-credit-card"></i></div>
+                    </div>
+                    <div class="card-value">#{staffDashboardController.pendingBillsCount}</div>
+                    <div class="card-change warning">
+                        <i class="pi pi-exclamation-triangle"></i>
+                        $#{staffDashboardController.totalPendingAmount} total pending
+                    </div>
+                </div>
+                
+                <div class="overview-card">
+                    <div class="card-header-info">
+                        <h3>Available Doctors</h3>
+                        <div class="card-icon"><i class="pi pi-user-md"></i></div>
+                    </div>
+                    <div class="card-value">#{staffDashboardController.availableDoctorsCount}</div>
+                    <div class="card-change positive">
+                        <i class="pi pi-check-circle"></i>
+                        Ready for appointments
+                    </div>
+                </div>
+            </div>
+
+            <!-- Operational Metrics -->
+            <h2 class="section-title"><i class="pi pi-chart-bar"></i> Performance Metrics</h2>
+            <div class="operational-metrics">
+                <div class="metric-item">
+                    <div class="metric-circle" style="--percentage: #{staffDashboardController.appointmentCompletionRate * 3.6}deg" data-value="#{staffDashboardController.appointmentCompletionRate}%"></div>
+                    <div class="metric-label">Appointment Completion</div>
+                    <div class="metric-value">#{staffDashboardController.appointmentCompletionRate}%</div>
+                </div>
+                
+                <div class="metric-item">
+                    <div class="metric-circle" style="--percentage: #{staffDashboardController.patientsProcessedToday * 3.6}deg" data-value="#{staffDashboardController.patientsProcessedToday}"></div>
+                    <div class="metric-label">Patients Processed</div>
+                    <div class="metric-value">#{staffDashboardController.patientsProcessedToday}</div>
+                </div>
+                
+                <div class="metric-item">
+                    <div class="metric-circle" style="--percentage: #{staffDashboardController.billsProcessedToday * 3.6}deg" data-value="#{staffDashboardController.billsProcessedToday}"></div>
+                    <div class="metric-label">Bills Processed</div>
+                    <div class="metric-value">#{staffDashboardController.billsProcessedToday}</div>
+                </div>
+                
+                <div class="metric-item">
+                    <div class="metric-circle" style="--percentage: #{staffDashboardController.serviceQualityScore * 20}deg" data-value="#{staffDashboardController.serviceQualityScore}"></div>
+                    <div class="metric-label">Service Quality</div>
+                    <div class="metric-value">#{staffDashboardController.serviceQualityScore}/5</div>
+                </div>
+            </div>
+
+            <!-- Pending Tasks -->
+            <div class="task-section">
+                <div class="management-header">
+                    <h3><i class="pi pi-list"></i> Pending Tasks</h3>
+                </div>
+                <div class="management-content">
+                    <c:forEach items="#{staffDashboardController.pendingTasks}" var="task" varStatus="status">
+                        <div class="task-item">
+                            <div class="task-priority #{task.priority}"></div>
+                            <div class="task-content">
+                                <div class="task-title">#{task.title}</div>
+                                <div class="task-desc">#{task.description}</div>
+                            </div>
+                            <div class="task-time">#{task.dueTime}</div>
+                        </div>
+                    </c:forEach>
+                </div>
+            </div>
+
+            <!-- Main Content Tabs -->
+            <div class="management-section">
+                <div class="management-header">
+                    <h3><i class="pi pi-cog"></i> Operations Management</h3>
+                </div>
+                <div class="management-content">
+                    <p:tabView activeIndex="0">
+                        <p:tab title="Today's Schedule">
+                            <div class="data-card">
+                                <div class="card-header">
+                                    <h3>Today's Appointments</h3>
+                                    <p:commandButton value="Refresh" icon="pi pi-refresh" action="#{staffDashboardController.refreshDashboard}" update="@form" styleClass="ui-button-outlined"/>
+                                </div>
+                                <div class="card-content">
+                                    <p:dataTable value="#{staffDashboardController.todaysAppointments}" var="appointment" 
+                                               styleClass="ui-datatable" paginator="true" rows="5"
+                                               paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                               rowsPerPageTemplate="5,10,15">
+                                        
+                                        <p:column headerText="Time" style="width: 120px;">
+                                            <h:outputText value="#{appointment.appointmentDateTime}">
+                                                <f:convertDateTime pattern="HH:mm"/>
+                                            </h:outputText>
+                                        </p:column>
+                                        
+                                        <p:column headerText="Patient" style="width: 200px;">
+                                            <h:outputText value="#{appointment.patient.firstName} #{appointment.patient.lastName}"/>
+                                        </p:column>
+                                        
+                                        <p:column headerText="Doctor" style="width: 150px;">
+                                            <h:outputText value="#{appointment.doctor.firstName} #{appointment.doctor.lastName}"/>
+                                        </p:column>
+                                        
+                                        <p:column headerText="Type" style="width: 120px;">
+                                            <h:outputText value="#{appointment.appointmentType}"/>
+                                        </p:column>
+                                        
+                                        <p:column headerText="Status" style="width: 120px;">
+                                            <span class="status-badge #{appointment.status.toString().toLowerCase()}">
+                                                #{appointment.status}
+                                            </span>
+                                        </p:column>
+                                        
+                                        <p:column headerText="Actions" style="width: 150px;">
+                                            <p:commandButton icon="pi pi-eye" styleClass="ui-button-info" title="View Details"/>
+                                            <p:commandButton icon="pi pi-pencil" styleClass="ui-button-warning" title="Edit"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </p:tab>
+                        
+                        <p:tab title="Recent Patients">
+                            <div class="data-card">
+                                <div class="card-header">
+                                    <h3>Recently Registered Patients</h3>
+                                </div>
+                                <div class="card-content">
+                                    <p:dataTable value="#{staffDashboardController.recentPatients}" var="patient" 
+                                               styleClass="ui-datatable" paginator="true" rows="5">
+                                        
+                                        <p:column headerText="Patient Name" style="width: 200px;">
+                                            <h:outputText value="#{patient.firstName} #{patient.lastName}"/>
+                                        </p:column>
+                                        
+                                        <p:column headerText="Contact" style="width: 150px;">
+                                            <h:outputText value="#{patient.phoneNumber}"/>
+                                        </p:column>
+                                        
+                                        <p:column headerText="Email" style="width: 200px;">
+                                            <h:outputText value="#{patient.email}"/>
+                                        </p:column>
+                                        
+                                        <p:column headerText="Status" style="width: 100px;">
+                                            <span class="status-badge #{patient.active ? 'completed' : 'cancelled'}">
+                                                #{patient.active ? 'Active' : 'Inactive'}
+                                            </span>
+                                        </p:column>
+                                        
+                                        <p:column headerText="Actions" style="width: 150px;">
+                                            <p:commandButton icon="pi pi-eye" styleClass="ui-button-info" title="View Details"/>
+                                            <p:commandButton icon="pi pi-pencil" styleClass="ui-button-warning" title="Edit"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </p:tab>
+                        
+                        <p:tab title="Pending Bills">
+                            <div class="data-card">
+                                <div class="card-header">
+                                    <h3>Bills Requiring Attention</h3>
+                                </div>
+                                <div class="card-content">
+                                    <p:dataTable value="#{staffDashboardController.pendingBills}" var="bill" 
+                                               styleClass="ui-datatable" paginator="true" rows="5">
+                                        
+                                        <p:column headerText="Patient" style="width: 150px;">
+                                            <h:outputText value="#{bill.patient.firstName} #{bill.patient.lastName}"/>
+                                        </p:column>
+                                        
+                                        <p:column headerText="Description" style="width: 200px;">
+                                            <h:outputText value="#{bill.description}"/>
+                                        </p:column>
+                                        
+                                        <p:column headerText="Amount" style="width: 120px;">
+                                            <h:outputText value="#{bill.amount}">
+                                                <f:convertNumber type="currency" currencySymbol="$"/>
+                                            </h:outputText>
+                                        </p:column>
+                                        
+                                        <p:column headerText="Due Date" style="width: 120px;">
+                                            <h:outputText value="#{bill.dueDate}">
+                                                <f:convertDateTime pattern="MMM dd, yyyy"/>
+                                            </h:outputText>
+                                        </p:column>
+                                        
+                                        <p:column headerText="Status" style="width: 100px;">
+                                            <span class="status-badge #{bill.status.toLowerCase()}">
+                                                #{bill.status}
+                                            </span>
+                                        </p:column>
+                                        
+                                        <p:column headerText="Actions" style="width: 150px;">
+                                            <p:commandButton icon="pi pi-eye" styleClass="ui-button-info" title="View Details"/>
+                                            <p:commandButton icon="pi pi-credit-card" styleClass="ui-button-success" title="Process Payment"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </p:tab>
+                        
+                        <p:tab title="Available Doctors">
+                            <div class="data-card">
+                                <div class="card-header">
+                                    <h3>Doctors Available Today</h3>
+                                </div>
+                                <div class="card-content">
+                                    <p:dataTable value="#{staffDashboardController.availableDoctors}" var="doctor" 
+                                               styleClass="ui-datatable" paginator="true" rows="5">
+                                        
+                                        <p:column headerText="Doctor Name" style="width: 200px;">
+                                            <h:outputText value="#{doctor.firstName} #{doctor.lastName}"/>
+                                        </p:column>
+                                        
+                                        <p:column headerText="Specialization" style="width: 150px;">
+                                            <h:outputText value="#{doctor.specialization}"/>
+                                        </p:column>
+                                        
+                                        <p:column headerText="Department" style="width: 150px;">
+                                            <h:outputText value="#{doctor.department.departmentName}"/>
+                                        </p:column>
+                                        
+                                        <p:column headerText="Contact" style="width: 120px;">
+                                            <h:outputText value="#{doctor.phoneNumber}"/>
+                                        </p:column>
+                                        
+                                        <p:column headerText="Status" style="width: 100px;">
+                                            <span class="status-badge #{doctor.active ? 'completed' : 'cancelled'}">
+                                                #{doctor.active ? 'Available' : 'Unavailable'}
+                                            </span>
+                                        </p:column>
+                                        
+                                        <p:column headerText="Actions" style="width: 150px;">
+                                            <p:commandButton icon="pi pi-eye" styleClass="ui-button-info" title="View Details"/>
+                                            <p:commandButton icon="pi pi-calendar-plus" styleClass="ui-button-success" title="Schedule"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </p:tab>
+                    </p:tabView>
+                </div>
+            </div>
+        </h:form>
+    </div>
+</h:body>
+</html> 

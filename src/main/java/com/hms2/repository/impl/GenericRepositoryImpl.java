@@ -1,17 +1,18 @@
 package com.hms2.repository.impl;
 
-import com.hms2.repository.GenericRepository;
-import com.hms2.util.HibernateUtil;
+import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.util.List;
+import java.util.Optional;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.util.List;
-import java.util.Optional;
+import com.hms2.repository.GenericRepository;
+import com.hms2.util.HibernateUtil;
 
 public abstract class GenericRepositoryImpl<T, ID extends Serializable> 
         implements GenericRepository<T, ID> {
@@ -22,8 +23,18 @@ public abstract class GenericRepositoryImpl<T, ID extends Serializable>
     
     @SuppressWarnings("unchecked")
     public GenericRepositoryImpl() {
-        this.entityClass = (Class<T>) ((ParameterizedType) getClass()
-                .getGenericSuperclass()).getActualTypeArguments()[0];
+        // More reliable way to get the entity class
+        Class<?> clazz = getClass();
+        while (clazz != null && !(clazz.getGenericSuperclass() instanceof ParameterizedType)) {
+            clazz = clazz.getSuperclass();
+        }
+        
+        if (clazz != null && clazz.getGenericSuperclass() instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) clazz.getGenericSuperclass();
+            this.entityClass = (Class<T>) parameterizedType.getActualTypeArguments()[0];
+        } else {
+            throw new IllegalStateException("Could not determine entity class for " + getClass().getName());
+        }
     }
     
     @Override
@@ -51,13 +62,14 @@ public abstract class GenericRepositoryImpl<T, ID extends Serializable>
             transaction = session.beginTransaction();
             T updatedEntity = session.merge(entity);
             transaction.commit();
-            logger.debug("Entity updated: {}", updatedEntity);
+            System.err.println("Entity updated: " + updatedEntity);
             return updatedEntity;
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            logger.error("Error updating entity", e);
+            System.err.println("[ERROR] Error updating entity: " + e.getMessage());
+            e.printStackTrace(System.err);
             throw new RuntimeException("Error updating entity", e);
         }
     }
@@ -98,7 +110,8 @@ public abstract class GenericRepositoryImpl<T, ID extends Serializable>
             throw new RuntimeException("Error deleting entity by ID", e);
         }
     }
-    
+
+
     @Override
     public Optional<T> findById(ID id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -109,7 +122,6 @@ public abstract class GenericRepositoryImpl<T, ID extends Serializable>
             throw new RuntimeException("Error finding entity by ID", e);
         }
     }
-    
     @Override
     public List<T> findAll() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {

@@ -1,0 +1,324 @@
+
+
+/* CSS Variables matching HealthManage design */
+:root {
+  --healthmanage-primary: #3b82f6;
+  --healthmanage-primary-dark: #2563eb;
+  --healthmanage-gray-50: #f9fafb;
+  --healthmanage-gray-100: #f3f4f6;
+  --healthmanage-gray-200: #e5e7eb;
+  --healthmanage-gray-600: #4b5563;
+  --healthmanage-gray-900: #111827;
+  --healthmanage-radius: 0.75rem;
+  --healthmanage-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  --healthmanage-shadow-lg: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --healthmanage-transition: 150ms ease-in-out;
+}
+
+/* Enhanced Button Styles */
+.btn-healthmanage {
+  background: #2c3e50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 20px;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all var(--healthmanage-transition);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.btn-healthmanage:hover {
+  background: #34495e;
+  transform: translateY(-1px);
+  color: white;
+  text-decoration: none;
+}
+
+/* Enhanced Card Styles for HealthManage */
+.card-healthmanage {
+  background: white;
+  border-radius: var(--healthmanage-radius);
+  box-shadow: var(--healthmanage-shadow);
+  border: 1px solid var(--healthmanage-gray-200);
+  overflow: hidden;
+  transition: all var(--healthmanage-transition);
+}
+
+.card-healthmanage:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--healthmanage-shadow-lg);
+}
+
+.card-healthmanage .card-header {
+  background: var(--healthmanage-gray-100);
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--healthmanage-gray-200);
+  margin: 0;
+}
+
+.card-healthmanage .card-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--healthmanage-gray-900);
+  margin: 0;
+}
+
+/* Metric Cards specific to HealthManage design */
+.metric-card-healthmanage {
+  background: white;
+  padding: 24px;
+  border-radius: var(--healthmanage-radius);
+  box-shadow: var(--healthmanage-shadow);
+  border: 1px solid var(--healthmanage-gray-200);
+  transition: all var(--healthmanage-transition);
+}
+
+.metric-card-healthmanage:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--healthmanage-shadow-lg);
+}
+
+.metric-header-healthmanage {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.metric-title-healthmanage {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--healthmanage-gray-600);
+  margin: 0;
+}
+
+.metric-icon-healthmanage {
+  width: 40px;
+  height: 40px;
+  background: var(--healthmanage-gray-100);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--healthmanage-gray-600);
+}
+
+.metric-value-healthmanage {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--healthmanage-gray-900);
+  margin: 0 0 8px 0;
+  line-height: 1;
+}
+
+/* Enhanced Form Styling */
+.form-healthmanage .form-group {
+  margin-bottom: 20px;
+}
+
+.form-healthmanage .form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--healthmanage-gray-600);
+  font-size: 14px;
+}
+
+.form-healthmanage .form-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--healthmanage-gray-200);
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all var(--healthmanage-transition);
+  background: white;
+}
+
+.form-healthmanage .form-input:focus {
+  outline: none;
+  border-color: var(--healthmanage-primary);
+  box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+}
+
+/* Enhanced Table Styling */
+.table-healthmanage {
+  width: 100%;
+  background: white;
+  border-radius: var(--healthmanage-radius);
+  overflow: hidden;
+  box-shadow: var(--healthmanage-shadow);
+}
+
+.table-healthmanage thead th {
+  background: var(--healthmanage-gray-50);
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--healthmanage-gray-600);
+  border-bottom: 1px solid var(--healthmanage-gray-200);
+  font-size: 14px;
+}
+
+.table-healthmanage tbody td {
+  padding: 16px;
+  border-bottom: 1px solid var(--healthmanage-gray-100);
+  color: var(--healthmanage-gray-900);
+}
+
+.table-healthmanage tbody tr:hover {
+  background: var(--healthmanage-gray-50);
+}
+
+/* Navigation Enhancement */
+.nav-healthmanage {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+.nav-link-healthmanage {
+  color: var(--healthmanage-gray-600);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 0;
+  transition: color var(--healthmanage-transition);
+  border-bottom: 2px solid transparent;
+}
+
+.nav-link-healthmanage:hover,
+.nav-link-healthmanage.active {
+  color: var(--healthmanage-primary);
+  border-bottom-color: var(--healthmanage-primary);
+  text-decoration: none;
+}
+
+/* Grid Utilities for HealthManage Layout */
+.grid-healthmanage {
+  display: grid;
+  gap: 24px;
+}
+
+.grid-healthmanage.cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-healthmanage.cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-healthmanage.cols-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.grid-healthmanage.responsive {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+/* Utility Classes for HealthManage */
+.text-healthmanage-primary { color: var(--healthmanage-primary); }
+.text-healthmanage-gray-600 { color: var(--healthmanage-gray-600); }
+.text-healthmanage-gray-900 { color: var(--healthmanage-gray-900); }
+
+.bg-healthmanage-primary { background: var(--healthmanage-primary); }
+.bg-healthmanage-gray-50 { background: var(--healthmanage-gray-50); }
+.bg-healthmanage-gray-100 { background: var(--healthmanage-gray-100); }
+
+.rounded-healthmanage { border-radius: var(--healthmanage-radius); }
+.shadow-healthmanage { box-shadow: var(--healthmanage-shadow); }
+.shadow-lg-healthmanage { box-shadow: var(--healthmanage-shadow-lg); }
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .grid-healthmanage.cols-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .grid-healthmanage.cols-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-healthmanage.cols-4,
+  .grid-healthmanage.cols-3,
+  .grid-healthmanage.cols-2 {
+    grid-template-columns: 1fr;
+  }
+  
+  .nav-healthmanage {
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  
+  .metric-card-healthmanage {
+    padding: 16px;
+  }
+  
+  .metric-value-healthmanage {
+    font-size: 24px;
+  }
+}
+
+/* Animation Enhancements */
+@keyframes healthmanage-fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-healthmanage-fadeIn {
+  animation: healthmanage-fadeIn 0.3s ease-out;
+}
+
+/* PrimeFaces Component Overrides for HealthManage Theme */
+.ui-button-healthmanage {
+  background: #2c3e50 !important;
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 12px 20px !important;
+  color: white !important;
+  font-weight: 500 !important;
+  transition: all var(--healthmanage-transition) !important;
+}
+
+.ui-button-healthmanage:hover {
+  background: #34495e !important;
+  transform: translateY(-1px) !important;
+}
+
+.ui-tabs-healthmanage {
+  background: white !important;
+  border: 1px solid var(--healthmanage-gray-200) !important;
+  border-radius: var(--healthmanage-radius) !important;
+  overflow: hidden !important;
+}
+
+.ui-tabs-healthmanage .ui-tabs-nav {
+  background: var(--healthmanage-gray-50) !important;
+  border: none !important;
+  border-bottom: 1px solid var(--healthmanage-gray-200) !important;
+}
+
+.ui-tabs-healthmanage .ui-tabs-nav li a {
+  padding: 16px 20px !important;
+  border: none !important;
+  background: transparent !important;
+  color: var(--healthmanage-gray-600) !important;
+  font-weight: 500 !important;
+}
+
+.ui-tabs-healthmanage .ui-tabs-nav li.ui-state-active a {
+  background: white !important;
+  color: var(--healthmanage-primary) !important;
+  border-bottom: 2px solid var(--healthmanage-primary) !important;
+}

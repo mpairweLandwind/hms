@@ -1,0 +1,832 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="/WEB-INF/templates/dashboard-template.xhtml">
+    
+    <ui:define name="title">Prescription Management</ui:define>
+    
+    <ui:define name="content">
+        <div class="prescription-management-container">
+            
+            <!-- Header Section -->
+            <div class="page-header">
+                <div class="header-content">
+                    <h1 class="page-title">
+                        <i class="fas fa-pills"></i>
+                        Prescription Management
+                    </h1>
+                    <p class="page-description">
+                        Create, manage, and track medication prescriptions for patients
+                    </p>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="header-actions">
+                    <p:commandButton value="New Prescription" 
+                                    icon="fas fa-plus" 
+                                    styleClass="btn-primary"
+                                    onclick="PF('prescriptionDialog').show()"
+                                    rendered="#{prescriptionManagementController.canCreatePrescriptions()}"
+                                    update="@form" />
+                    
+                    <p:commandButton value="Refresh" 
+                                    icon="fas fa-sync-alt" 
+                                    styleClass="btn-secondary"
+                                    action="#{prescriptionManagementController.loadPrescriptions()}"
+                                    update="@form" />
+                </div>
+            </div>
+            
+            <!-- Statistics Cards -->
+            <div class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon active">
+                            <i class="fas fa-pills"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number">#{prescriptionManagementController.activePrescriptions.size()}</h3>
+                            <p class="stat-label">Active</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon completed">
+                            <i class="fas fa-check-double"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number">#{prescriptionManagementController.completedPrescriptions.size()}</h3>
+                            <p class="stat-label">Completed</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon expired">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number">#{prescriptionManagementController.expiredPrescriptions.size()}</h3>
+                            <p class="stat-label">Expired</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon overdue">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number">#{prescriptionManagementController.overduePrescriptions.size()}</h3>
+                            <p class="stat-label">Overdue</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filters Section -->
+            <div class="filters-section">
+                <p:panel header="Filters and Search" styleClass="filter-panel">
+                    <div class="filter-grid">
+                        <div class="filter-item">
+                            <p:outputLabel for="statusFilter" value="Status:" />
+                            <p:selectOneMenu id="statusFilter" value="#{prescriptionManagementController.selectedStatus}">
+                                <f:selectItem itemLabel="All Statuses" itemValue="" />
+                                <f:selectItem itemLabel="Active" itemValue="ACTIVE" />
+                                <f:selectItem itemLabel="Completed" itemValue="COMPLETED" />
+                                <f:selectItem itemLabel="Expired" itemValue="EXPIRED" />
+                                <f:selectItem itemLabel="Cancelled" itemValue="CANCELLED" />
+                            </p:selectOneMenu>
+                        </div>
+                        
+                        <div class="filter-item">
+                            <p:outputLabel for="doctorFilter" value="Doctor:" />
+                            <p:selectOneMenu id="doctorFilter" value="#{prescriptionManagementController.selectedDoctorId}">
+                                <f:selectItem itemLabel="All Doctors" itemValue="" />
+                                <f:selectItems value="#{prescriptionManagementController.allDoctors}" 
+                                              var="doctor" 
+                                              itemLabel="Dr. #{doctor.firstName} #{doctor.lastName}" 
+                                              itemValue="#{doctor.doctorId}" />
+                            </p:selectOneMenu>
+                        </div>
+                        
+                        <div class="filter-item">
+                            <p:outputLabel for="patientFilter" value="Patient:" />
+                            <p:selectOneMenu id="patientFilter" value="#{prescriptionManagementController.selectedPatientId}">
+                                <f:selectItem itemLabel="All Patients" itemValue="" />
+                                <f:selectItems value="#{prescriptionManagementController.allPatients}" 
+                                              var="patient" 
+                                              itemLabel="#{patient.firstName} #{patient.lastName}" 
+                                              itemValue="#{patient.patientId}" />
+                            </p:selectOneMenu>
+                        </div>
+                        
+                        <div class="filter-item">
+                            <p:outputLabel for="dateFilter" value="Date:" />
+                            <p:calendar id="dateFilter" 
+                                       value="#{prescriptionManagementController.selectedDate}" 
+                                       showTime="false" 
+                                       pattern="MM/dd/yyyy" />
+                        </div>
+                        
+                        <div class="filter-item">
+                            <p:outputLabel for="searchFilter" value="Search:" />
+                            <p:inputText id="searchFilter" 
+                                        value="#{prescriptionManagementController.searchTerm}" 
+                                        placeholder="Search prescriptions..." />
+                        </div>
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <p:commandButton value="Apply Filters" 
+                                        icon="fas fa-filter" 
+                                        styleClass="btn-primary"
+                                        action="#{prescriptionManagementController.filterPrescriptions()}"
+                                        update="@form" />
+                        
+                        <p:commandButton value="Clear Filters" 
+                                        icon="fas fa-times" 
+                                        styleClass="btn-secondary"
+                                        action="#{prescriptionManagementController.clearFilters()}"
+                                        update="@form" />
+                    </div>
+                </p:panel>
+            </div>
+            
+            <!-- Prescriptions Tabs -->
+            <div class="prescriptions-section">
+                <p:tabView styleClass="prescription-tabs">
+                    
+                    <!-- Active Prescriptions Tab -->
+                    <p:tab title="Active (#{prescriptionManagementController.activePrescriptions.size()})" 
+                           styleClass="tab-active">
+                        <div class="prescriptions-list">
+                            <p:dataTable value="#{prescriptionManagementController.activePrescriptions}" 
+                                        var="prescription" 
+                                        styleClass="prescription-table"
+                                        emptyMessage="No active prescriptions found">
+                                
+                                <p:column headerText="Patient" styleClass="patient-column">
+                                    <div class="patient-info">
+                                        <strong>#{prescription.patient.firstName} #{prescription.patient.lastName}</strong>
+                                        <small>ID: #{prescription.patient.patientId}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Doctor" styleClass="doctor-column">
+                                    <div class="doctor-info">
+                                        <strong>Dr. #{prescription.doctor.firstName} #{prescription.doctor.lastName}</strong>
+                                        <small>#{prescription.doctor.specialization}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Diagnosis" styleClass="diagnosis-column">
+                                    <div class="diagnosis-info">
+                                        <strong>#{prescription.diagnosis}</strong>
+                                        <small>Date: #{prescription.prescriptionDate}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Medications" styleClass="medications-column">
+                                    <div class="medications-info">
+                                        <strong>#{prescription.medications.size()} medications</strong>
+                                        <small>Valid until: #{prescription.validUntil}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Status" styleClass="status-column">
+                                    <p:tag value="ACTIVE" severity="success" />
+                                </p:column>
+                                
+                                <p:column headerText="Actions" styleClass="actions-column">
+                                    <div class="action-buttons">
+                                        <p:commandButton icon="fas fa-eye" 
+                                                        styleClass="btn-info btn-sm"
+                                                        title="View Details"
+                                                        action="#{prescriptionManagementController.openDetailsDialog(prescription)}"
+                                                        update="@form" />
+                                                        
+                                        <p:commandButton icon="fas fa-sync" 
+                                                        styleClass="btn-warning btn-sm"
+                                                        title="Refill"
+                                                        rendered="#{prescriptionManagementController.canRefillPrescriptions()}"
+                                                        action="#{prescriptionManagementController.openRefillDialog(prescription)}"
+                                                        update="@form" />
+                                                        
+                                        <p:commandButton icon="fas fa-check-double" 
+                                                        styleClass="btn-success btn-sm"
+                                                        title="Mark Complete"
+                                                        action="#{prescriptionManagementController.markAsCompleted(prescription)}"
+                                                        update="@form" />
+                                                        
+                                        <p:commandButton icon="fas fa-times" 
+                                                        styleClass="btn-danger btn-sm"
+                                                        title="Cancel"
+                                                        rendered="#{prescriptionManagementController.canCancelPrescriptions()}"
+                                                        action="#{prescriptionManagementController.cancelPrescription(prescription)}"
+                                                        update="@form" />
+                                    </div>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </p:tab>
+                    
+                    <!-- Overdue Prescriptions Tab -->
+                    <p:tab title="Overdue (#{prescriptionManagementController.overduePrescriptions.size()})" 
+                           styleClass="tab-overdue"
+                           rendered="#{prescriptionManagementController.overduePrescriptions.size() > 0}">
+                        <div class="prescriptions-list">
+                            <p:dataTable value="#{prescriptionManagementController.overduePrescriptions}" 
+                                        var="prescription" 
+                                        styleClass="prescription-table overdue-table"
+                                        emptyMessage="No overdue prescriptions found">
+                                
+                                <p:column headerText="Patient" styleClass="patient-column">
+                                    <div class="patient-info">
+                                        <strong>#{prescription.patient.firstName} #{prescription.patient.lastName}</strong>
+                                        <small>ID: #{prescription.patient.patientId}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Doctor" styleClass="doctor-column">
+                                    <div class="doctor-info">
+                                        <strong>Dr. #{prescription.doctor.firstName} #{prescription.doctor.lastName}</strong>
+                                        <small>#{prescription.doctor.specialization}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Diagnosis" styleClass="diagnosis-column">
+                                    <div class="diagnosis-info">
+                                        <strong>#{prescription.diagnosis}</strong>
+                                        <small>Date: #{prescription.prescriptionDate}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Expiry" styleClass="expiry-column">
+                                    <div class="expiry-info">
+                                        <strong class="text-danger">#{prescription.validUntil}</strong>
+                                        <small>Overdue</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Status" styleClass="status-column">
+                                    <p:tag value="OVERDUE" severity="danger" />
+                                </p:column>
+                                
+                                <p:column headerText="Actions" styleClass="actions-column">
+                                    <div class="action-buttons">
+                                        <p:commandButton icon="fas fa-eye" 
+                                                        styleClass="btn-info btn-sm"
+                                                        title="View Details"
+                                                        action="#{prescriptionManagementController.openDetailsDialog(prescription)}"
+                                                        update="@form" />
+                                                        
+                                        <p:commandButton icon="fas fa-sync" 
+                                                        styleClass="btn-warning btn-sm"
+                                                        title="Refill"
+                                                        rendered="#{prescriptionManagementController.canRefillPrescriptions()}"
+                                                        action="#{prescriptionManagementController.openRefillDialog(prescription)}"
+                                                        update="@form" />
+                                    </div>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </p:tab>
+                    
+                    <!-- Recent Prescriptions Tab -->
+                    <p:tab title="Recent (#{prescriptionManagementController.recentPrescriptions.size()})" 
+                           styleClass="tab-recent"
+                           rendered="#{prescriptionManagementController.recentPrescriptions.size() > 0}">
+                        <div class="prescriptions-list">
+                            <p:dataTable value="#{prescriptionManagementController.recentPrescriptions}" 
+                                        var="prescription" 
+                                        styleClass="prescription-table"
+                                        emptyMessage="No recent prescriptions found">
+                                
+                                <p:column headerText="Patient" styleClass="patient-column">
+                                    <div class="patient-info">
+                                        <strong>#{prescription.patient.firstName} #{prescription.patient.lastName}</strong>
+                                        <small>ID: #{prescription.patient.patientId}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Doctor" styleClass="doctor-column">
+                                    <div class="doctor-info">
+                                        <strong>Dr. #{prescription.doctor.firstName} #{prescription.doctor.lastName}</strong>
+                                        <small>#{prescription.doctor.specialization}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Diagnosis" styleClass="diagnosis-column">
+                                    <div class="diagnosis-info">
+                                        <strong>#{prescription.diagnosis}</strong>
+                                        <small>Date: #{prescription.prescriptionDate}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Status" styleClass="status-column">
+                                    <p:tag value="#{prescription.status}" 
+                                           severity="#{prescriptionManagementController.getStatusColor(prescription.status)}" />
+                                </p:column>
+                                
+                                <p:column headerText="Actions" styleClass="actions-column">
+                                    <div class="action-buttons">
+                                        <p:commandButton icon="fas fa-eye" 
+                                                        styleClass="btn-info btn-sm"
+                                                        title="View Details"
+                                                        action="#{prescriptionManagementController.openDetailsDialog(prescription)}"
+                                                        update="@form" />
+                                    </div>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </p:tab>
+                    
+                    <!-- Controlled Substances Tab -->
+                    <p:tab title="Controlled Substances (#{prescriptionManagementController.controlledSubstancePrescriptions.size()})" 
+                           styleClass="tab-controlled"
+                           rendered="#{prescriptionManagementController.canViewControlledSubstances() and prescriptionManagementController.controlledSubstancePrescriptions.size() > 0}">
+                        <div class="prescriptions-list">
+                            <p:dataTable value="#{prescriptionManagementController.controlledSubstancePrescriptions}" 
+                                        var="prescription" 
+                                        styleClass="prescription-table controlled-table"
+                                        emptyMessage="No controlled substance prescriptions found">
+                                
+                                <p:column headerText="Patient" styleClass="patient-column">
+                                    <div class="patient-info">
+                                        <strong>#{prescription.patient.firstName} #{prescription.patient.lastName}</strong>
+                                        <small>ID: #{prescription.patient.patientId}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Doctor" styleClass="doctor-column">
+                                    <div class="doctor-info">
+                                        <strong>Dr. #{prescription.doctor.firstName} #{prescription.doctor.lastName}</strong>
+                                        <small>#{prescription.doctor.specialization}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Diagnosis" styleClass="diagnosis-column">
+                                    <div class="diagnosis-info">
+                                        <strong>#{prescription.diagnosis}</strong>
+                                        <small>Date: #{prescription.prescriptionDate}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Medications" styleClass="medications-column">
+                                    <div class="medications-info">
+                                        <strong class="text-warning">#{prescription.medications.size()} controlled medications</strong>
+                                        <small>Valid until: #{prescription.validUntil}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Status" styleClass="status-column">
+                                    <p:tag value="CONTROLLED" severity="warning" />
+                                </p:column>
+                                
+                                <p:column headerText="Actions" styleClass="actions-column">
+                                    <div class="action-buttons">
+                                        <p:commandButton icon="fas fa-eye" 
+                                                        styleClass="btn-info btn-sm"
+                                                        title="View Details"
+                                                        action="#{prescriptionManagementController.openDetailsDialog(prescription)}"
+                                                        update="@form" />
+                                    </div>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </p:tab>
+                    
+                </p:tabView>
+            </div>
+            
+        </div>
+        
+        <!-- New Prescription Dialog -->
+        <p:dialog header="Create New Prescription" 
+                  widgetVar="prescriptionDialog" 
+                  modal="true" 
+                  showEffect="fade" 
+                  hideEffect="fade"
+                  styleClass="prescription-dialog"
+                  rendered="#{prescriptionManagementController.showPrescriptionDialog}">
+            
+            <div class="dialog-content">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <p:outputLabel for="patientSelect" value="Patient *" />
+                        <p:selectOneMenu id="patientSelect" 
+                                        value="#{prescriptionManagementController.newPrescription.patientId}"
+                                        required="true"
+                                        requiredMessage="Please select a patient">
+                            <f:selectItem itemLabel="Select Patient" itemValue="" />
+                            <f:selectItems value="#{prescriptionManagementController.allPatients}" 
+                                          var="patient" 
+                                          itemLabel="#{patient.firstName} #{patient.lastName} (ID: #{patient.patientId})" 
+                                          itemValue="#{patient.patientId}" />
+                        </p:selectOneMenu>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="doctorSelect" value="Doctor *" />
+                        <p:selectOneMenu id="doctorSelect" 
+                                        value="#{prescriptionManagementController.newPrescription.doctorId}"
+                                        required="true"
+                                        requiredMessage="Please select a doctor">
+                            <f:selectItem itemLabel="Select Doctor" itemValue="" />
+                            <f:selectItems value="#{prescriptionManagementController.allDoctors}" 
+                                          var="doctor" 
+                                          itemLabel="Dr. #{doctor.firstName} #{doctor.lastName} (#{doctor.specialization})" 
+                                          itemValue="#{doctor.doctorId}" />
+                        </p:selectOneMenu>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="prescriptionDate" value="Prescription Date *" />
+                        <p:calendar id="prescriptionDate" 
+                                   value="#{prescriptionManagementController.newPrescription.prescriptionDate}"
+                                   showTime="false" 
+                                   pattern="MM/dd/yyyy"
+                                   required="true"
+                                   requiredMessage="Please select prescription date" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="validUntil" value="Valid Until" />
+                        <p:calendar id="validUntil" 
+                                   value="#{prescriptionManagementController.newPrescription.validUntil}"
+                                   showTime="false" 
+                                   pattern="MM/dd/yyyy" />
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <p:outputLabel for="diagnosis" value="Diagnosis *" />
+                        <p:inputTextarea id="diagnosis" 
+                                        value="#{prescriptionManagementController.newPrescription.diagnosis}"
+                                        rows="3"
+                                        required="true"
+                                        requiredMessage="Please provide a diagnosis" />
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <p:outputLabel for="symptoms" value="Symptoms" />
+                        <p:inputTextarea id="symptoms" 
+                                        value="#{prescriptionManagementController.newPrescription.symptoms}"
+                                        rows="2" />
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <p:outputLabel for="treatmentPlan" value="Treatment Plan" />
+                        <p:inputTextarea id="treatmentPlan" 
+                                        value="#{prescriptionManagementController.newPrescription.treatmentPlan}"
+                                        rows="2" />
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <p:outputLabel for="notes" value="Notes" />
+                        <p:inputTextarea id="notes" 
+                                        value="#{prescriptionManagementController.newPrescription.notes}"
+                                        rows="2" />
+                    </div>
+                </div>
+                
+                <!-- Medications Section -->
+                <div class="medications-section">
+                    <h4>Medications</h4>
+                    
+                    <div class="medications-list">
+                        <p:dataTable value="#{prescriptionManagementController.medications}" 
+                                    var="medication" 
+                                    styleClass="medication-table"
+                                    emptyMessage="No medications added">
+                            
+                            <p:column headerText="Medication" styleClass="medication-name-column">
+                                <strong>#{medication.medicationName}</strong>
+                                <small>#{medication.genericName}</small>
+                            </p:column>
+                            
+                            <p:column headerText="Dosage" styleClass="dosage-column">
+                                <strong>#{medication.dosage}</strong>
+                                <small>#{medication.strength}</small>
+                            </p:column>
+                            
+                            <p:column headerText="Frequency" styleClass="frequency-column">
+                                <strong>#{medication.frequency}</strong>
+                                <small>#{medication.duration}</small>
+                            </p:column>
+                            
+                            <p:column headerText="Route" styleClass="route-column">
+                                <strong>#{medication.route}</strong>
+                            </p:column>
+                            
+                            <p:column headerText="Actions" styleClass="actions-column">
+                                <div class="action-buttons">
+                                    <p:commandButton icon="fas fa-edit" 
+                                                    styleClass="btn-warning btn-sm"
+                                                    title="Edit"
+                                                    action="#{prescriptionManagementController.editMedication(medication)}"
+                                                    update="@form" />
+                                                    
+                                    <p:commandButton icon="fas fa-trash" 
+                                                    styleClass="btn-danger btn-sm"
+                                                    title="Remove"
+                                                    action="#{prescriptionManagementController.removeMedication(medication)}"
+                                                    update="@form" />
+                                </div>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                    
+                    <div class="add-medication-section">
+                        <p:commandButton value="Add Medication" 
+                                        icon="fas fa-plus" 
+                                        styleClass="btn-secondary"
+                                        onclick="PF('medicationDialog').show()"
+                                        update="@form" />
+                    </div>
+                </div>
+            </div>
+            
+            <f:facet name="footer">
+                <div class="dialog-actions">
+                    <p:commandButton value="Create Prescription" 
+                                    icon="fas fa-save" 
+                                    styleClass="btn-primary"
+                                    action="#{prescriptionManagementController.createPrescription()}"
+                                    update="@form"
+                                    oncomplete="PF('prescriptionDialog').hide()" />
+                    
+                    <p:commandButton value="Cancel" 
+                                    icon="fas fa-times" 
+                                    styleClass="btn-secondary"
+                                    onclick="PF('prescriptionDialog').hide()" />
+                </div>
+            </f:facet>
+        </p:dialog>
+        
+        <!-- Medication Dialog -->
+        <p:dialog header="Add/Edit Medication" 
+                  widgetVar="medicationDialog" 
+                  modal="true" 
+                  showEffect="fade" 
+                  hideEffect="fade"
+                  styleClass="medication-dialog"
+                  rendered="#{prescriptionManagementController.showMedicationDialog}">
+            
+            <div class="dialog-content">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <p:outputLabel for="medicationName" value="Medication Name *" />
+                        <p:inputText id="medicationName" 
+                                    value="#{prescriptionManagementController.newMedication.medicationName}"
+                                    required="true"
+                                    requiredMessage="Please provide medication name" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="genericName" value="Generic Name" />
+                        <p:inputText id="genericName" 
+                                    value="#{prescriptionManagementController.newMedication.genericName}" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="dosage" value="Dosage *" />
+                        <p:inputText id="dosage" 
+                                    value="#{prescriptionManagementController.newMedication.dosage}"
+                                    required="true"
+                                    requiredMessage="Please provide dosage" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="strength" value="Strength" />
+                        <p:inputText id="strength" 
+                                    value="#{prescriptionManagementController.newMedication.strength}" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="frequency" value="Frequency *" />
+                        <p:selectOneMenu id="frequency" 
+                                        value="#{prescriptionManagementController.newMedication.frequency}"
+                                        required="true"
+                                        requiredMessage="Please select frequency">
+                            <f:selectItem itemLabel="Select Frequency" itemValue="" />
+                            <f:selectItem itemLabel="Once daily" itemValue="Once daily" />
+                            <f:selectItem itemLabel="Twice daily" itemValue="Twice daily" />
+                            <f:selectItem itemLabel="Three times daily" itemValue="Three times daily" />
+                            <f:selectItem itemLabel="Four times daily" itemValue="Four times daily" />
+                            <f:selectItem itemLabel="As needed" itemValue="As needed" />
+                        </p:selectOneMenu>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="duration" value="Duration *" />
+                        <p:inputText id="duration" 
+                                    value="#{prescriptionManagementController.newMedication.duration}"
+                                    required="true"
+                                    requiredMessage="Please provide duration" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="route" value="Route" />
+                        <p:selectOneMenu id="route" 
+                                        value="#{prescriptionManagementController.newMedication.route}">
+                            <f:selectItem itemLabel="Select Route" itemValue="" />
+                            <f:selectItem itemLabel="Oral" itemValue="Oral" />
+                            <f:selectItem itemLabel="Topical" itemValue="Topical" />
+                            <f:selectItem itemLabel="Injectable" itemValue="Injectable" />
+                            <f:selectItem itemLabel="Inhalation" itemValue="Inhalation" />
+                        </p:selectOneMenu>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="quantity" value="Quantity" />
+                        <p:inputNumber id="quantity" 
+                                      value="#{prescriptionManagementController.newMedication.quantity}" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="unit" value="Unit" />
+                        <p:selectOneMenu id="unit" 
+                                        value="#{prescriptionManagementController.newMedication.unit}">
+                            <f:selectItem itemLabel="Select Unit" itemValue="" />
+                            <f:selectItem itemLabel="Tablets" itemValue="tablets" />
+                            <f:selectItem itemLabel="Capsules" itemValue="capsules" />
+                            <f:selectItem itemLabel="ml" itemValue="ml" />
+                            <f:selectItem itemLabel="mg" itemValue="mg" />
+                        </p:selectOneMenu>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <p:outputLabel for="instructions" value="Instructions" />
+                        <p:inputTextarea id="instructions" 
+                                        value="#{prescriptionManagementController.newMedication.instructions}"
+                                        rows="3" />
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <p:outputLabel for="sideEffects" value="Side Effects" />
+                        <p:inputTextarea id="sideEffects" 
+                                        value="#{prescriptionManagementController.newMedication.sideEffects}"
+                                        rows="2" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:selectBooleanCheckbox id="isControlled" 
+                                                value="#{prescriptionManagementController.newMedication.isControlled}" />
+                        <p:outputLabel for="isControlled" value="Controlled Substance" />
+                    </div>
+                </div>
+            </div>
+            
+            <f:facet name="footer">
+                <div class="dialog-actions">
+                    <p:commandButton value="Add Medication" 
+                                    icon="fas fa-plus" 
+                                    styleClass="btn-primary"
+                                    action="#{prescriptionManagementController.addMedication()}"
+                                    update="@form"
+                                    oncomplete="PF('medicationDialog').hide()" />
+                    
+                    <p:commandButton value="Cancel" 
+                                    icon="fas fa-times" 
+                                    styleClass="btn-secondary"
+                                    onclick="PF('medicationDialog').hide()" />
+                </div>
+            </f:facet>
+        </p:dialog>
+        
+        <!-- Refill Dialog -->
+        <p:dialog header="Refill Prescription" 
+                  widgetVar="refillDialog" 
+                  modal="true" 
+                  showEffect="fade" 
+                  hideEffect="fade"
+                  styleClass="refill-dialog"
+                  rendered="#{prescriptionManagementController.showRefillDialog}">
+            
+            <div class="dialog-content">
+                <div class="prescription-details">
+                    <h4>Prescription Details</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <strong>Patient:</strong> #{prescriptionManagementController.selectedPrescription.patient.firstName} #{prescriptionManagementController.selectedPrescription.patient.lastName}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Doctor:</strong> Dr. #{prescriptionManagementController.selectedPrescription.doctor.firstName} #{prescriptionManagementController.selectedPrescription.doctor.lastName}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Diagnosis:</strong> #{prescriptionManagementController.selectedPrescription.diagnosis}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Valid Until:</strong> #{prescriptionManagementController.selectedPrescription.validUntil}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="refill-form">
+                    <div class="form-group">
+                        <p:outputLabel for="refillNotes" value="Refill Notes" />
+                        <p:inputTextarea id="refillNotes" 
+                                        value="#{prescriptionManagementController.refillNotes}"
+                                        rows="3" />
+                    </div>
+                </div>
+            </div>
+            
+            <f:facet name="footer">
+                <div class="dialog-actions">
+                    <p:commandButton value="Refill" 
+                                    icon="fas fa-sync" 
+                                    styleClass="btn-primary"
+                                    action="#{prescriptionManagementController.refillPrescription()}"
+                                    update="@form"
+                                    oncomplete="PF('refillDialog').hide()" />
+                    
+                    <p:commandButton value="Cancel" 
+                                    icon="fas fa-times" 
+                                    styleClass="btn-secondary"
+                                    onclick="PF('refillDialog').hide()" />
+                </div>
+            </f:facet>
+        </p:dialog>
+        
+        <!-- Details Dialog -->
+        <p:dialog header="Prescription Details" 
+                  widgetVar="detailsDialog" 
+                  modal="true" 
+                  showEffect="fade" 
+                  hideEffect="fade"
+                  styleClass="details-dialog"
+                  rendered="#{prescriptionManagementController.showDetailsDialog}">
+            
+            <div class="dialog-content">
+                <div class="prescription-details">
+                    <h4>Prescription Information</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <strong>Patient:</strong> #{prescriptionManagementController.selectedPrescription.patient.firstName} #{prescriptionManagementController.selectedPrescription.patient.lastName}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Doctor:</strong> Dr. #{prescriptionManagementController.selectedPrescription.doctor.firstName} #{prescriptionManagementController.selectedPrescription.doctor.lastName}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Diagnosis:</strong> #{prescriptionManagementController.selectedPrescription.diagnosis}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Prescription Date:</strong> #{prescriptionManagementController.selectedPrescription.prescriptionDate}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Valid Until:</strong> #{prescriptionManagementController.selectedPrescription.validUntil}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Status:</strong> #{prescriptionManagementController.selectedPrescription.status}
+                        </div>
+                    </div>
+                    
+                    <div class="medications-details">
+                        <h5>Medications</h5>
+                        <p:dataTable value="#{prescriptionManagementController.selectedPrescription.medications}" 
+                                    var="medication" 
+                                    styleClass="medication-details-table">
+                            
+                            <p:column headerText="Medication">
+                                <strong>#{medication.medicationName}</strong>
+                                <small>#{medication.genericName}</small>
+                            </p:column>
+                            
+                            <p:column headerText="Dosage">
+                                <strong>#{medication.dosage}</strong>
+                                <small>#{medication.strength}</small>
+                            </p:column>
+                            
+                            <p:column headerText="Frequency">
+                                <strong>#{medication.frequency}</strong>
+                                <small>#{medication.duration}</small>
+                            </p:column>
+                            
+                            <p:column headerText="Route">
+                                <strong>#{medication.route}</strong>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                </div>
+            </div>
+            
+            <f:facet name="footer">
+                <div class="dialog-actions">
+                    <p:commandButton value="Close" 
+                                    icon="fas fa-times" 
+                                    styleClass="btn-secondary"
+                                    onclick="PF('detailsDialog').hide()" />
+                </div>
+            </f:facet>
+        </p:dialog>
+        
+    </ui:define>
+    
+</ui:composition>
+</html> 

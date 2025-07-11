@@ -1,18 +1,26 @@
 package com.hms2.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
+
+import com.hms2.enums.MedicalRecordStatus;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "medical_records")
 public class MedicalRecord extends BaseEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "medical_record_seq")
-    @SequenceGenerator(name = "medical_record_seq", sequenceName = "medical_record_seq", allocationSize = 1)
-    @Column(name = "record_id")
-    private Long recordId;
 
     // Many-to-one relationship with Patient
     @ManyToOne(fetch = FetchType.LAZY)
@@ -64,14 +72,13 @@ public class MedicalRecord extends BaseEntity {
     @Column(name = "notes", length = 1000)
     private String notes;
 
-    @Pattern(regexp = "DRAFT|COMPLETED|REVIEWED|ARCHIVED",
-             message = "Status must be DRAFT, COMPLETED, REVIEWED, or ARCHIVED")
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20)
-    private String status = "DRAFT";
+    private MedicalRecordStatus status = MedicalRecordStatus.DRAFT;
 
     // Vital signs
     @DecimalMin(value = "0.0", message = "Temperature must be positive")
-    @Column(name = "temperature", precision = 4, scale = 1)
+    @Column(name = "temperature")
     private Double temperature;
 
     @Min(value = 0, message = "Blood pressure systolic must be positive")
@@ -91,11 +98,11 @@ public class MedicalRecord extends BaseEntity {
     private Integer respiratoryRate;
 
     @DecimalMin(value = "0.0", message = "Weight must be positive")
-    @Column(name = "weight", precision = 5, scale = 2)
+    @Column(name = "weight")
     private Double weight;
 
     @DecimalMin(value = "0.0", message = "Height must be positive")
-    @Column(name = "height", precision = 5, scale = 2)
+    @Column(name = "height")
     private Double height;
 
     // Constructors
@@ -110,23 +117,23 @@ public class MedicalRecord extends BaseEntity {
 
     // Business methods
     public boolean isDraft() {
-        return "DRAFT".equals(status);
+        return MedicalRecordStatus.DRAFT.equals(status);
     }
 
     public boolean isCompleted() {
-        return "COMPLETED".equals(status);
+        return MedicalRecordStatus.COMPLETED.equals(status);
     }
 
     public void complete() {
-        this.status = "COMPLETED";
+        this.status = MedicalRecordStatus.COMPLETED;
     }
 
     public void review() {
-        this.status = "REVIEWED";
+        this.status = MedicalRecordStatus.REVIEWED;
     }
 
     public void archive() {
-        this.status = "ARCHIVED";
+        this.status = MedicalRecordStatus.ARCHIVED;
     }
 
     public Double getBMI() {
@@ -144,20 +151,17 @@ public class MedicalRecord extends BaseEntity {
     }
 
     // Getters and setters
-    public Long getRecordId() {
-        return recordId;
-    }
-
-    public void setRecordId(Long recordId) {
-        this.recordId = recordId;
-    }
-
     public Patient getPatient() {
         return patient;
     }
 
     public void setPatient(Patient patient) {
         this.patient = patient;
+    }
+
+    // Backward compatibility method
+    public Long getRecordId() {
+        return getId();
     }
 
     public Doctor getDoctor() {
@@ -240,11 +244,11 @@ public class MedicalRecord extends BaseEntity {
         this.notes = notes;
     }
 
-    public String getStatus() {
+    public MedicalRecordStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(MedicalRecordStatus status) {
         this.status = status;
     }
 
@@ -302,5 +306,16 @@ public class MedicalRecord extends BaseEntity {
 
     public void setHeight(Double height) {
         this.height = height;
+    }
+
+    @Override
+    public String toString() {
+        return "MedicalRecord{" +
+                "id=" + getId() +
+                ", patient=" + (patient != null ? patient.getFullName() : "null") +
+                ", doctor=" + (doctor != null ? doctor.getFullName() : "null") +
+                ", visitDate=" + visitDate +
+                ", status=" + status +
+                '}';
     }
 }

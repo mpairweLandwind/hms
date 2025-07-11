@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+    <title>Patient Management - Hospital Management System</title>
+    <h:outputStylesheet library="css" name="dashboard.css" />
+    <h:outputStylesheet library="css" name="components.css" />
+    <h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            background: #007bff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .header-content h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .header-content p {
+            color: #6c757d;
+            font-size: 14px;
+            margin: 4px 0 0 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .management-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 32px;
+            overflow: hidden;
+        }
+
+        .management-header {
+            padding: 24px;
+            border-bottom: 1px solid #e9ecef;
+            background: #f8f9fa;
+        }
+
+        .management-header h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .management-content {
+            padding: 0;
+        }
+
+        .ui-tabs {
+            border: none !important;
+            background: transparent !important;
+        }
+
+        .ui-tabs .ui-tabs-nav {
+            background: #f8f9fa !important;
+            border: none !important;
+            border-bottom: 1px solid #e9ecef !important;
+            padding: 0 24px !important;
+        }
+
+        .ui-tabs .ui-tabs-nav li {
+            border: none !important;
+            background: transparent !important;
+            margin-right: 8px !important;
+        }
+
+        .ui-tabs .ui-tabs-nav li a {
+            background: transparent !important;
+            border: none !important;
+            color: #6c757d !important;
+            padding: 16px 20px !important;
+            font-weight: 500 !important;
+            border-radius: 8px 8px 0 0 !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .ui-tabs .ui-tabs-nav li.ui-tabs-selected a,
+        .ui-tabs .ui-tabs-nav li a:hover {
+            background: white !important;
+            color: #007bff !important;
+            border-bottom: 2px solid #007bff !important;
+        }
+
+        .ui-tabs .ui-tabs-panels {
+            background: white !important;
+            border: none !important;
+            padding: 24px !important;
+        }
+
+        .ui-datatable {
+            border: none !important;
+            border-radius: 12px !important;
+            overflow: hidden !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+        }
+
+        .ui-datatable .ui-datatable-header {
+            background: #f8f9fa !important;
+            border: none !important;
+            padding: 16px 20px !important;
+            font-weight: 600 !important;
+            color: #2c3e50 !important;
+        }
+
+        .ui-datatable .ui-datatable-thead>tr>th {
+            background: #f8f9fa !important;
+            border: none !important;
+            border-bottom: 2px solid #e9ecef !important;
+            padding: 16px 20px !important;
+            font-weight: 600 !important;
+            color: #495057 !important;
+            font-size: 14px !important;
+        }
+
+        .ui-datatable .ui-datatable-tbody>tr>td {
+            border: none !important;
+            border-bottom: 1px solid #f1f3f4 !important;
+            padding: 16px 20px !important;
+            font-size: 14px !important;
+        }
+
+        .ui-datatable .ui-datatable-tbody>tr:hover {
+            background: #f8f9fa !important;
+        }
+
+        .ui-inputfield {
+            border: 2px solid #e9ecef !important;
+            border-radius: 8px !important;
+            padding: 12px 16px !important;
+            font-size: 14px !important;
+            transition: border-color 0.2s ease !important;
+        }
+
+        .ui-inputfield:focus {
+            border-color: #007bff !important;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1) !important;
+        }
+
+        .action-icons-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: flex-start;
+            min-width: 110px;
+        }
+
+        .action-icon-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: transparent;
+            border: none;
+            transition: background 0.2s;
+            cursor: pointer;
+            position: relative;
+            margin-right: 2px;
+            z-index: 2;
+        }
+
+        .action-icon-btn:last-child {
+            margin-right: 0;
+        }
+
+        .action-icon-btn:hover {
+            background: #e9ecef;
+        }
+
+        .action-icon-btn .pi {
+            font-size: 1.2rem;
+            color: #495057;
+            transition: color 0.2s;
+        }
+
+        .action-icon-btn:hover .pi {
+            color: #007bff;
+        }
+
+        .ui-row-editor {
+            min-width: 70px !important;
+            display: flex !important;
+            gap: 6px !important;
+            justify-content: flex-start !important;
+            align-items: center !important;
+            z-index: 3 !important;
+            background: none !important;
+            border: none !important;
+        }
+
+        .ui-row-editor .ui-icon {
+            margin-right: 2px;
+        }
+
+        .ui-row-editor .ui-icon:last-child {
+            margin-right: 0;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 32px;
+            color: #2c3e50;
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .sidebar-link i {
+            font-size: 1.2rem;
+        }
+
+        .sidebar-link.active, .sidebar-link:hover {
+            background: #e9f2ff;
+            color: #007bff !important;
+        }
+
+        .patient-details-panel {
+            padding: 18px 24px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .patient-details-panel h4 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 16px;
+            }
+
+            .admin-header {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+
+            .ui-tabs .ui-tabs-nav {
+                padding: 0 16px !important;
+            }
+
+            .ui-tabs .ui-tabs-panels {
+                padding: 16px !important;
+            }
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <div class="admin-layout" style="display: flex; min-height: 100vh;">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" style="width: 240px; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-right: 32px; padding: 32px 0 24px 0; display: flex; flex-direction: column; align-items: center;">
+            <div class="sidebar-logo" style="margin-bottom: 32px;">
+                <span style="font-size: 2rem; font-weight: bold; color: #007bff;">HMS</span>
+            </div>
+            <nav class="sidebar-nav" style="width: 100%;">
+                <ul style="list-style: none; padding: 0; margin: 0; width: 100%;">
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/admin-dashboard.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-home"></i> Dashboard
+                        </h:link>
+                    </li>
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/sections/patient-management.xhtml" styleClass="sidebar-link active">
+                            <i class="pi pi-users"></i> Patients
+                        </h:link>
+                    </li>
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/sections/doctor-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-user-md"></i> Doctors
+                        </h:link>
+                    </li>
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/sections/staff-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-id-card"></i> Staff
+                        </h:link>
+                    </li>
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/sections/user-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-user"></i> Users
+                        </h:link>
+                    </li>
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/sections/department-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-building"></i> Departments
+                        </h:link>
+                    </li>
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/sections/billing-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-credit-card"></i> Billing
+                        </h:link>
+                    </li>
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/sections/appointment-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-calendar"></i> Appointments
+                        </h:link>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="admin-container" style="flex: 1;">
+            <header class="admin-header" style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 24px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <button type="button" style="background: #f7f8fa; border: none; border-radius: 6px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; margin-right: 8px;">
+                        <i class="pi pi-angle-left" style="font-size: 1.3rem; color: #6c757d;"></i>
+                    </button>
+                    <span style="font-size: 1.1rem; font-weight: 500; color: #555; letter-spacing: 1px;">PATIENT DASHBOARD</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 24px; flex: 1; justify-content: flex-end;">
+                    <i class="pi pi-search" style="font-size: 1.2rem; color: #6c757d; cursor: pointer;"></i>
+                    <span style="position: relative;">
+                        <i class="pi pi-bell" style="font-size: 1.2rem; color: #6c757d; cursor: pointer;"></i>
+                        <span style="position: absolute; top: -6px; right: -8px; background: #007bff; color: white; font-size: 11px; border-radius: 8px; padding: 0 5px; min-width: 16px; text-align: center;">5</span>
+                    </span>
+                    <h:form id="userMenuForm" style="margin: 0;">
+                        <p:overlayPanel id="userMenuPanel" for="userMenuAvatar" hideEffect="fade" showEffect="fade" style="min-width: 180px;">
+                            <div style="padding: 8px 0;">
+                                <p:commandLink style="display: flex; align-items: center; gap: 10px; padding: 8px 16px; color: #333; text-decoration: none;" action="#">
+                                    <img src="#{request.contextPath}/resources/images/user.png" alt="Profile" style="width:18px;height:18px;border-radius:50%;border:1px solid #e9ecef;object-fit:cover;"/> Profile
+                                </p:commandLink>
+                                <p:commandLink style="display: flex; align-items: center; gap: 10px; padding: 8px 16px; color: #333; text-decoration: none;" action="#">
+                                    <i class="pi pi-cog" style="color: #007bff;"></i> Settings
+                                </p:commandLink>
+                                <p:divider style="margin: 4px 0;"/>
+                                <p:commandButton value="Logout" icon="pi pi-sign-out" action="#{authController.logout}" immediate="true" styleClass="ui-button-flat" style="width: 100%; text-align: left; color: #d9534f; padding: 8px 16px; background: none; border: none;" ajax="false"/>
+                            </div>
+                        </p:overlayPanel>
+                        <p:commandLink id="userMenuAvatar" style="display: flex; align-items: center; gap: 8px;">
+                            <img src="#{request.contextPath}/resources/images/user.png" alt="User" style="width:32px;height:32px;border-radius:50%;border:1px solid #e9ecef;object-fit:cover;"/>
+                            <span style="font-weight: 500; color: #2c3e50;">#{authController.currentUserName}</span>
+                        </p:commandLink>
+                    </h:form>
+                </div>
+            </header>
+
+            <div class="management-section">
+                <div class="management-header">
+                    <h3 id="patient-management-title">Patient Management</h3>
+                </div>
+                <div class="management-content">
+                    <h:form id="patientForm" aria-labelledby="patient-management-title">
+                        <h:messages globalOnly="true" style="color: #dc3545; margin-bottom: 10px;"/>
+                        <p:tabView id="patientTabView" aria-label="Patient Management Tabs">
+                            <p:tab title="View/Edit Patients" id="viewEditPatientsTab" aria-label="View or Edit Patients">
+                                <p:dataTable id="allPatientsTable"
+                                             value="#{adminDashboardController.allPatients}"
+                                             var="patient"
+                                             editable="true"
+                                             rowKey="#{patient.patientId}"
+                                             editMode="row"
+                                             selection="#{adminDashboardController.selectedPatient}"
+                                             selectionMode="single"
+                                             styleClass="ui-datatable"
+                                             aria-label="All Patients Table">
+                                    <p:ajax event="rowEdit" listener="#{adminDashboardController.onRowEditPatient}" update="@form"/>
+                                    <p:ajax event="rowEditCancel" update="@form"/>
+                                    <p:column expander="true" style="width:40px"/>
+                                    <p:column headerText="First Name">
+                                        <p:cellEditor>
+                                            <f:facet name="output">#{patient.firstName}</f:facet>
+                                            <f:facet name="input"><h:inputText value="#{patient.firstName}" styleClass="ui-inputfield" aria-label="First Name" required="true"/></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column headerText="Last Name">
+                                        <p:cellEditor>
+                                            <f:facet name="output">#{patient.lastName}</f:facet>
+                                            <f:facet name="input"><h:inputText value="#{patient.lastName}" styleClass="ui-inputfield" aria-label="Last Name" required="true"/></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column headerText="Email">
+                                        <p:cellEditor>
+                                            <f:facet name="output">#{patient.email}</f:facet>
+                                            <f:facet name="input"><h:inputText value="#{patient.email}" styleClass="ui-inputfield" aria-label="Email" required="true"/></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column headerText="Phone">
+                                        <p:cellEditor>
+                                            <f:facet name="output">#{patient.phoneNumber}</f:facet>
+                                            <f:facet name="input"><h:inputText value="#{patient.phoneNumber}" styleClass="ui-inputfield" aria-label="Phone" required="true"/></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column headerText="Actions" style="width: 120px;">
+                                        <div class="action-icons-row">
+                                            <p:rowEditor styleClass="action-icon-btn" editTitle="Edit" cancelTitle="Cancel" saveTitle="Save"/>
+                                            <p:commandButton icon="pi pi-trash" title="Soft Delete" actionListener="#{adminDashboardController.deletePatient(patient)}" update="@form" styleClass="ui-button-danger action-icon-btn" aria-label="Delete Patient" ajax="false"/>
+                                        </div>
+                                    </p:column>
+                                    <p:rowExpansion>
+                                        <div class="patient-details-panel">
+                                            <h4>Patient Details</h4>
+                                            <div class="ui-g ui-fluid" style="row-gap: 10px;">
+                                                <div class="ui-g-6"><b>Address:</b> #{patient.address}</div>
+                                                <div class="ui-g-6"><b>Date of Birth:</b> <h:outputText value="#{patient.dateOfBirth}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText></div>
+                                                <div class="ui-g-6"><b>Age:</b> #{patient.age}</div>
+                                                <div class="ui-g-6"><b>Gender:</b> #{patient.gender}</div>
+                                                <div class="ui-g-6"><b>Emergency Contact:</b> #{patient.emergencyContact}</div>
+                                                <div class="ui-g-6"><b>Emergency Phone:</b> #{patient.emergencyPhone}</div>
+                                                <div class="ui-g-6"><b>Insurance Number:</b> #{patient.insuranceNumber}</div>
+                                                <div class="ui-g-6"><b>Blood Type:</b> #{patient.bloodType}</div>
+                                                <div class="ui-g-12"><b>Allergies:</b> #{patient.allergies}</div>
+                                                <div class="ui-g-6"><b>Active:</b> <h:outputText value="#{patient.active ? 'Yes' : 'No'}"/></div>
+                                            </div>
+                                        </div>
+                                    </p:rowExpansion>
+                                </p:dataTable>
+                            </p:tab>
+                            <p:tab title="Show Deleted/Restore" id="deletedPatientsTab" aria-label="Show Deleted or Restore Patients">
+                                <p:dataTable id="deletedPatientsTable" value="#{adminDashboardController.deletedPatients}" var="patient" styleClass="ui-datatable" aria-label="Deleted Patients Table">
+                                    <p:column headerText="First Name">#{patient.firstName}</p:column>
+                                    <p:column headerText="Last Name">#{patient.lastName}</p:column>
+                                    <p:column headerText="Email">#{patient.email}</p:column>
+                                    <p:column headerText="Actions">
+                                        <p:commandButton value="Restore" icon="pi pi-undo" actionListener="#{adminDashboardController.restorePatient(patient)}" update="@form" styleClass="ui-button-success" aria-label="Restore Patient" ajax="false"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                        </p:tabView>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+    </div>
+</h:body>
+
+</html> 

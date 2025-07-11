@@ -1,3 +1,4 @@
+<!-- DEBUG: Ensure unique messages, global messages, and hidden token for patient registration form. -->
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
@@ -40,6 +41,9 @@
     
     <ui:define name="registrationForm">
         <h:form id="patientRegistrationForm" styleClass="registration-form">
+            <p:messages id="patientMessages" showDetail="true" showSummary="true" autoUpdate="true" styleClass="form-messages"/>
+            <h:messages id="patientGlobalMessages" globalOnly="true" />
+            <h:inputHidden id="patientFormUniqueToken" value="#{patientRegistrationController.formToken}" />
             
             <!-- Step 1: Account Information -->
             <div class="form-step active" data-step="1">
@@ -74,7 +78,7 @@
                 
                 <div class="form-grid">
                     <div class="form-group">
-                        <p:outputLabel for="dateOfBirth" value="Date of Birth" styleClass="form-label">
+                        <p:outputLabel for="dateOfBirth" value="Date of Birth *" styleClass="form-label required">
                             <i class="pi pi-calendar label-icon" aria-hidden="true"></i>
                         </p:outputLabel>
                         <p:datePicker id="dateOfBirth" 
@@ -82,21 +86,34 @@
                                     pattern="dd/MM/yyyy"
                                     placeholder="Select your birth date"
                                     styleClass="form-input"
-                                    showIcon="true"/>
+                                    showIcon="true"
+                                    required="true"
+                                    requiredMessage="Date of birth is required"
+                                    yearRange="1900:#{currentYear}"
+                                    maxdate="#{currentDate}"
+                                    mindate="1900-01-01">
+                            <p:ajax event="dateSelect" 
+                                  listener="#{patientRegistrationController.validateDateOfBirth}" 
+                                  update="messages"/>
+                        </p:datePicker>
+                        <p:message for="dateOfBirth" styleClass="field-error"/>
                     </div>
                     
                     <div class="form-group">
-                        <p:outputLabel for="gender" value="Gender" styleClass="form-label">
+                        <p:outputLabel for="gender" value="Gender *" styleClass="form-label required">
                             <i class="pi pi-user label-icon" aria-hidden="true"></i>
                         </p:outputLabel>
                         <p:selectOneMenu id="gender" 
                                        value="#{patientRegistrationController.registrationDTO.gender}"
-                                       styleClass="form-input">
+                                       styleClass="form-input"
+                                       required="true"
+                                       requiredMessage="Gender is required">
                             <f:selectItem itemLabel="Select Gender" itemValue=""/>
                             <f:selectItem itemLabel="Male" itemValue="MALE"/>
                             <f:selectItem itemLabel="Female" itemValue="FEMALE"/>
                             <f:selectItem itemLabel="Other" itemValue="OTHER"/>
                         </p:selectOneMenu>
+                        <p:message for="gender" styleClass="field-error"/>
                     </div>
                 </div>
                 
@@ -109,15 +126,16 @@
                                        value="#{patientRegistrationController.registrationDTO.bloodType}"
                                        styleClass="form-input">
                             <f:selectItem itemLabel="Select Blood Type" itemValue=""/>
-                            <f:selectItem itemLabel="A+" itemValue="A_POSITIVE"/>
-                            <f:selectItem itemLabel="A-" itemValue="A_NEGATIVE"/>
-                            <f:selectItem itemLabel="B+" itemValue="B_POSITIVE"/>
-                            <f:selectItem itemLabel="B-" itemValue="B_NEGATIVE"/>
-                            <f:selectItem itemLabel="AB+" itemValue="AB_POSITIVE"/>
-                            <f:selectItem itemLabel="AB-" itemValue="AB_NEGATIVE"/>
-                            <f:selectItem itemLabel="O+" itemValue="O_POSITIVE"/>
-                            <f:selectItem itemLabel="O-" itemValue="O_NEGATIVE"/>
+                            <f:selectItem itemLabel="A+" itemValue="A+"/>
+                            <f:selectItem itemLabel="A-" itemValue="A-"/>
+                            <f:selectItem itemLabel="B+" itemValue="B+"/>
+                            <f:selectItem itemLabel="B-" itemValue="B-"/>
+                            <f:selectItem itemLabel="AB+" itemValue="AB+"/>
+                            <f:selectItem itemLabel="AB-" itemValue="AB-"/>
+                            <f:selectItem itemLabel="O+" itemValue="O+"/>
+                            <f:selectItem itemLabel="O-" itemValue="O-"/>
                         </p:selectOneMenu>
+                        <p:message for="bloodType" styleClass="field-error"/>
                     </div>
                     
                     <div class="form-group">
@@ -127,19 +145,29 @@
                         <p:inputText id="insuranceNumber" 
                                    value="#{patientRegistrationController.registrationDTO.insuranceNumber}" 
                                    placeholder="Your insurance policy number"
-                                   styleClass="form-input"/>
+                                   styleClass="form-input"
+                                   maxlength="50">
+                            <f:validateRegex pattern="^[A-Za-z0-9\-_]{5,50}$" 
+                                           message="Insurance number must be 5-50 characters (letters, numbers, hyphens, underscores)"/>
+                        </p:inputText>
+                        <p:message for="insuranceNumber" styleClass="field-error"/>
                     </div>
                 </div>
                 
                 <div class="form-grid">
                     <div class="form-group">
                         <p:outputLabel for="emergencyContact" value="Emergency Contact Name" styleClass="form-label">
-                            <i class="pi pi-phone label-icon" aria-hidden="true"></i>
+                            <i class="pi pi-user label-icon" aria-hidden="true"></i>
                         </p:outputLabel>
                         <p:inputText id="emergencyContact" 
                                    value="#{patientRegistrationController.registrationDTO.emergencyContact}" 
                                    placeholder="Emergency contact person"
-                                   styleClass="form-input"/>
+                                   styleClass="form-input"
+                                   maxlength="100">
+                            <f:validateRegex pattern="^[A-Za-z\s]{2,100}$" 
+                                           message="Emergency contact name must be 2-100 letters and spaces only"/>
+                        </p:inputText>
+                        <p:message for="emergencyContact" styleClass="field-error"/>
                     </div>
                     
                     <div class="form-group">
@@ -149,7 +177,12 @@
                         <p:inputText id="emergencyPhone" 
                                    value="#{patientRegistrationController.registrationDTO.emergencyPhone}" 
                                    placeholder="Emergency contact number"
-                                   styleClass="form-input"/>
+                                   styleClass="form-input"
+                                   maxlength="20">
+                            <f:validateRegex pattern="^[+]?[0-9]{10,15}$" 
+                                           message="Emergency phone must be 10-15 digits with optional + prefix"/>
+                        </p:inputText>
+                        <p:message for="emergencyPhone" styleClass="field-error"/>
                     </div>
                 </div>
                 
@@ -161,9 +194,15 @@
                                    value="#{patientRegistrationController.registrationDTO.allergies}" 
                                    rows="3" 
                                    placeholder="List any known allergies or medical conditions"
-                                   styleClass="form-input"/>
+                                   styleClass="form-input"
+                                   maxlength="500">
+                        <f:validateRegex pattern="^[A-Za-z0-9\s,\.\-_]{0,500}$" 
+                                       message="Allergies field can contain letters, numbers, spaces, commas, periods, hyphens, and underscores only"/>
+                    </p:inputTextarea>
+                    <p:message for="allergies" styleClass="field-error"/>
                 </div>
                 
+                <!-- Terms and Conditions -->
                 <div class="form-group">
                     <div class="checkbox-group">
                         <p:selectBooleanCheckbox id="acceptTerms" 
@@ -172,14 +211,41 @@
                                                styleClass="custom-checkbox"/>
                         <p:outputLabel for="acceptTerms" styleClass="checkbox-label">
                             I agree to the <h:link value="Terms of Service" outcome="/terms"/> and 
-                            <h:link value="Privacy Policy" outcome="/privacy"/>
+                            <h:link value="Privacy Policy" outcome="/privacy"/> *
                         </p:outputLabel>
+                        <p:message for="acceptTerms" styleClass="field-error"/>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <p:selectBooleanCheckbox id="acceptPrivacy" 
+                                               value="#{patientRegistrationController.registrationDTO.acceptPrivacy}"
+                                               required="true"
+                                               styleClass="custom-checkbox"/>
+                        <p:outputLabel for="acceptPrivacy" styleClass="checkbox-label">
+                            I consent to the processing of my personal data for healthcare purposes *
+                        </p:outputLabel>
+                        <p:message for="acceptPrivacy" styleClass="field-error"/>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <p:selectBooleanCheckbox id="medicalConsent" 
+                                               value="#{patientRegistrationController.registrationDTO.medicalConsent}"
+                                               required="true"
+                                               styleClass="custom-checkbox"/>
+                        <p:outputLabel for="medicalConsent" styleClass="checkbox-label">
+                            I consent to medical data processing and sharing with healthcare providers *
+                        </p:outputLabel>
+                        <p:message for="medicalConsent" styleClass="field-error"/>
                     </div>
                 </div>
             </div>
 
             <!-- Navigation Buttons -->
-            <div class="form-navigation">
+            <div class="form-navigation" id="form-navigation">
                 <p:commandButton value="Previous" 
                                icon="pi pi-chevron-left" 
                                styleClass="btn btn-secondary nav-btn prev-btn"
@@ -192,45 +258,234 @@
                                styleClass="btn btn-primary nav-btn next-btn"
                                onclick="nextStep(); return false;"/>
                 
-                <p:commandButton value="Create Patient Account" 
+                <p:commandButton id="submitPatientBtn" value="Create Patient Account" 
                                icon="pi pi-user-plus" 
                                styleClass="btn btn-primary nav-btn submit-btn"
                                action="#{patientRegistrationController.registerPatient}"
-                               update="patientRegistrationForm messages"
-                               onstart="showLoading('Creating your patient account...')"
-                               oncomplete="hideLoading(); handleRegistrationComplete(args);"
-                               style="display: none;"/>
+                               ajax="false"
+                               style="display: none;"
+                               onclick="showLoading('Creating your account...');"/>
             </div>
-
-            <p:messages id="messages" showDetail="true" closable="true"/>
         </h:form>
     </ui:define>
     
     <ui:define name="alternativeRoles">
-        <h:link outcome="/views/registration/doctor-registration" styleClass="role-link">
-            <i class="pi pi-user-edit" aria-hidden="true"></i>
-            <span>Doctor</span>
-        </h:link>
-        <h:link outcome="/views/registration/staff-registration" styleClass="role-link">
-            <i class="pi pi-users" aria-hidden="true"></i>
-            <span>Staff</span>
-        </h:link>
+        <!-- Removed links to register as Doctor or Staff for strict patient registration only -->
     </ui:define>
     
     <ui:define name="additionalScripts">
-        <script>
-            function handleRegistrationComplete(args) {
-                if (args.validationFailed) {
-                    return;
+        <script type="text/javascript">
+        //<![CDATA[
+            // Enhanced validation patterns
+            const VALIDATION_PATTERNS = {
+                phone: /^[+]?[0-9]{10,15}$/,
+                email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                username: /^[a-zA-Z0-9_]{3,50}$/,
+                name: /^[A-Za-z\s]{2,50}$/,
+                insurance: /^[A-Za-z0-9\-_]{5,50}$/,
+                emergencyName: /^[A-Za-z\s]{2,100}$/,
+                allergies: /^[A-Za-z0-9\s,.\-_]{0,500}$/
+            };
+            
+            // Enhanced field validation with better user feedback
+            function validateField(field) {
+                const value = field.value.trim();
+                const fieldType = field.id;
+                
+                // Clear previous errors
+                clearFieldError(field);
+                
+                // Required field validation
+                if (field.hasAttribute('required') && !value) {
+                    showFieldError(field, 'This field is required');
+                    return false;
                 }
                 
-                if (args.success) {
-                    showSuccessMessage('Patient account created successfully! Please check your email for verification.');
-                    setTimeout(() => {
-                        window.location.href = '/index.xhtml';
-                    }, 3000);
+                // Pattern validation
+                if (value && VALIDATION_PATTERNS[fieldType]) {
+                    if (!VALIDATION_PATTERNS[fieldType].test(value)) {
+                        showFieldError(field, getValidationMessage(fieldType));
+                        return false;
+                    }
+                }
+                
+                // Specific field validations
+                switch (fieldType) {
+                    case 'phoneNumber':
+                    case 'emergencyPhone':
+                        if (value && !VALIDATION_PATTERNS.phone.test(value)) {
+                            showFieldError(field, 'Please enter a valid phone number (10-15 digits, + prefix optional)');
+                            return false;
+                        }
+                        break;
+                    case 'email':
+                        if (value && !VALIDATION_PATTERNS.email.test(value)) {
+                            showFieldError(field, 'Please enter a valid email address');
+                            return false;
+                        }
+                        break;
+                    case 'username':
+                        if (value && !VALIDATION_PATTERNS.username.test(value)) {
+                            showFieldError(field, 'Username must be 3-50 characters (letters, numbers, underscores only)');
+                            return false;
+                        }
+                        break;
+                    case 'firstName':
+                    case 'lastName':
+                        if (value && !VALIDATION_PATTERNS.name.test(value)) {
+                            showFieldError(field, 'Name must be 2-50 letters and spaces only');
+                            return false;
+                        }
+                        break;
+                    case 'insuranceNumber':
+                        if (value && !VALIDATION_PATTERNS.insurance.test(value)) {
+                            showFieldError(field, 'Insurance number must be 5-50 characters (letters, numbers, hyphens, underscores)');
+                            return false;
+                        }
+                        break;
+                    case 'emergencyContact':
+                        if (value && !VALIDATION_PATTERNS.emergencyName.test(value)) {
+                            showFieldError(field, 'Emergency contact name must be 2-100 letters and spaces only');
+                            return false;
+                        }
+                        break;
+                    case 'allergies':
+                        if (value && !VALIDATION_PATTERNS.allergies.test(value)) {
+                            showFieldError(field, 'Allergies field can contain letters, numbers, spaces, commas, periods, hyphens, and underscores only');
+                            return false;
+                        }
+                        break;
+                }
+                
+                return true;
+            }
+            
+            function getValidationMessage(fieldType) {
+                const messages = {
+                    phone: 'Please enter a valid phone number (10-15 digits, + prefix optional)',
+                    email: 'Please enter a valid email address',
+                    username: 'Username must be 3-50 characters (letters, numbers, underscores only)',
+                    name: 'Name must be 2-50 letters and spaces only',
+                    insurance: 'Insurance number must be 5-50 characters (letters, numbers, hyphens, underscores)',
+                    emergencyName: 'Emergency contact name must be 2-100 letters and spaces only',
+                    allergies: 'Allergies field can contain letters, numbers, spaces, commas, periods, hyphens, and underscores only'
+                };
+                return messages[fieldType] || 'Invalid format';
+            }
+            
+            // Enhanced error display
+            function showFieldError(field, message) {
+                field.classList.add('error');
+                field.setAttribute('aria-invalid', 'true');
+                
+                // Remove existing error message
+                const existingError = field.parentNode.querySelector('.field-error-message');
+                if (existingError) {
+                    existingError.remove();
+                }
+                
+                // Create error message element
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'field-error-message';
+                errorDiv.textContent = message;
+                errorDiv.setAttribute('role', 'alert');
+                errorDiv.setAttribute('aria-live', 'polite');
+                
+                field.parentNode.appendChild(errorDiv);
+                
+                // Announce to screen reader
+                announceToScreenReader(message);
+            }
+            
+            function clearFieldError(field) {
+                field.classList.remove('error');
+                field.setAttribute('aria-invalid', 'false');
+                
+                const errorMessage = field.parentNode.querySelector('.field-error-message');
+                if (errorMessage) {
+                    errorMessage.remove();
                 }
             }
+            
+            // Enhanced loading state
+            function showLoading(message = 'Processing...') {
+                const loadingDiv = document.createElement('div');
+                loadingDiv.id = 'loading-overlay';
+                loadingDiv.className = 'loading-overlay';
+                loadingDiv.innerHTML = `
+                    <div class="loading-content">
+                        <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
+                        <p>${message}</p>
+                    </div>
+                `;
+                document.body.appendChild(loadingDiv);
+                
+                // Announce to screen reader
+                announceToScreenReader(message);
+            }
+            
+            function hideLoading() {
+                const loadingDiv = document.getElementById('loading-overlay');
+                if (loadingDiv) {
+                    loadingDiv.remove();
+                }
+            }
+            
+            // Enhanced accessibility
+            function announceToScreenReader(message) {
+                const announcement = document.createElement('div');
+                announcement.setAttribute('aria-live', 'polite');
+                announcement.setAttribute('aria-atomic', 'true');
+                announcement.className = 'sr-only';
+                announcement.textContent = message;
+                
+                document.body.appendChild(announcement);
+                
+                setTimeout(() => {
+                    announcement.remove();
+                }, 1000);
+            }
+            
+            // Enhanced step validation
+            function validateCurrentStep() {
+                const currentStepElement = document.querySelector('.form-step.active');
+                const requiredFields = currentStepElement.querySelectorAll('input[required], select[required], textarea[required]');
+                let isValid = true;
+                
+                requiredFields.forEach(field => {
+                    if (!validateField(field)) {
+                        isValid = false;
+                    }
+                });
+                
+                if (!isValid) {
+                    showStepError('Please correct the errors before proceeding');
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            function showStepError(message) {
+                const messagesContainer = document.getElementById('messages');
+                if (messagesContainer) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'ui-message ui-message-error ui-widget ui-corner-all';
+                    errorDiv.innerHTML = `
+                        <span class=\"ui-message-error-icon\"></span>
+                        <span class=\"ui-message-error-detail\">${message}</span>
+                    `;
+                    messagesContainer.appendChild(errorDiv);
+                    
+                    // Auto-remove after 5 seconds
+                    setTimeout(() => {
+                        errorDiv.remove();
+                    }, 5000);
+                }
+                
+                announceToScreenReader(message);
+            }
+        //]]>
         </script>
     </ui:define>
     

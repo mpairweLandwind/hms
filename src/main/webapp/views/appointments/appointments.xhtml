@@ -23,7 +23,7 @@
             </div>
 
             <!-- Search and Filter Panel -->
-            <p:panel header="Search & Filter" styleClass="search-panel" toggleable="true">
+            <p:panel header="Search &amp; Filter" styleClass="search-panel" toggleable="true">
                 <div class="p-grid">
                     <div class="p-col-12 p-md-4">
                         <p:outputLabel for="searchTerm" value="Search:" />
@@ -119,6 +119,20 @@
                                       message="Are you sure you want to mark this appointment as completed?" 
                                       icon="pi pi-exclamation-triangle" />
                         </p:commandButton>
+                        
+                        <p:commandButton icon="pi pi-pencil" 
+                                        title="Edit"
+                                        action="#{appointmentController.openEditDialog(appointment)}"
+                                        onclick="PF('editAppointmentDialog').show()"
+                                        styleClass="ui-button-warning ui-button-sm"
+                                        rendered="#{appointment.status ne 'COMPLETED' and appointment.status ne 'CANCELLED'}"/>
+                        
+                        <p:commandButton icon="pi pi-calendar" 
+                                        title="Reschedule"
+                                        action="#{appointmentController.openRescheduleDialog(appointment)}"
+                                        onclick="PF('rescheduleAppointmentDialog').show()"
+                                        styleClass="ui-button-info ui-button-sm"
+                                        rendered="#{appointment.status ne 'COMPLETED' and appointment.status ne 'CANCELLED'}"/>
                     </p:column>
                 </p:dataTable>
             </p:panel>
@@ -140,7 +154,7 @@
                         <h:outputText value="#{appointment.appointmentId}" />
                     </p:column>
                     
-                    <p:column headerText="Date & Time" sortBy="#{appointment.appointmentDate}">
+                    <p:column headerText="Date &amp; Time" sortBy="#{appointment.appointmentDate}">
                         <h:outputText value="#{appointment.appointmentDate}">
                             <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
                         </h:outputText>

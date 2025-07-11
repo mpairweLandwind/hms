@@ -20,16 +20,18 @@
                 
                 <h3>Are you sure you want to cancel this appointment?</h3>
                 
-                <div class="appointment-summary" rendered="#{not empty appointmentController.selectedAppointment}">
+                <ui:fragment rendered="#{not empty appointmentController.selectedAppointment}">
+                    <div class="appointment-summary">
                     <p><strong>Patient:</strong> #{appointmentController.selectedAppointment.patientName}</p>
                     <p><strong>Doctor:</strong> #{appointmentController.selectedAppointment.doctorName}</p>
-                    <p><strong>Date & Time:</strong> 
+                    <p><strong>Date &amp; Time:</strong>
                         <h:outputText value="#{appointmentController.selectedAppointment.appointmentDate}">
                             <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
                         </h:outputText>
                     </p>
                 </div>
-                
+                </ui:fragment>
+
                 <p class="cancel-warning">
                     <i class="pi pi-info-circle"></i>
                     This action cannot be undone. The appointment will be marked as cancelled.
