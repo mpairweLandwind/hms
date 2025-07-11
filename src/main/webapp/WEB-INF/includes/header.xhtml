@@ -1,209 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
+    <header class="main-header">
     <div class="header-container">
         <!-- Logo and Brand -->
-        <div class="header-brand">
-            <h:link outcome="/index" styleClass="brand-link" title="Hospital Management System Home">
-                <div class="brand-logo">
-                    <i class="pi pi-heart-fill" aria-hidden="true"></i>
-                    <span class="brand-text">
-                        <span class="brand-name">HealthCare</span>
-                        <span class="brand-suffix">Plus</span>
-                    </span>
-                </div>
-            </h:link>
-        </div>
-
-        <!-- Search Bar (for authenticated users) -->
-        <div class="header-search" 
-             style="#{sessionController.currentUser != null ? 'display: flex;' : 'display: none;'}">
-            <h:form styleClass="search-form">
-                <div class="search-input-group">
-                    <p:inputText id="globalSearch" 
-                                 value="#{searchController.searchQuery}"
-                                 placeholder="Search patients, appointments, records..."
-                                 styleClass="search-input"
-                                 title="Global search across the system"
-                                 accesskey="s">
-                        <p:ajax event="keyup" 
-                                listener="#{searchController.performSearch}" 
-                                update="searchResults"
-                                delay="300"/>
-                    </p:inputText>
-                    <p:commandButton icon="pi pi-search" 
-                                     styleClass="search-button p-button-text"
-                                     action="#{searchController.performSearch}"
-                                     title="Perform search"
-                                     update="searchResults"/>
-                </div>
-                
-                <!-- Search Results Dropdown -->
-                <p:overlayPanel for="globalSearch" 
-                                id="searchResults" 
-                                styleClass="search-results-panel"
-                                showEvent="focus"
-                                hideEvent="blur"
-                                dynamic="true">
-                    <ui:repeat value="#{searchController.searchResults}" var="result">
-                        <div class="search-result-item">
-                            <h:link outcome="#{result.url}" styleClass="search-result-link">
-                                <i class="#{result.icon}" aria-hidden="true"></i>
-                                <div class="search-result-content">
-                                    <span class="search-result-title">#{result.title}</span>
-                                    <span class="search-result-description">#{result.description}</span>
-                                </div>
-                            </h:link>
-                        </div>
-                    </ui:repeat>
-                    
-                    <div class="search-no-results" 
-                         style="#{empty searchController.searchResults ? 'display: block;' : 'display: none;'}">
-                        <i class="pi pi-search" aria-hidden="true"></i>
-                        <p>No results found. Try different keywords.</p>
-                    </div>
-                </p:overlayPanel>
-            </h:form>
-        </div>
-
-        <!-- User Actions -->
-        <div class="header-actions">
-            <!-- Guest Actions -->
-            <div class="guest-actions" 
-                 style="#{sessionController.currentUser == null ? 'display: flex;' : 'display: none;'}">
-                <p:commandButton value="Sign In" 
-                                 icon="pi pi-sign-in"
-                                 styleClass="p-button-outlined p-button-primary signin-btn"
-                                 onclick="PF('loginDialog').show()"
-                                 title="Sign in to your account"/>
-                <p:commandButton value="Register" 
-                                 icon="pi pi-user-plus"
-                                 styleClass="p-button-primary register-btn"
-                                 onclick="PF('registerDialog').show()"
-                                 title="Create a new account"/>
+            <div class="header-brand">
+                <h:link outcome="/index" styleClass="brand-link">
+                    <div class="brand-logo">
+            <div class="logo-icon">
+                <!--<i class="pi pi-heart-fill" aria-hidden="true"></i>-->
+                <h:graphicImage library="images" name="hms.png" alt="HMS Logo" style="height: 40px; width: auto;"/>
             </div>
-
-            <!-- Authenticated User Actions -->
-            <div class="user-actions" 
-                 style="#{sessionController.currentUser != null ? 'display: flex;' : 'display: none;'}">
-                
-                <!-- Notifications -->
-                <div class="notification-container">
-                    <p:commandButton icon="pi pi-bell" 
-                                     styleClass="p-button-text p-button-rounded notification-btn"
-                                     title="View notifications"
-                                     onclick="PF('notificationPanel').toggle(this)">
-                        <span class="notification-badge" 
-                              style="#{notificationController.unreadCount > 0 ? 'display: inline;' : 'display: none;'}">
-                            #{notificationController.unreadCount}
-                        </span>
-                    </p:commandButton>
-                    
-                    <p:overlayPanel widgetVar="notificationPanel" 
-                                    styleClass="notification-panel"
-                                    showEvent="click"
-                                    hideEvent="click"
-                                    dynamic="true">
-                        <div class="notification-header">
-                            <h4>Notifications</h4>
-                            <p:commandLink value="Mark all as read" 
-                                           action="#{notificationController.markAllAsRead}"
-                                           update="@form"
-                                           styleClass="mark-all-read"/>
+                        <div class="brand-text">
+                            <h1 class="brand-name">HealthCare<span class="brand-accent">Plus</span></h1>
+                            <p class="brand-tagline">Professional Hospital Management</p>
                         </div>
-                        
-                        <div class="notification-list">
-                            <ui:repeat value="#{notificationController.recentNotifications}" var="notification">
-                                <div class="notification-item #{notification.read ? 'read' : 'unread'}">
-                                    <div class="notification-icon">
-                                        <i class="#{notification.icon}" aria-hidden="true"></i>
-                                    </div>
-                                    <div class="notification-content">
-                                        <p class="notification-title">#{notification.title}</p>
-                                        <p class="notification-message">#{notification.message}</p>
-                                        <span class="notification-time">#{notification.timeAgo}</span>
-                                    </div>
+                    </div>
+                </h:link>
+            </div>
+        
+            <!-- Main Navigation -->
+            <nav class="main-nav" role="navigation" aria-label="Main navigation">
+                <ul class="nav-list">
+                <li class="nav-item">
+                    <h:link outcome="/index" styleClass="nav-link #{request.requestURI.contains('index') ? 'active' : ''}">
+                            <i class="pi pi-home" aria-hidden="true"></i>
+                            <span>Home</span>
+                    </h:link>
+                </li>
+                
+                <li class="nav-item">
+                    <h:link outcome="/views/appointments/appointments" styleClass="nav-link #{request.requestURI.contains('appointments') ? 'active' : ''}">
+                            <i class="pi pi-calendar" aria-hidden="true"></i>
+                            <span>Appointments</span>
+                    </h:link>
+                </li>
+                
+                <li class="nav-item">
+                    <h:link outcome="/views/patients/patients" styleClass="nav-link #{request.requestURI.contains('patients') ? 'active' : ''}">
+                            <i class="pi pi-users" aria-hidden="true"></i>
+                            <span>Patients</span>
+                    </h:link>
+                </li>
+                
+                <li class="nav-item">
+                    <h:link outcome="/views/doctors/doctors" styleClass="nav-link #{request.requestURI.contains('doctors') ? 'active' : ''}">
+                            <i class="pi pi-user-edit" aria-hidden="true"></i>
+                            <span>Doctors</span>
+                    </h:link>
+                </li>
+                
+                <li class="nav-item">
+                    <h:link outcome="/views/billing/billing" styleClass="nav-link #{request.requestURI.contains('billing') ? 'active' : ''}">
+                            <i class="pi pi-credit-card" aria-hidden="true"></i>
+                            <span>Billing</span>
+                    </h:link>
+                </li>
+            </ul>
+        </nav>
+        
+            <!-- Header Actions -->
+        <div class="header-actions">
+                <!-- Global Search -->
+            <div class="search-container">
+                    <h:form id="globalSearchForm">
+                        <div class="search-wrapper">
+                        <p:inputText id="globalSearch" 
+                                     value="#{searchController.searchQuery}"
+                                     placeholder="Search patients, appointments, records..."
+                                     styleClass="search-input"
+                                         title="Global search across the system">
+                            <p:ajax event="keyup" 
+                                    listener="#{searchController.performSearch}" 
+                                    update="searchResults"
+                                    delay="300"/>
+                        </p:inputText>
+                        <p:commandButton icon="pi pi-search" 
+                                             styleClass="search-btn"
+                                         action="#{searchController.performSearch}"
+                                         update="searchResults"/>
+                    </div>
+                    
+                        <!-- Search Results -->
+                    <p:overlayPanel for="globalSearch" 
+                                    id="searchResults" 
+                                        styleClass="search-results"
+                                    showEvent="focus"
+                                    hideEvent="blur"
+                                    dynamic="true">
+                        <div class="search-results-header">
+                                <h4>Search Results</h4>
+                            <p:commandButton icon="pi pi-times" 
+                                                 styleClass="close-btn"
+                                                 onclick="PF('searchResultsPanel').hide()"/>
+                        </div>
+                        <div class="search-results-content">
+                            <ui:repeat value="#{searchController.searchResults}" var="result">
+                                <div class="search-result-item">
+                                        <h:link outcome="#{result.url}" styleClass="result-link">
+                                        <i class="#{result.icon}" aria-hidden="true"></i>
+                                            <div class="result-content">
+                                                <span class="result-title">#{result.title}</span>
+                                                <span class="result-desc">#{result.description}</span>
+                                        </div>
+                                    </h:link>
                                 </div>
                             </ui:repeat>
                         </div>
-                        
-                        <div class="notification-footer">
-                            <h:link outcome="/notifications" value="View all notifications"/>
-                        </div>
                     </p:overlayPanel>
-                </div>
-
-                <!-- User Menu -->
-                <div class="user-menu-container">
-                    <p:commandButton styleClass="p-button-text user-menu-btn"
-                                     title="User menu"
-                                     onclick="PF('userMenuPanel').toggle(this)">
-                        <div class="user-avatar">
-                            <img src="#{sessionController.currentUser.avatarUrl}" 
-                                 alt="#{sessionController.currentUser.fullName}"
-                                 onerror="this.src='#{resource['images:default-avatar.png']}'"/>
-                        </div>
-                        <span class="user-name">#{sessionController.currentUser.firstName}</span>
-                        <i class="pi pi-chevron-down" aria-hidden="true"></i>
-                    </p:commandButton>
-                    
-                    <p:overlayPanel widgetVar="userMenuPanel" 
-                                    styleClass="user-menu-panel"
-                                    showEvent="click"
-                                    hideEvent="click">
-                        <div class="user-menu-header">
-                            <div class="user-info">
-                                <img src="#{sessionController.currentUser.avatarUrl}" 
-                                     alt="#{sessionController.currentUser.fullName}"
-                                     class="user-avatar-large"
-                                     onerror="this.src='#{resource['images:default-avatar.png']}'"/>
-                                <div class="user-details">
-                                    <p class="user-full-name">#{sessionController.currentUser.fullName}</p>
-                                    <p class="user-role">#{sessionController.currentUser.role.displayName}</p>
-                                    <p class="user-email">#{sessionController.currentUser.email}</p>
-                                </div>
+                </h:form>
+            </div>
+            
+            <!-- Notifications -->
+                <div class="notifications">
+                    <button class="notification-btn" onclick="toggleNotifications()" title="Notifications">
+                    <i class="pi pi-bell" aria-hidden="true"></i>
+                        <span class="notification-badge">0</span>
+                </button>
+            </div>
+            
+            <!-- User Menu -->
+                <div class="user-menu">
+                    <button class="user-menu-btn" onclick="toggleUserMenu()" title="User menu">
+                    <div class="user-avatar">
+                        <i class="pi pi-user" aria-hidden="true"></i>
+                    </div>
+                    <span class="user-name">#{authController.currentUser != null ? authController.currentUser.getUsername() : 'Guest'}</span>
+                    <i class="pi pi-chevron-down" aria-hidden="true"></i>
+                </button>
+                
+                    <div class="user-dropdown" id="userDropdown">
+                    <div class="dropdown-header">
+                        <div class="user-info">
+                            <div class="user-avatar-large">
+                                <i class="pi pi-user" aria-hidden="true"></i>
+                            </div>
+                            <div class="user-details">
+                                <span class="user-full-name">#{authController.currentUser != null ? authController.currentUser.getFirstName() : 'Guest'} #{authController.currentUser != null ? authController.currentUser.getLastName() : ''}</span>
+                                <span class="user-role">#{authController.currentUser != null ? authController.currentUser.getRole() : 'Guest'}</span>
                             </div>
                         </div>
+                    </div>
+                    
+                    <div class="dropdown-menu">
+                        <h:link outcome="/views/profile/profile" styleClass="dropdown-item">
+                            <i class="pi pi-user" aria-hidden="true"></i>
+                            <span>Profile</span>
+                        </h:link>
                         
-                        <div class="user-menu-items">
-                            <h:link outcome="/profile" styleClass="menu-item">
-                                <i class="pi pi-user" aria-hidden="true"></i>
-                                <span>My Profile</span>
-                            </h:link>
-                            
-                            <h:link outcome="/settings" styleClass="menu-item">
-                                <i class="pi pi-cog" aria-hidden="true"></i>
-                                <span>Settings</span>
-                            </h:link>
-                            
-                            <h:link outcome="/help" styleClass="menu-item">
-                                <i class="pi pi-question-circle" aria-hidden="true"></i>
-                                <span>Help &amp; Support</span>
-                            </h:link>
-                            
-                            <div class="menu-divider"></div>
-                            
-                            <p:commandLink action="#{authController.logout}" 
-                                           styleClass="menu-item logout-item"
-                                           title="Sign out of your account">
-                                <i class="pi pi-sign-out" aria-hidden="true"></i>
-                                <span>Sign Out</span>
-                            </p:commandLink>
-                        </div>
-                    </p:overlayPanel>
+                        <h:link outcome="/views/settings/settings" styleClass="dropdown-item">
+                            <i class="pi pi-cog" aria-hidden="true"></i>
+                            <span>Settings</span>
+                        </h:link>
+                        
+                        <h:link outcome="/help" styleClass="dropdown-item">
+                            <i class="pi pi-question-circle" aria-hidden="true"></i>
+                            <span>Help & Support</span>
+                        </h:link>
+                    
+                    <div class="dropdown-divider"></div>
+                    
+                            <h:link outcome="/logout" styleClass="dropdown-item logout-item">
+                            <i class="pi pi-sign-out" aria-hidden="true"></i>
+                            <span>Sign Out</span>
+                        </h:link>
+                    </div>
+                </div>
+                </div>
+                
+                <!-- Mobile Menu Toggle -->
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle mobile menu">
+                    <i class="pi pi-bars" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+    
+    <!-- Mobile Navigation -->
+        <div class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-header">
+                <div class="mobile-brand">
+                <i class="pi pi-heart-fill" aria-hidden="true"></i>
+                <span>HealthCare Plus</span>
+            </div>
+                <button class="mobile-close-btn" onclick="closeMobileMenu()">
+                <i class="pi pi-times" aria-hidden="true"></i>
+            </button>
+        </div>
+        
+            <nav class="mobile-nav-menu">
+                <ul class="mobile-nav-list">
+                    <li><h:link outcome="/index" styleClass="mobile-nav-link" onclick="closeMobileMenu()">Home</h:link></li>
+                    <li><h:link outcome="/views/appointments/appointments" styleClass="mobile-nav-link" onclick="closeMobileMenu()">Appointments</h:link></li>
+                    <li><h:link outcome="/views/patients/patients" styleClass="mobile-nav-link" onclick="closeMobileMenu()">Patients</h:link></li>
+                    <li><h:link outcome="/views/doctors/doctors" styleClass="mobile-nav-link" onclick="closeMobileMenu()">Doctors</h:link></li>
+                    <li><h:link outcome="/views/billing/billing" styleClass="mobile-nav-link" onclick="closeMobileMenu()">Billing</h:link></li>
+        </ul>
+            </nav>
+        
+        <div class="mobile-nav-footer">
+            <div class="mobile-user-info">
+                <div class="mobile-user-avatar">
+                    <i class="pi pi-user" aria-hidden="true"></i>
+                </div>
+                <div class="mobile-user-details">
+                    <span class="mobile-user-name">#{authController.currentUser != null ? authController.currentUser.getUsername() : 'Guest'}</span>
+                    <span class="mobile-user-role">#{authController.currentUser != null ? authController.currentUser.getRole() : 'Guest'}</span>
+                </div>
+            </div>
+            
+            <div class="mobile-user-actions">
+                    <h:link outcome="/views/profile/profile" styleClass="mobile-nav-link" onclick="closeMobileMenu()">Profile</h:link>
+                    <h:link outcome="/logout" styleClass="mobile-nav-link logout-link" onclick="closeMobileMenu()">Sign Out</h:link>
                 </div>
             </div>
         </div>
+        
+        <!-- Mobile Overlay -->
+        <div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
+    </header>
 
-        <!-- Mobile Menu Toggle -->
-        <div class="mobile-menu-toggle">
-            <p:commandButton icon="pi pi-bars" 
-                             styleClass="p-button-text mobile-menu-btn"
-                             onclick="toggleMobileMenu()"
-                             title="Toggle mobile menu"/>
-        </div>
-    </div>
 </ui:composition>

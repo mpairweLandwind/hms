@@ -1,24 +1,24 @@
 package com.hms2.controller;
 
 import com.hms2.model.Staff;
-import com.hms2.model.StaffStatus;
+import com.hms2.enums.StaffStatus;
 import com.hms2.service.StaffService;
 import org.primefaces.PrimeFaces;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.ViewScoped;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.faces.view.ViewScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import java.io.Serializable;
 import java.util.List;
 
 @Named("staffController")
-@ViewScoped
-public class StaffController implements Serializable {
+@RequestScoped
+public class StaffController {
     
     private static final Logger logger = LoggerFactory.getLogger(StaffController.class);
     

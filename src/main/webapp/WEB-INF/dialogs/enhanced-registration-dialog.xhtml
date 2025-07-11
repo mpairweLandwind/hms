@@ -720,7 +720,7 @@
         }
 
         function nextStep() {
-            if (currentStep < 3) {
+            if (currentStep &lt; 3) {
                 // Hide current step
                 document.querySelector(`[data-step="${currentStep}"]`).classList.remove('active');
                 
@@ -755,7 +755,7 @@
 
         function updateProgress() {
             document.querySelectorAll('.progress-step').forEach((step, index) => {
-                if (index + 1 < currentStep) {
+                if (index + 1 &lt; currentStep) {
                     step.classList.add('completed');
                     step.classList.remove('active');
                 } else if (index + 1 === currentStep) {

@@ -1,23 +1,27 @@
 package com.hms2.service;
 
-import com.hms2.dto.UserRegistrationDTO;
+import com.hms2.dto.user.DoctorRegistrationDTO;
+import com.hms2.dto.user.PatientRegistrationDTO;
+import com.hms2.dto.user.StaffRegistrationDTO;
 import com.hms2.model.User;
-import com.hms2.model.Patient;
-import com.hms2.model.Doctor;
-import com.hms2.model.Staff;
 
 public interface RegistrationService {
     
-    User registerUser(UserRegistrationDTO registrationDTO);
+    // Complete registration methods - creates both User and role-specific entity simultaneously
+    User registerPatient(PatientRegistrationDTO patientRegistrationDTO);
     
-    Patient registerPatient(UserRegistrationDTO registrationDTO);
+    User registerDoctor(DoctorRegistrationDTO doctorRegistrationDTO);
     
-    Doctor registerDoctor(UserRegistrationDTO registrationDTO);
+    User registerStaff(StaffRegistrationDTO staffRegistrationDTO);
     
-    Staff registerStaff(UserRegistrationDTO registrationDTO);
+    // Validation methods
+    void validatePatientRegistration(PatientRegistrationDTO patientRegistrationDTO);
     
-    void validateRegistrationData(UserRegistrationDTO registrationDTO);
+    void validateDoctorRegistration(DoctorRegistrationDTO doctorRegistrationDTO);
     
+    void validateStaffRegistration(StaffRegistrationDTO staffRegistrationDTO);
+    
+    // Unique constraint checks
     boolean isEmailUnique(String email);
     
     boolean isUsernameUnique(String username);

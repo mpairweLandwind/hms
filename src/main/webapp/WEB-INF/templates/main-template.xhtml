@@ -30,7 +30,7 @@
     <ui:insert name="head"/>
 </h:head>
 
-<h:body styleClass="#{sessionController.currentUser != null ? 'authenticated' : 'guest'}">
+<h:body styleClass="#{authController.currentUser != null ? 'authenticated' : 'guest'}">
     <!-- Skip Navigation for Accessibility -->
     <a href="#main-content" class="skip-nav" tabindex="1">Skip to main content</a>
     
@@ -117,7 +117,7 @@
     </p:confirmDialog>
 
     <!-- JavaScript -->
-    <h:outputScript library="js" name="main.js"/>
+<!--    <h:outputScript library="js" name="main.js"/>-->
     <ui:insert name="scripts"/>
 
     <!-- Accessibility Announcements -->

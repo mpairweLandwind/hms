@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+    <title>Doctor Management - Hospital Management System</title>
+    <h:outputStylesheet library="css" name="dashboard.css" />
+    <h:outputStylesheet library="css" name="components.css" />
+    <h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
+    <style>
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #2c3e50;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f4f7f6; /* Lighter background for the entire layout */
+        }
+
+        /* Sidebar styles */
+        .admin-sidebar {
+            width: 260px; /* Slightly wider sidebar */
+            background: #ffffff;
+            border-right: 1px solid #e0e6ed; /* Subtle separator */
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.03); /* Lighter shadow */
+            padding: 32px 0 24px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar-logo {
+            margin-bottom: 40px; /* More space */
+        }
+
+        .sidebar-logo span {
+            font-size: 2.2rem; /* Larger logo */
+            font-weight: 700; /* Bolder */
+            color: #1e88e5; /* A slightly softer blue */
+        }
+
+        .sidebar-nav {
+            width: 100%;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 8px; /* Tighter spacing */
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 32px; /* More padding for links */
+            color: #4a6572; /* Softer text color */
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 0; /* No border-radius for full-width links */
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-link i {
+            font-size: 1.25rem; /* Slightly larger icons */
+        }
+
+        .sidebar-link.active, .sidebar-link:hover {
+            background: #e3f2fd; /* Lighter blue highlight */
+            color: #1e88e5 !important; /* Matches logo blue */
+            border-left: 5px solid #1e88e5; /* Highlight bar on active/hover */
+            padding-left: 27px; /* Adjust padding due to border-left */
+        }
+        .sidebar-link.active i, .sidebar-link:hover i {
+            color: #1e88e5 !important;
+        }
+
+
+        /* Main Content Header */
+        .admin-container {
+            flex: 1;
+            padding: 24px 32px; /* More generous padding */
+            display: flex;
+            flex-direction: column;
+            gap: 32px; /* Spacing between header and management section */
+        }
+
+        .admin-header {
+            background: #ffffff;
+            border-radius: 16px; /* More rounded corners */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Softer, wider shadow */
+            padding: 20px 30px; /* More internal padding */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 24px; /* Sticks to the top with some margin */
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-back-button {
+            background: #eff3f7; /* Light grey background */
+            border: none;
+            border-radius: 8px; /* Slightly more rounded */
+            width: 42px; /* Larger button */
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .header-back-button:hover {
+            background: #e0e6ed;
+        }
+
+        .header-back-button .pi {
+            font-size: 1.4rem; /* Larger icon */
+            color: #6c757d;
+        }
+
+        .header-title {
+            font-size: 1.25rem; /* Larger title */
+            font-weight: 600;
+            color: #34495e; /* Darker, more prominent */
+            letter-spacing: 0.5px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 28px; /* More spacing for right-side icons */
+        }
+
+        .header-icon {
+            font-size: 1.4rem; /* Larger icons */
+            color: #6c757d;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .header-icon:hover {
+            color: #1e88e5;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background: #ff5722; /* Orange for notifications */
+            color: white;
+            font-size: 10px;
+            border-radius: 10px;
+            padding: 2px 7px;
+            min-width: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(255, 87, 34, 0.3);
+        }
+
+        .user-menu-avatar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .user-menu-avatar img {
+            width: 38px; /* Larger avatar */
+            height: 38px;
+            border-radius: 50%;
+            border: 2px solid #e0e6ed; /* More prominent border */
+            object-fit: cover;
+        }
+
+        .user-menu-avatar span {
+            font-weight: 600; /* Bolder name */
+            color: #34495e;
+        }
+
+        /* Management Section */
+        .management-section {
+            background: #ffffff;
+            border-radius: 16px; /* Consistent rounded corners */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 0; /* Remove bottom margin if container has padding */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            flex: 1; /* Make it fill available space */
+        }
+
+        .management-header {
+            padding: 24px 30px;
+            border-bottom: 1px solid #e0e6ed;
+            background: #fafbfd; /* Lighter header background */
+        }
+
+        .management-header h3 {
+            font-size: 1.6rem; /* Larger heading */
+            font-weight: 700;
+            color: #34495e;
+            margin: 0;
+        }
+
+        .management-content {
+            padding: 0;
+            flex: 1; /* Ensure content area takes full height */
+        }
+
+        /* PrimeFaces component overrides */
+        .ui-tabs {
+            border: none !important;
+            background: transparent !important;
+        }
+
+        .ui-tabs .ui-tabs-nav {
+            background: #fafbfd !important;
+            border: none !important;
+            border-bottom: 1px solid #e0e6ed !important;
+            padding: 0 30px !important;
+        }
+
+        .ui-tabs .ui-tabs-nav li {
+            border: none !important;
+            background: transparent !important;
+            margin-right: 12px !important; /* More space between tabs */
+        }
+
+        .ui-tabs .ui-tabs-nav li a {
+            background: transparent !important;
+            border: none !important;
+            color: #6c757d !important;
+            padding: 18px 24px !important; /* More padding */
+            font-weight: 600 !important; /* Bolder tab text */
+            border-radius: 10px 10px 0 0 !important; /* More rounded tabs */
+            transition: all 0.2s ease !important;
+        }
+
+        .ui-tabs .ui-tabs-nav li.ui-tabs-selected a,
+        .ui-tabs .ui-tabs-nav li a:hover {
+            background: #ffffff !important;
+            color: #1e88e5 !important;
+            border-bottom: 3px solid #1e88e5 !important; /* Thicker active border */
+            margin-bottom: -1px; /* To overlap the bottom border */
+        }
+
+        .ui-tabs .ui-tabs-panels {
+            background: #ffffff !important;
+            border: none !important;
+            padding: 30px !important; /* More padding */
+        }
+
+        /* DataTable specific styles */
+        .ui-datatable {
+            border: none !important;
+            border-radius: 16px !important; /* Consistent with other sections */
+            overflow: hidden !important;
+            box-shadow: none !important; /* Remove individual datatable shadow if parent has one */
+        }
+
+        .ui-datatable .ui-datatable-header {
+            background: #ffffff !important;
+            border: none !important;
+            padding: 20px 30px !important; /* Consistent padding */
+            font-weight: 700 !important; /* Bolder header */
+            color: #34495e !important;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e6ed; /* Separate header from toolbar */
+        }
+
+        .ui-datatable .ui-datatable-thead > tr > th {
+            background: #fafbfd !important; /* Lighter header row */
+            border: none !important;
+            border-bottom: 2px solid #e9ecef !important;
+            padding: 18px 24px !important; /* More padding */
+            font-weight: 600 !important;
+            color: #555;
+            font-size: 14px !important;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .ui-datatable .ui-datatable-tbody > tr > td {
+            border: none !important;
+            border-bottom: 1px solid #f1f3f4 !important;
+            padding: 16px 24px !important; /* More padding */
+            font-size: 14px !important;
+            color: #34495e;
+        }
+
+        .ui-datatable .ui-datatable-tbody > tr:hover {
+            background: #fcfdfe !important; /* Very subtle hover */
+        }
+
+        /* Toolbar styles */
+        .ui-toolbar {
+            background: #ffffff !important;
+            border: none !important;
+            padding: 16px 24px !important; /* Match table cell padding */
+            border-bottom: 1px solid #e0e6ed !important;
+        }
+
+        .ui-toolbar .ui-button {
+            border-radius: 8px !important; /* Consistent button radius */
+            padding: 10px 18px !important; /* More spacious buttons */
+            font-size: 14px !important;
+        }
+
+        .ui-toolbar .ui-button-success {
+            background-color: #28a745 !important;
+            border-color: #28a745 !important;
+            color: white !important;
+        }
+
+        .ui-toolbar .ui-button-danger {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+            color: white !important;
+        }
+
+        .ui-toolbar .ui-button-help {
+            background-color: #17a2b8 !important;
+            border-color: #17a2b8 !important;
+            color: white !important;
+        }
+
+        .ui-toolbar .ui-fileupload-simple .ui-button {
+            background-color: #6c757d !important; /* Muted for import */
+            border-color: #6c757d !important;
+            color: white !important;
+        }
+
+        /* Input field styles */
+        .ui-inputfield {
+            border: 1px solid #ced4da !important; /* Lighter border */
+            border-radius: 8px !important;
+            padding: 12px 16px !important;
+            font-size: 15px !important; /* Slightly larger font */
+            transition: all 0.2s ease !important;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05); /* Subtle inner shadow */
+        }
+
+        .ui-inputfield:focus {
+            border-color: #1e88e5 !important; /* Focus blue */
+            box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.2) !important; /* Lighter focus shadow */
+            outline: none;
+        }
+
+        /* DataTable header filter */
+        .doctors-table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .filter-container .ui-input-icon-left .pi {
+            color: #9da7b3;
+            margin-left: 10px;
+        }
+
+        .filter-container .ui-inputtext {
+            padding-left: 40px !important;
+            border-radius: 20px !important; /* Pill shape for search */
+            border: 1px solid #e0e6ed !important;
+            width: 250px;
+        }
+
+        /* Action Buttons in Table */
+        .action-icon-btn {
+            width: 36px; /* Slightly smaller for table context */
+            height: 36px;
+            border-radius: 50%;
+            background: #f0f4f7; /* Subtle background for icons */
+            color: #5a6d7a;
+        }
+
+        .action-icon-btn:hover {
+            background: #e3f2fd;
+        }
+
+        .action-icon-btn .pi {
+            font-size: 1.1rem;
+            color: inherit; /* Inherit color from parent */
+        }
+
+        .action-icon-btn.edit-button {
+            background-color: #e3f2fd !important;
+            color: #1e88e5 !important;
+        }
+
+        .action-icon-btn.edit-button:hover {
+            background-color: #bbdefb !important;
+        }
+
+        .action-icon-btn.delete-button {
+            background-color: #ffebee !important;
+            color: #ef5350 !important;
+        }
+
+        .action-icon-btn.delete-button:hover {
+            background-color: #ffcdd2 !important;
+        }
+
+        /* Status badges */
+        .doctor-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: capitalize;
+            min-width: 120px; /* Ensure consistent width for badges */
+            text-align: center;
+        }
+
+        .status-active { background-color: #e6f6ee; color: #28a745; }
+        .status-inactive { background-color: #f7f7f7; color: #6c757d; }
+        .status-pending_verification { background-color: #fff3e0; color: #ff9800; }
+        .status-suspended { background-color: #ffebee; color: #dc3545; }
+        .status-retired { background-color: #e0e0e0; color: #495057; }
+
+        /* Data table cell improvements */
+        .ui-datatable .ui-datatable-tbody > tr > td {
+            border: none !important;
+            border-bottom: 1px solid #f1f3f4 !important;
+            padding: 16px 24px !important; /* More padding */
+            font-size: 14px !important;
+            color: #34495e;
+            vertical-align: top; /* Align content to top for better readability */
+        }
+
+        /* Qualifications column styling */
+        .qualifications-cell {
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .qualifications-cell:hover {
+            white-space: normal;
+            word-wrap: break-word;
+            background-color: #f8f9fa;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Department column styling */
+        .department-cell {
+            font-weight: 500;
+            color: #1e88e5;
+        }
+
+        /* Dialog/Form styles */
+        .ui-dialog {
+            border-radius: 16px !important;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .ui-dialog .ui-dialog-titlebar {
+            background: #1e88e5 !important; /* Blue header for dialog */
+            color: white !important;
+            border-radius: 16px 16px 0 0 !important;
+            padding: 1rem 1.5rem !important;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .ui-dialog .ui-dialog-content {
+            padding: 2rem 2.5rem !important; /* More padding inside content */
+        }
+
+        .formgrid.grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive 2 columns */
+            gap: 1.5rem; /* Space between columns and rows */
+            margin-bottom: 1.5rem;
+        }
+
+        .formgrid.grid .field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .formgrid.grid .field .ui-outputlabel {
+            font-weight: 600;
+            color: #34495e;
+            font-size: 0.95rem;
+        }
+
+        .formgrid.grid .field .ui-inputtext,
+        .formgrid.grid .field .ui-selectonemenu {
+            width: 100% !important; /* Ensure inputs fill their grid column */
+        }
+
+        /* Dialog footer buttons */
+        .ui-dialog .ui-dialog-footer {
+            padding: 1.5rem 2.5rem !important;
+            border-top: 1px solid #e0e6ed;
+            background: #fafbfd;
+            border-radius: 0 0 16px 16px !important;
+        }
+
+        .ui-dialog .ui-dialog-footer .ui-button {
+            padding: 10px 20px !important;
+            font-size: 1rem !important;
+            border-radius: 8px !important;
+        }
+
+        .ui-button-secondary {
+            background-color: #6c757d !important;
+            border-color: #6c757d !important;
+            color: white !important;
+        }
+
+        /* Confirm Dialog */
+        .ui-confirmdialog .ui-confirmdialog-message {
+            font-size: 1.1rem;
+            color: #34495e;
+        }
+
+        .ui-confirmdialog .ui-confirmdialog-footer .ui-button {
+            padding: 8px 16px !important;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 16px;
+            }
+
+            .admin-header {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+                position: static; /* Disable sticky on mobile */
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .ui-tabs .ui-tabs-nav {
+                padding: 0 16px !important;
+            }
+
+            .ui-tabs .ui-tabs-panels {
+                padding: 16px !important;
+            }
+
+            .formgrid.grid {
+                grid-template-columns: 1fr; /* Single column on small screens */
+            }
+
+            .ui-toolbar .ui-toolbar-group {
+                flex-direction: column; /* Stack toolbar buttons */
+                gap: 10px;
+                width: 100%;
+            }
+            .ui-toolbar .ui-button {
+                width: 100%;
+            }
+        }
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            gap: 1.5rem;
+        }
+        .step-indicator .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            background: #f0f4f8;
+            color: #6c757d;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s;
+            min-width: 80px;
+        }
+        .step-indicator .step.active {
+            background: #1e88e5;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(30,136,229,0.08);
+        }
+        .step-indicator .step .step-number {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.2rem;
+        }
+        .step-indicator .step .step-label {
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+        .nav-btn {
+            background: #1e88e5;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 24px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-left: 0;
+        }
+        .nav-btn:hover, .nav-btn:focus {
+            background: #1565c0;
+            color: #fff;
+        }
+        .nav-btn:disabled {
+            background: #b3d1f7;
+            color: #e3e3e3;
+            cursor: not-allowed;
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <div class="sidebar-logo">
+                <span>HMS</span>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <h:link outcome="/views/dashboard/admin-dashboard.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-home"></i> Dashboard
+                        </h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="/views/dashboard/sections/patient-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-users"></i> Patients
+                        </h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="/views/dashboard/sections/doctor-management.xhtml" styleClass="sidebar-link active">
+                            <i class="pi pi-id-card"></i> Doctors
+                        </h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="/views/dashboard/sections/staff-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-id-card"></i> Staff
+                        </h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="/views/dashboard/sections/user-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-user"></i> Users
+                        </h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="/views/dashboard/sections/department-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-building"></i> Departments
+                        </h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="/views/dashboard/sections/billing-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-credit-card"></i> Billing
+                        </h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="/views/dashboard/sections/appointment-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-calendar"></i> Appointments
+                        </h:link>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <div class="admin-container">
+            <header class="admin-header">
+                <div class="header-left">
+                    <button type="button" class="header-back-button">
+                        <i class="pi pi-angle-left"></i>
+                    </button>
+                    <span class="header-title">DOCTOR DASHBOARD</span>
+                </div>
+                <div class="header-right">
+                    <i class="pi pi-search header-icon"></i>
+                    <span style="position: relative;">
+                        <i class="pi pi-bell header-icon"></i>
+                        <span class="notification-badge">5</span>
+                    </span>
+                    <h:form id="userMenuForm">
+                        <p:overlayPanel id="userMenuPanel" for="userMenuAvatar" hideEffect="fade" showEffect="fade" style="min-width: 200px;">
+                            <div style="padding: 10px 0;">
+                                <p:commandLink style="display: flex; align-items: center; gap: 10px; padding: 10px 18px; color: #34495e; text-decoration: none; font-size: 0.95rem;" action="#">
+                                    <img src="#{request.contextPath}/resources/images/user.png" alt="Profile" style="width:20px;height:20px;border-radius:50%;object-fit:cover;"/> Profile
+                                </p:commandLink>
+                                <p:commandLink style="display: flex; align-items: center; gap: 10px; padding: 10px 18px; color: #34495e; text-decoration: none; font-size: 0.95rem;" action="#">
+                                    <i class="pi pi-cog" style="color: #1e88e5; font-size: 1.1rem;"></i> Settings
+                                </p:commandLink>
+                                <p:divider style="margin: 8px 0;"/>
+                                <p:commandButton value="Logout" icon="pi pi-sign-out" action="#{authController.logout}" immediate="true" styleClass="ui-button-flat ui-button-danger-text" style="width: 100%; text-align: left; padding: 10px 18px; background: none; border: none; font-size: 0.95rem;" ajax="false"/>
+                            </div>
+                        </p:overlayPanel>
+                        <p:commandLink id="userMenuAvatar" styleClass="user-menu-avatar">
+                            <img src="#{request.contextPath}/resources/images/user.png" alt="User"/>
+                            <span>#{authController.currentUserName}</span>
+                        </p:commandLink>
+                    </h:form>
+                </div>
+            </header>
+
+            <div class="management-section">
+                <div class="management-header">
+                    <h3 id="doctor-management-title">Doctor Management</h3>
+                </div>
+                <div class="management-content">
+                    <p:tabView id="doctorTabView">
+                        <p:tab title="Add New Doctor">
+                            <p:messages id="doctorFormMessages" showDetail="true" closable="true" />
+                            <h:form id="addDoctorForm" styleClass="doctor-multistep-form">
+                                <div class="step-indicator">
+                                    <div class="step" data-step="1"><span class="step-number">1</span><span class="step-label">Account</span></div>
+                                    <div class="step" data-step="2"><span class="step-number">2</span><span class="step-label">Personal</span></div>
+                                    <div class="step" data-step="3"><span class="step-number">3</span><span class="step-label">Professional</span></div>
+                                    <div class="step" data-step="4"><span class="step-number">4</span><span class="step-label">Consent</span></div>
+                                </div>
+                                <div class="form-step" data-step="1">
+                                    <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                        <div class="form-group">
+                                            <label for="username">Username: <span style="color: #dc3545;">*</span></label>
+                                            <p:inputText id="username"
+                                                value="#{adminDashboardController.newDoctorRegistration.username}"
+                                                required="true"
+                                                requiredMessage="Username is required"
+                                                maxlength="50"
+                                                size="50"
+                                                placeholder="Choose a username"
+                                                aria-required="true"
+                                                aria-label="Username"
+                                                styleClass="ui-inputfield #{component.valid ? '' : 'ui-state-error'}"
+                                                validatorMessage="Username must be 3-50 characters (letters, numbers, underscores only)">
+                                                <f:validateLength minimum="3" maximum="50"/>
+                                                <f:validateRegex pattern="^[a-zA-Z0-9_]{3,50}$" message="Username must be 3-50 characters (letters, numbers, underscores only)"/>
+                                            </p:inputText>
+                                            <p:message for="username" display="icon" styleClass="field-error" />
+                                            <div class="field-help">Choose a unique username (letters, numbers, underscores only)</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="email">Email: <span style="color: #dc3545;">*</span></label>
+                                            <p:inputText id="email"
+                                                value="#{adminDashboardController.newDoctorRegistration.email}"
+                                                required="true"
+                                                requiredMessage="Email is required"
+                                                maxlength="100"
+                                                size="50"
+                                                type="email"
+                                                placeholder="Enter email address"
+                                                aria-required="true"
+                                                aria-label="Email"
+                                                styleClass="ui-inputfield #{component.valid ? '' : 'ui-state-error'}"
+                                                validatorMessage="Please enter a valid email address">
+                                                <f:validateRegex pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" message="Please enter a valid email address"/>
+                                            </p:inputText>
+                                            <p:message for="email" display="icon" styleClass="field-error" />
+                                            <div class="field-help">Enter a valid email address</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="password">Password: <span style="color: #dc3545;">*</span></label>
+                                            <p:password id="password"
+                                                value="#{adminDashboardController.newDoctorRegistration.password}"
+                                                required="true"
+                                                requiredMessage="Password is required"
+                                                maxlength="50"
+                                                size="50"
+                                                placeholder="Create a password"
+                                                aria-required="true"
+                                                aria-label="Password"
+                                                styleClass="ui-inputfield #{component.valid ? '' : 'ui-state-error'}"
+                                                feedback="true" toggleMask="true"
+                                                validatorMessage="Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character">
+                                                <f:validateLength minimum="6" maximum="50"/>
+                                                <f:validateRegex pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&amp;.])[A-Za-z\d@$!%*?&amp;.]{6,50}$" message="Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"/>
+                                            </p:password>
+                                            <p:message for="password" display="icon" styleClass="field-error" />
+                                            <div class="field-help">Password must be 6-50 characters, with upper/lowercase, number, and special character</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="confirmPassword">Confirm Password: <span style="color: #dc3545;">*</span></label>
+                                            <p:password id="confirmPassword"
+                                                value="#{adminDashboardController.newDoctorRegistration.confirmPassword}"
+                                                required="true"
+                                                requiredMessage="Confirm password is required"
+                                                maxlength="50"
+                                                size="50"
+                                                placeholder="Confirm your password"
+                                                aria-required="true"
+                                                aria-label="Confirm Password"
+                                                styleClass="ui-inputfield #{component.valid ? '' : 'ui-state-error'}"
+                                                feedback="false">
+                                                <f:validateLength minimum="6" maximum="50"/>
+                                            </p:password>
+                                            <p:message for="confirmPassword" display="icon" styleClass="field-error" />
+                                            <div class="field-help">Re-enter your password</div>
+                                        </div>
+                                    </div>
+                                    <div style="margin-top: 20px; text-align: right;">
+                                        <button type="button" class="btn btn-primary nav-btn next-btn">Next</button>
+                                    </div>
+                                </div>
+                                <div class="form-step" data-step="2">
+                                    <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                        <div class="form-group">
+                                            <label for="firstName">First Name: <span style="color: #dc3545;">*</span></label>
+                                            <p:inputText id="firstName"
+                                                value="#{adminDashboardController.newDoctorRegistration.firstName}"
+                                                required="true"
+                                                requiredMessage="First name is required"
+                                                maxlength="50"
+                                                size="50"
+                                                placeholder="Enter first name"
+                                                aria-required="true"
+                                                aria-label="First Name"
+                                                styleClass="ui-inputfield #{component.valid ? '' : 'ui-state-error'}"
+                                                validatorMessage="First name must be 2-50 letters and spaces only">
+                                                <f:validateLength maximum="50"/>
+                                                <f:validateRegex pattern="^[A-Za-z\s]{2,50}$" message="First name must be 2-50 letters and spaces only"/>
+                                            </p:inputText>
+                                            <p:message for="firstName" display="icon" styleClass="field-error" />
+                                            <div class="field-help">Enter your first name (letters and spaces only)</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="lastName">Last Name: <span style="color: #dc3545;">*</span></label>
+                                            <p:inputText id="lastName"
+                                                value="#{adminDashboardController.newDoctorRegistration.lastName}"
+                                                required="true"
+                                                requiredMessage="Last name is required"
+                                                maxlength="50"
+                                                size="50"
+                                                placeholder="Enter last name"
+                                                aria-required="true"
+                                                aria-label="Last Name"
+                                                styleClass="ui-inputfield #{component.valid ? '' : 'ui-state-error'}"
+                                                validatorMessage="Last name must be 2-50 letters and spaces only">
+                                                <f:validateLength maximum="50"/>
+                                                <f:validateRegex pattern="^[A-Za-z\s]{2,50}$" message="Last name must be 2-50 letters and spaces only"/>
+                                            </p:inputText>
+                                            <p:message for="lastName" display="icon" styleClass="field-error" />
+                                            <div class="field-help">Enter your last name (letters and spaces only)</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="phoneNumber">Phone Number: <span style="color: #dc3545;">*</span></label>
+                                            <p:inputText id="phoneNumber"
+                                                value="#{adminDashboardController.newDoctorRegistration.phoneNumber}"
+                                                required="true"
+                                                requiredMessage="Phone number is required"
+                                                maxlength="20"
+                                                size="20"
+                                                placeholder="Enter phone number"
+                                                aria-required="true"
+                                                aria-label="Phone Number"
+                                                styleClass="ui-inputfield #{component.valid ? '' : 'ui-state-error'}"
+                                                validatorMessage="Phone number must be 10-15 digits (can start with + for international numbers)">
+                                                <f:validateRegex pattern="^[+]?[0-9]{10,15}$" message="Phone number must be 10-15 digits (can start with + for international numbers)"/>
+                                            </p:inputText>
+                                            <p:message for="phoneNumber" display="icon" styleClass="field-error" />
+                                            <div class="field-help">Enter a 10-15 digit phone number (can start with + for international numbers)</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="address">Address:</label>
+                                            <p:inputTextarea id="address"
+                                                value="#{adminDashboardController.newDoctorRegistration.address}"
+                                                rows="3"
+                                                maxlength="255"
+                                                placeholder="Enter address"
+                                                aria-label="Address"
+                                                styleClass="ui-inputfield #{component.valid ? '' : 'ui-state-error'}"
+                                                validatorMessage="Address can contain letters, numbers, spaces, commas, periods, hyphens, and underscores only">
+                                                <f:validateRegex pattern="^[A-Za-z0-9\s,\.\-_]{0,255}$" message="Address can contain letters, numbers, spaces, commas, periods, hyphens, and underscores only"/>
+                                            </p:inputTextarea>
+                                            <p:message for="address" display="icon" styleClass="field-error" />
+                                            <div class="field-help">Enter your address (optional)</div>
+                                        </div>
+                                    </div>
+                                    <div style="margin-top: 20px; text-align: right;">
+                                        <button type="button" class="btn btn-secondary nav-btn prev-btn">Previous</button>
+                                        <button type="button" class="btn btn-primary nav-btn next-btn" style="margin-left: 12px;">Next</button>
+                                    </div>
+                                </div>
+                                <div class="form-step" data-step="3">
+                                    <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                        <div class="form-group">
+                                            <label for="specialization">Specialization: <span style="color: #dc3545;">*</span></label>
+                                            <p:inputText id="specialization"
+                                                value="#{adminDashboardController.newDoctorRegistration.specialization}"
+                                                required="true"
+                                                requiredMessage="Specialization is required"
+                                                maxlength="100"
+                                                size="50"
+                                                placeholder="Enter specialization"
+                                                aria-required="true"
+                                                aria-label="Specialization"
+                                                styleClass="ui-inputfield #{component.valid ? '' : 'ui-state-error'}"
+                                                validatorMessage="Specialization must be 2-100 letters and spaces only">
+                                                <f:validateLength maximum="100"/>
+                                                <f:validateRegex pattern="^[A-Za-z\s]{2,100}$" message="Specialization must be 2-100 letters and spaces only"/>
+                                            </p:inputText>
+                                            <p:message for="specialization" display="icon" styleClass="field-error" />
+                                            <div class="field-help">Enter your medical specialization (letters and spaces only)</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="licenseNumber">License Number: <span style="color: #dc3545;">*</span></label>
+                                            <p:inputText id="licenseNumber"
+                                                value="#{adminDashboardController.newDoctorRegistration.licenseNumber}"
+                                                required="true"
+                                                requiredMessage="License number is required"
+                                                maxlength="50"
+                                                size="50"
+                                                placeholder="Enter license number"
+                                                aria-required="true"
+                                                aria-label="License Number"
+                                                styleClass="ui-inputfield #{component.valid ? '' : 'ui-state-error'}"
+                                                validatorMessage="License number must be 5-50 characters (letters, numbers, hyphens, underscores)">
+                                                <f:validateLength maximum="50"/>
+                                                <f:validateRegex pattern="^[A-Za-z0-9\-_]{5,50}$" message="License number must be 5-50 characters (letters, numbers, hyphens, underscores)"/>
+                                            </p:inputText>
+                                            <p:message for="licenseNumber" display="icon" styleClass="field-error" />
+                                            <div class="field-help">Enter your medical license number</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="qualifications">Qualifications: <span style="color: #dc3545;">*</span></label>
+                                            <p:inputTextarea id="qualifications"
+                                                value="#{adminDashboardController.newDoctorRegistration.qualifications}"
+                                                required="true"
+                                                requiredMessage="Qualifications are required"
+                                                rows="3"
+                                                maxlength="200"
+                                                placeholder="Enter qualifications"
+                                                aria-required="true"
+                                                aria-label="Qualifications"
+                                                styleClass="ui-inputfield #{component.valid ? '' : 'ui-state-error'}"
+                                                validatorMessage="Qualifications must be 2-200 characters (letters, numbers, spaces, commas, periods, hyphens, underscores)">
+                                                <f:validateLength maximum="200"/>
+                                                <f:validateRegex pattern="^[A-Za-z0-9\s,\.\-_]{2,200}$" message="Qualifications must be 2-200 characters (letters, numbers, spaces, commas, periods, hyphens, underscores)"/>
+                                            </p:inputTextarea>
+                                            <p:message for="qualifications" display="icon" styleClass="field-error" />
+                                            <div class="field-help">Enter your qualifications (e.g., MBBS, MD, PhD, Board Certification)</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="experience">Experience (Years): <span style="color: #dc3545;">*</span></label>
+                                            <p:inputText id="experience"
+                                                value="#{adminDashboardController.newDoctorRegistration.experience}"
+                                                required="true"
+                                                requiredMessage="Experience is required"
+                                                maxlength="2"
+                                                size="2"
+                                                placeholder="Enter years of experience"
+                                                aria-required="true"
+                                                aria-label="Experience"
+                                                styleClass="ui-inputfield #{component.valid ? '' : 'ui-state-error'}"
+                                                validatorMessage="Experience must be a number between 0 and 99">
+                                                <f:validateLongRange minimum="0" maximum="99"/>
+                                            </p:inputText>
+                                            <p:message for="experience" display="icon" styleClass="field-error" />
+                                            <div class="field-help">Enter your years of experience (0-99)</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="department">Department: <span style="color: #dc3545;">*</span></label>
+                                            <div class="field col-12 md:col-4">
+                                                <p:selectOneMenu id="department"
+                                                    value="#{adminDashboardController.newDoctorRegistration.department}"
+                                                    style="width: 100%;"
+                                                    aria-label="Department"
+                                                    converter="departmentTableDTOConverter">
+                                                    <f:selectItem itemLabel="Select Department" itemValue="" />
+                                                    <f:selectItems value="#{adminDashboardController.allDepartments}" var="d" itemLabel="#{d.departmentName}" itemValue="#{d}" />
+                                                </p:selectOneMenu>
+                                                <p:message for="department" display="icon" styleClass="field-error" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="margin-top: 20px; text-align: right;">
+                                        <button type="button" class="btn btn-secondary nav-btn prev-btn">Previous</button>
+                                        <button type="button" class="btn btn-primary nav-btn next-btn" style="margin-left: 12px;">Next</button>
+                                    </div>
+                                </div>
+                                <div class="form-step" data-step="4">
+                                    <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                        <div class="form-group">
+                                            <p:selectBooleanCheckbox id="acceptTerms" value="#{adminDashboardController.newDoctorRegistration.acceptTerms}" required="true" requiredMessage="You must agree to the Terms of Service and Privacy Policy" />
+                                            <p:outputLabel for="acceptTerms">I agree to the Terms of Service and Privacy Policy *</p:outputLabel>
+                                            <p:message for="acceptTerms" display="icon" styleClass="field-error" />
+                                        </div>
+                                        <div class="form-group">
+                                            <p:selectBooleanCheckbox id="acceptPrivacy" value="#{adminDashboardController.newDoctorRegistration.acceptPrivacy}" required="true" requiredMessage="You must consent to data processing" />
+                                            <p:outputLabel for="acceptPrivacy">I consent to the processing of my personal data for healthcare purposes *</p:outputLabel>
+                                            <p:message for="acceptPrivacy" display="icon" styleClass="field-error" />
+                                        </div>
+                                        <div class="form-group">
+                                            <p:selectBooleanCheckbox id="professionalConsent" value="#{adminDashboardController.newDoctorRegistration.professionalConsent}" required="true" requiredMessage="You must confirm your credentials are accurate" />
+                                            <p:outputLabel for="professionalConsent">I confirm that all provided credentials and information are accurate and current *</p:outputLabel>
+                                            <p:message for="professionalConsent" display="icon" styleClass="field-error" />
+                                        </div>
+                                    </div>
+                                    <div style="margin-top: 20px; text-align: right;">
+                                        <button type="button" class="btn btn-secondary nav-btn prev-btn">Previous</button>
+                                        <h:commandButton id="createDoctorBtn" value="Create Doctor Account"
+                                            action="#{adminDashboardController.createDoctorAccount}"
+                                            styleClass="ui-button-primary"
+                                            style="margin-left: 12px; background: #2c3e50 !important; border-color: #2c3e50 !important; outline: 2px solid #0056b3; outline-offset: 2px; padding: 12px 24px; font-size: 16px;"
+                                            aria-label="Create Doctor Account"
+                                            update="doctorFormMessages @form"
+                                            ajax="true"
+                                            onclick="return validateForm()"/>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </p:tab>
+                        <p:tab title="Manage Doctors">
+                            <div class="card crud-demo">
+                                <h:form id="form">
+                                    <p:growl id="messages" showDetail="true" />
+                                    <!-- Doctor management toolbar -->
+                                    <div class="doctor-toolbar" style="display: flex; gap: 1.5rem; margin-bottom: 1.5rem;">
+                                        <p:commandButton value="New" icon="pi pi-plus" actionListener="#{adminDashboardController.openNewDoctor}"
+                                            update=":dialogs:manage-doctor-content" oncomplete="PF('manageDoctorDialog').show()"
+                                            styleClass="ui-button-success" />
+                                        <p:commandButton id="delete-doctors-button" value="Delete" icon="pi pi-trash" actionListener="#{adminDashboardController.deleteSelectedDoctors}"
+                                            update="doctorTabView:form:dt-doctors doctorTabView:form:messages" styleClass="ui-button-danger" />
+                                        <p:commandButton value="Import" icon="pi pi-upload" actionListener="#{adminDashboardController.importDoctors}"
+                                            styleClass="ui-button-info" />
+                                        <p:commandButton value="Export" icon="pi pi-download" actionListener="#{adminDashboardController.exportDoctors}"
+                                            styleClass="ui-button-help" />
+                                    </div>
+                                    <p:dataTable id="dt-doctors" widgetVar="dtDoctors" var="doctor" value="#{adminDashboardController.allDoctors}"
+                                        reflow="true" styleClass="doctors-table ui-datatable-striped ui-datatable-hoverable" selectionMode="multiple" selection="#{adminDashboardController.selectedDoctors}"
+                                        rowKey="#{doctor.doctorId}" paginator="true" rows="10" selectionRowMode="add" paginatorPosition="bottom"
+                                        style="width: 100%; min-width: 1100px; table-layout: auto;">
+                                        <f:facet name="header">
+                                            <div class="doctors-table-header" style="display: flex; justify-content: space-between; align-items: center;">
+                                                <span style="font-weight: bold">DOCTORS</span>
+                                                <span class="filter-container ui-input-icon-left"> <i class="pi pi-search"></i>
+                                                    <p:inputText id="globalFilter" onkeyup="PrimeFaces.debounce(() => PF('dtDoctors').filter())" placeholder="Search" />
+                                                </span>
+                                            </div>
+                                        </f:facet>
+                                        <p:ajax event="rowSelect" update="doctorTabView:form:delete-doctors-button" />
+                                        <p:ajax event="rowUnselect" update="doctorTabView:form:delete-doctors-button" />
+                                        <p:ajax event="rowSelectCheckbox" update="doctorTabView:form:delete-doctors-button" />
+                                        <p:ajax event="rowUnselectCheckbox" update="doctorTabView:form:delete-doctors-button" />
+                                        <p:ajax event="toggleSelect" update="doctorTabView:form:delete-doctors-button" />
+                                        <p:column selectionBox="true" exportable="false" style="width: 40px; text-align: center;" />
+                                        <p:column headerText="ID" sortBy="#{doctor.doctorId}" filterBy="#{doctor.doctorId}" style="min-width: 70px; text-align: center;">
+                                            <h:outputText value="#{doctor.doctorId}" />
+                                        </p:column>
+
+                                        <p:column headerText="First Name" sortBy="#{doctor.firstName}" filterBy="#{doctor.firstName}" style="min-width: 120px;">
+                                            <h:outputText value="#{doctor.firstName}" />
+                                        </p:column>
+                                        <p:column headerText="Last Name" sortBy="#{doctor.lastName}" filterBy="#{doctor.lastName}" style="min-width: 120px;">
+                                            <h:outputText value="#{doctor.lastName}" />
+                                        </p:column>
+                                        <p:column headerText="Email" sortBy="#{doctor.email}" filterBy="#{doctor.email}" style="min-width: 180px;">
+                                            <h:outputText value="#{doctor.email}" />
+                                        </p:column>
+                                        <p:column headerText="Phone" sortBy="#{doctor.phoneNumber}" filterBy="#{doctor.phoneNumber}" style="min-width: 120px;">
+                                            <h:outputText value="#{doctor.phoneNumber}" />
+                                        </p:column>
+                                        <p:column headerText="Specialization" sortBy="#{doctor.specialization}" filterBy="#{doctor.specialization}" style="min-width: 140px;">
+                                            <h:outputText value="#{doctor.specialization}" />
+                                        </p:column>
+                                        <p:column headerText="License" sortBy="#{doctor.licenseNumber}" filterBy="#{doctor.licenseNumber}" style="min-width: 120px;">
+                                            <h:outputText value="#{doctor.licenseNumber}" />
+                                        </p:column>
+                                        <p:column headerText="Qualifications" sortBy="#{doctor.qualifications}" filterBy="#{doctor.qualifications}" style="min-width: 180px;">
+                                            <h:outputText value="#{doctor.qualifications}" styleClass="qualifications-cell" title="#{doctor.qualifications}" />
+                                        </p:column>
+                                        <p:column headerText="Experience" sortBy="#{doctor.experience}" filterBy="#{doctor.experience}" style="min-width: 100px; text-align: center;">
+                                            <h:outputText value="#{doctor.experience}" />
+                                        </p:column>
+                                        <p:column headerText="Department" sortBy="#{doctor.department.departmentName}" filterBy="#{doctor.department.departmentName}" style="min-width: 140px;">
+                                            <h:outputText value="#{doctor.department.departmentName}" styleClass="department-cell" />
+                                        </p:column>
+                                        <p:column headerText="Status" sortBy="#{doctor.status.text}" filterBy="#{doctor.status.text}" style="min-width: 120px; text-align: center;">
+                                            <h:outputText styleClass="doctor-badge status-#{doctor.status.name().toLowerCase()}"
+                                                value="#{doctor.status.text}" />
+                                        </p:column>
+                                        <p:column headerText="Actions" exportable="false" width="120px" style="text-align: center; min-width: 120px;">
+                                            <div class="action-icons-row" style="display: flex; justify-content: center; gap: 0.5rem;">
+                                                <p:commandButton icon="pi pi-pencil" update=":dialogs:manage-doctor-content"
+                                                    oncomplete="PF('manageDoctorDialog').show()"
+                                                    styleClass="action-icon-btn edit-button" process="@this" title="Edit Doctor"
+                                                    actionListener="#{adminDashboardController.prepareEditDoctor(doctor)}">
+                                                    <f:setPropertyActionListener value="#{doctor}" target="#{adminDashboardController.selectedDoctor}" />
+                                                    <p:resetInput target=":dialogs:manage-doctor-content" />
+                                                </p:commandButton>
+                                                <p:commandButton icon="pi pi-trash"
+                                                    process="@this"
+                                                    oncomplete="PF('deleteDoctorDialog').show()"
+                                                    styleClass="action-icon-btn delete-button" title="Delete Doctor">
+                                                    <f:setPropertyActionListener value="#{doctor}" target="#{adminDashboardController.selectedDoctor}" />
+                                                </p:commandButton>
+                                            </div>
+                                        </p:column>
+                                    </p:dataTable>
+                                   
+                                </h:form>
+                            </div>
+                        </p:tab>
+                    </p:tabView>
+
+                    <h:form id="dialogs">
+                                <p:dialog header="Doctor Details" showEffect="fade" modal="true" widgetVar="manageDoctorDialog"
+            responsive="true">
+                                <p:outputPanel id="manage-doctor-content" style="background: #f9fbfd; border-radius: 16px; padding: 2rem 1.5rem 0.5rem 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04); max-width: 1100px; margin: 0 auto; max-height: 80vh; overflow-y: auto;">
+                                        <p:outputPanel rendered="#{not empty adminDashboardController.selectedDoctor}">
+                                        <div class="formgrid grid" style="margin-bottom: 0.2rem; gap: 1.5rem; grid-template-columns: repeat(2, 1fr);">
+                                                <div class="field">
+                                                    <p:outputLabel for="firstName" value="First Name"/>
+                                                <p:inputText id="firstName" value="#{adminDashboardController.selectedDoctor.firstName}"
+                                                             required="true" placeholder="Enter first name" />
+                                                </div>
+                                                <div class="field">
+                                                    <p:outputLabel for="lastName" value="Last Name"/>
+                                                <p:inputText id="lastName" value="#{adminDashboardController.selectedDoctor.lastName}"
+                                                             required="true" placeholder="Enter last name" />
+                                                </div>
+                                                <div class="field">
+                                                    <p:outputLabel for="email" value="Email"/>
+                                                <p:inputText id="email" value="#{adminDashboardController.selectedDoctor.email}"
+                                                             required="true" placeholder="Enter email address" />
+                                                </div>
+                                                <div class="field">
+                                                    <p:outputLabel for="phone" value="Phone"/>
+                                                <p:inputText id="phone" value="#{adminDashboardController.selectedDoctor.phoneNumber}"
+                                                             required="true" placeholder="Enter phone number" />
+                                                </div>
+
+                                                <div class="field">
+                                                    <p:outputLabel for="specialization" value="Specialization"/>
+                                                <p:inputText id="specialization" value="#{adminDashboardController.selectedDoctor.specialization}"
+                                                             required="true" placeholder="Enter specialization" />
+                                                </div>
+                                                <div class="field">
+                        <p:outputLabel for="license" value="License Number"/>
+                                                <p:inputText id="license" value="#{adminDashboardController.selectedDoctor.licenseNumber}"
+                                                             required="true" placeholder="Enter license number" />
+                                            </div>
+
+                                            <div class="field">
+                                                <p:outputLabel for="qualifications" value="Qualifications"/>
+                                                <p:inputTextarea id="qualifications" value="#{adminDashboardController.selectedDoctor.qualifications}"
+                                                             required="true" placeholder="Enter qualifications (e.g., MBBS, MD, PhD, Board Certification)" 
+                                                             rows="3" maxlength="200" 
+                                                             validatorMessage="Qualifications must be between 2 and 200 characters"
+                                                             styleClass="ui-inputfield #{component.valid ? '' : 'ui-state-error'}">
+                                                    <f:validateLength minimum="2" maximum="200"/>
+                                                </p:inputTextarea>
+                                                <p:message for="qualifications" display="icon" styleClass="field-error" />
+                                            </div>
+
+                                            <div class="field">
+                                                <p:outputLabel for="experience" value="Experience (Years)"/>
+                                                <p:inputText id="experience" value="#{adminDashboardController.selectedDoctor.experience}"
+                                                             required="true" placeholder="Enter years of experience" />
+                                            </div>
+                                            <!-- <div class="field">
+                                                <p:outputLabel for="department" value="Department"/>
+                                                <p:selectOneMenu id="department" value="#{adminDashboardController.selectedDoctor.department}"
+                                                                 required="true" style="width: 100%;"
+                                                                 converter="departmentTableDTOConverter">
+                                                    <f:selectItem itemLabel="Select Department" itemValue=""/>
+                                                    <f:selectItems value="#{adminDashboardController.allDepartments}" var="d" itemLabel="#{d.departmentName}" itemValue="#{d}" />
+                                                    <f:attribute name="departments" value="#{adminDashboardController.allDepartments}"/>
+                                                </p:selectOneMenu>
+                                            </div> -->
+
+                                                <div class="field">
+                                                    <p:outputLabel for="status" value="Status"/>
+                                                <p:selectOneMenu id="status" value="#{adminDashboardController.selectedDoctor.status}"
+                                                                 required="true">
+                            <f:selectItems value="#{adminDashboardController.allDoctorStatuses}" var="status"
+                                itemLabel="#{status.text}" itemValue="#{status}"/>
+                                                    </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                    </p:outputPanel>
+                                    <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+                                        <p:commandButton value="Save" icon="pi pi-check"
+                                            actionListener="#{adminDashboardController.updateDoctor}"
+                                            update="doctorTabView:form:messages doctorTabView:form:dt-doctors manage-doctor-content"
+                                            process="manage-doctor-content @this"
+                                            styleClass="ui-button-success"
+                                            oncomplete="if (!args.validationFailed) PF('manageDoctorDialog').hide();" />
+                                        <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageDoctorDialog').hide()"
+                                            class="ui-button-secondary" />
+                                    </div>
+                                </p:outputPanel>
+                                </p:dialog>
+
+                            <p:confirmDialog widgetVar="deleteDoctorDialog" showEffect="fade" width="350"
+                                             message="Are you sure you want to delete this doctor?" header="Confirm Deletion" severity="warn">
+                                    <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{adminDashboardController.deleteDoctor}"
+                                                 process="@this" update="doctorTabView:form:messages doctorTabView:form:dt-doctors doctorTabView:form:delete-doctors-button"
+                                                 oncomplete="PF('deleteDoctorDialog').hide()" styleClass="ui-button-danger ui-button-raised"/>
+                                <p:commandButton value="No" type="button" styleClass="ui-button-secondary ui-button-outlined" icon="pi pi-times"
+                                        onclick="PF('deleteDoctorDialog').hide()" />
+                                </p:confirmDialog>
+
+                            <p:confirmDialog global="true" showEffect="fade" width="350">
+                                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
+                                        icon="pi pi-times" />
+                                </p:confirmDialog>
+                            </h:form>
+</div>
+                </div>
+            </div>
+        </div>
+    </h:body>
+
+
+<script type="text/javascript">
+//<![CDATA[
+    document.addEventListener('DOMContentLoaded', function() {
+        let currentStep = 1;
+        const totalSteps = 4;
+        const submitBtn = document.getElementById('addDoctorForm:createDoctorBtn');
+
+        function showStep(step) {
+            document.querySelectorAll('.form-step').forEach(function(el) {
+                el.style.display = 'none';
+            });
+            document.querySelector('.form-step[data-step="' + step + '"]').style.display = '';
+            document.querySelectorAll('.step-indicator .step').forEach(function(el, idx) {
+                el.classList.toggle('active', idx + 1 === step);
+            });
+            document.querySelector('.prev-btn').style.display = (step > 1) ? '' : 'none';
+            document.querySelectorAll('.next-btn').forEach(function(btn) {
+                // Always show Next button on step 3
+                if (step === 3) {
+                    btn.style.display = '';
+                    btn.disabled = false;
+                } else {
+                    btn.style.display = (step < totalSteps) ? '' : 'none';
+                }
+            });
+            if (step === totalSteps) {
+                if (submitBtn) submitBtn.style.display = '';
+            } else {
+                if (submitBtn) submitBtn.style.display = 'none';
+            }
+        }
+
+        function validateStep(step) {
+            // Find all required input/select/textarea fields in the current step
+            const stepPanel = document.querySelector('.form-step[data-step="' + step + '"]');
+            let valid = true;
+            // Only check visible required fields
+            const requiredFields = stepPanel.querySelectorAll('[required], [aria-required="true"]');
+            requiredFields.forEach(function(field) {
+                let isEmpty = false;
+                if (field.type === 'checkbox' || field.type === 'radio') {
+                    isEmpty = !field.checked;
+                } else if (field.tagName === 'SELECT') {
+                    // Remove all JS validation for dropdowns; let PrimeFaces handle it
+                    return;
+                } else {
+                    isEmpty = !field.value || field.value.trim() === '';
+                }
+                // Only add/remove error class for non-selects
+                if (field.tagName !== 'SELECT') {
+                    if (isEmpty || field.classList.contains('ui-state-error')) {
+                        field.classList.add('ui-state-error');
+                        valid = false;
+                    } else {
+                        field.classList.remove('ui-state-error');
+                    }
+                }
+            });
+            // Optionally, scroll to first error
+            if (!valid) {
+                const firstError = stepPanel.querySelector('.ui-state-error');
+                if (firstError) firstError.focus();
+            }
+            return valid;
+        }
+
+        document.querySelectorAll('.prev-btn').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (currentStep > 1) {
+                    currentStep--;
+                    showStep(currentStep);
+                }
+            });
+        });
+        document.querySelectorAll('.next-btn').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (validateStep(currentStep)) {
+                    if (currentStep < totalSteps) {
+                        currentStep++;
+                        showStep(currentStep);
+                    }
+                }
+            });
+        });
+        showStep(currentStep);
+    });
+//]]>
+</script>
+</html>

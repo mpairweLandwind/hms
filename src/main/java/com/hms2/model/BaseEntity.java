@@ -23,7 +23,7 @@ public abstract class BaseEntity {
     private String updatedBy;
     
     @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted = false;
+    protected Boolean isDeleted = false;
     
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;

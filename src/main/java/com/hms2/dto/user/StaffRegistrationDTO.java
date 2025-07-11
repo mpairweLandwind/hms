@@ -1,9 +1,18 @@
 package com.hms2.dto.user;
 
-import com.hms2.enums.StaffStatus;
-import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.Date;
+
+import com.hms2.enums.StaffStatus;
+
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 public class StaffRegistrationDTO {
     
@@ -58,7 +67,7 @@ public class StaffRegistrationDTO {
     @Size(max = 500, message = "Notes must not exceed 500 characters")
     private String notes;
     
-    private Long departmentId;
+    private String departmentName;
     
     private StaffStatus status = StaffStatus.PENDING_VERIFICATION;
     
@@ -76,6 +85,9 @@ public class StaffRegistrationDTO {
     
     @AssertTrue(message = "You must accept the employment agreement")
     private boolean acceptEmployment = false;
+    
+    @AssertTrue(message = "You must confirm employment eligibility")
+    private boolean confirmEligibility = false;
     
     // Constructors
     public StaffRegistrationDTO() {}
@@ -196,12 +208,12 @@ public class StaffRegistrationDTO {
         this.notes = notes;
     }
     
-    public Long getDepartmentId() {
-        return departmentId;
+    public String getDepartmentName() {
+        return departmentName;
     }
     
-    public void setDepartmentId(Long departmentId) {
-        this.departmentId = departmentId;
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
     
     public StaffStatus getStatus() {
@@ -258,5 +270,13 @@ public class StaffRegistrationDTO {
     
     public void setAcceptEmployment(boolean acceptEmployment) {
         this.acceptEmployment = acceptEmployment;
+    }
+    
+    public boolean isConfirmEligibility() {
+        return confirmEligibility;
+    }
+    
+    public void setConfirmEligibility(boolean confirmEligibility) {
+        this.confirmEligibility = confirmEligibility;
     }
 }

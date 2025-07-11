@@ -13,7 +13,13 @@
                        value="#{controller.registrationDTO.firstName}" 
                        required="true" 
                        placeholder="Your first name"
-                       styleClass="form-input"/>
+                       styleClass="form-input"
+                       maxlength="50">
+                <f:validateLength minimum="2" maximum="50"/>
+                <f:validateRegex pattern="^[A-Za-z\s]{2,50}$" 
+                               message="First name must be 2-50 letters and spaces only"/>
+            </p:inputText>
+            <p:message for="firstName" styleClass="field-error"/>
         </div>
         
         <div class="form-group">
@@ -24,7 +30,13 @@
                        value="#{controller.registrationDTO.lastName}" 
                        required="true" 
                        placeholder="Your last name"
-                       styleClass="form-input"/>
+                       styleClass="form-input"
+                       maxlength="50">
+                <f:validateLength minimum="2" maximum="50"/>
+                <f:validateRegex pattern="^[A-Za-z\s]{2,50}$" 
+                               message="Last name must be 2-50 letters and spaces only"/>
+            </p:inputText>
+            <p:message for="lastName" styleClass="field-error"/>
         </div>
     </div>
     
@@ -37,7 +49,12 @@
                        value="#{controller.registrationDTO.phoneNumber}" 
                        required="true" 
                        placeholder="Your contact number"
-                       styleClass="form-input"/>
+                       styleClass="form-input"
+                       maxlength="20">
+                <f:validateRegex pattern="^[+]?[0-9]{10,15}$" 
+                               message="Phone number must be 10-15 digits with optional + prefix"/>
+            </p:inputText>
+            <p:message for="phoneNumber" styleClass="field-error"/>
         </div>
         
         <div class="form-group">
@@ -48,7 +65,12 @@
                            value="#{controller.registrationDTO.address}" 
                            rows="3" 
                            placeholder="Your complete address"
-                           styleClass="form-input"/>
+                           styleClass="form-input"
+                           maxlength="255">
+                <f:validateRegex pattern="^[A-Za-z0-9\s,\.\-_]{0,255}$" 
+                               message="Address can contain letters, numbers, spaces, commas, periods, hyphens, and underscores only"/>
+            </p:inputTextarea>
+            <p:message for="address" styleClass="field-error"/>
         </div>
     </div>
 

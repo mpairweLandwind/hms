@@ -816,3 +816,368 @@ a:hover {
 .min-h-screen {
   min-height: 100vh;
 }
+
+/* ===================================
+   MODERN FOOTER CSS - Hospital Management System
+   Professional footer design with improved layout
+   =================================== */
+
+.main-footer {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  color: #f8fafc;
+  margin-top: auto;
+  position: relative;
+}
+
+.footer-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Footer Content */
+.footer-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr;
+  gap: 3rem;
+  padding: 4rem 0 2rem 0;
+}
+
+/* Brand Section */
+.brand-section {
+  grid-column: 1;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.footer-logo {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.footer-brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.footer-brand-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.footer-brand-tagline {
+  font-size: 0.875rem;
+  color: #cbd5e1;
+  margin: 0;
+  line-height: 1;
+}
+
+.footer-description {
+  color: #cbd5e1;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  font-size: 0.875rem;
+}
+
+.footer-social {
+  display: flex;
+  gap: 1rem;
+}
+
+.social-link {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f8fafc;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.social-link:hover {
+  background: rgba(59, 130, 246, 0.8);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Footer Sections */
+.footer-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #f8fafc;
+  margin: 0 0 1.5rem 0;
+  position: relative;
+}
+
+.footer-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  background: #3b82f6;
+  border-radius: 1px;
+}
+
+.footer-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.footer-link {
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  display: inline-block;
+  position: relative;
+}
+
+.footer-link:hover {
+  color: #3b82f6;
+  transform: translateX(4px);
+}
+
+.footer-link::before {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #3b82f6;
+  transition: width 0.2s ease;
+}
+
+.footer-link:hover::before {
+  width: 100%;
+}
+
+/* Contact Section */
+.contact-section {
+  grid-column: 5;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.contact-item i {
+  color: #3b82f6;
+  font-size: 1rem;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.contact-item span {
+  color: #cbd5e1;
+}
+
+/* Footer Bottom */
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2rem 0;
+  margin-top: 2rem;
+}
+
+.footer-bottom-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.footer-copyright {
+  color: #94a3b8;
+  font-size: 0.875rem;
+}
+
+.footer-copyright p {
+  margin: 0;
+}
+
+.footer-legal {
+  display: flex;
+  gap: 2rem;
+}
+
+.footer-legal-link {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.2s ease;
+}
+
+.footer-legal-link:hover {
+  color: #3b82f6;
+}
+
+/* ===================================
+   RESPONSIVE DESIGN
+   =================================== */
+@media (max-width: 1024px) {
+  .footer-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  
+  .brand-section {
+    grid-column: 1 / -1;
+  }
+  
+  .contact-section {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-container {
+    padding: 0 1.5rem;
+  }
+  
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 3rem 0 2rem 0;
+  }
+  
+  .footer-bottom-content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .footer-legal {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-container {
+    padding: 0 1rem;
+  }
+  
+  .footer-content {
+    padding: 2rem 0 1.5rem 0;
+  }
+  
+  .footer-brand {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .footer-social {
+    justify-content: center;
+  }
+  
+  .contact-item {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+  }
+}
+
+/* ===================================
+   ANIMATIONS
+   =================================== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.footer-section {
+  animation: fadeInUp 0.6s ease;
+}
+
+.footer-section:nth-child(1) { animation-delay: 0.1s; }
+.footer-section:nth-child(2) { animation-delay: 0.2s; }
+.footer-section:nth-child(3) { animation-delay: 0.3s; }
+.footer-section:nth-child(4) { animation-delay: 0.4s; }
+.footer-section:nth-child(5) { animation-delay: 0.5s; }
+
+/* ===================================
+   ACCESSIBILITY
+   =================================== */
+@media (prefers-reduced-motion: reduce) {
+  .footer-section,
+  .social-link,
+  .footer-link {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Focus styles for accessibility */
+.footer-link:focus,
+.social-link:focus,
+.footer-legal-link:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .main-footer {
+    background: #000000;
+    border-top: 2px solid #ffffff;
+  }
+  
+  .footer-link:hover {
+    background: #ffffff;
+    color: #000000;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+  }
+}

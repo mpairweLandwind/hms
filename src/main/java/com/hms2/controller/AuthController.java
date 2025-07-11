@@ -1,23 +1,20 @@
 package com.hms2.controller;
 
-import com.hms2.model.User;
+import java.io.Serializable;
+
 import com.hms2.enums.UserRole;
+import com.hms2.model.User;
 import com.hms2.service.AuthenticationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import java.io.Serializable;
 
 @Named("authController")
 @SessionScoped
 public class AuthController implements Serializable {
-    
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     
     @Inject
     private AuthenticationService authenticationService;
@@ -26,16 +23,17 @@ public class AuthController implements Serializable {
     private String password;
     private User currentUser;
     private boolean loggedIn = false;
+    private boolean rememberMe = false;
     
     public String login() {
         try {
-            logger.info("Attempting login for user: {}", username);
+            System.err.println("Attempting login for user: " + username);
             
-            User user = authenticationService.authenticate(username, password);
+            User user = authenticationService.authenticate(username, password).orElse(null);
             if (user != null) {
                 currentUser = user;
                 loggedIn = true;
-                
+                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("user", user);
                 addSuccessMessage("Login successful! Welcome " + user.getUsername());
                 
                 // Redirect based on user role
@@ -46,7 +44,8 @@ public class AuthController implements Serializable {
             }
             
         } catch (Exception e) {
-            logger.error("Login error", e);
+            System.err.println("Login error");
+            e.printStackTrace(System.err);
             addErrorMessage("Login failed: " + e.getMessage());
             return null;
         }
@@ -55,30 +54,31 @@ public class AuthController implements Serializable {
     private String redirectBasedOnRole(UserRole role) {
         switch (role) {
             case PATIENT:
-                return "patient-dashboard?faces-redirect=true";
+                return "/views/dashboard/patient-dashboard.xhtml?faces-redirect=true";
             case DOCTOR:
-                return "doctor-dashboard?faces-redirect=true";
+                return "/views/dashboard/doctor-dashboard.xhtml?faces-redirect=true";
             case STAFF:
-                return "staff-dashboard?faces-redirect=true";
+                return "/views/dashboard/staff-dashboard.xhtml?faces-redirect=true";
             case ADMIN:
-                return "admin-dashboard?faces-redirect=true";
+                return "/views/dashboard/admin-dashboard.xhtml?faces-redirect=true";
             default:
-                return "dashboard?faces-redirect=true";
+                return "/index.xhtml?faces-redirect=true";
         }
     }
     
     public String logout() {
-        logger.info("User {} logging out", currentUser != null ? currentUser.getUsername() : "unknown");
+        System.err.println("User " + (currentUser != null ? currentUser.getUsername() : "unknown") + " logging out");
         
         currentUser = null;
         loggedIn = false;
         username = null;
         password = null;
+        rememberMe = false;
         
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
         addSuccessMessage("You have been logged out successfully");
         
-        return "index?faces-redirect=true";
+        return "/index.xhtml?faces-redirect=true";
     }
     
     public boolean isLoggedIn() {
@@ -126,5 +126,13 @@ public class AuthController implements Serializable {
     
     public String getCurrentUserName() {
         return currentUser != null ? currentUser.getUsername() : "";
+    }
+    
+    public boolean isRememberMe() {
+        return rememberMe;
+    }
+    
+    public void setRememberMe(boolean rememberMe) {
+        this.rememberMe = rememberMe;
     }
 }

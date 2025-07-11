@@ -1,0 +1,692 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="/WEB-INF/templates/dashboard-template.xhtml">
+    
+    <ui:define name="title">Appointment Management</ui:define>
+    
+    <ui:define name="content">
+        <div class="appointment-management-container">
+            
+            <!-- Header Section -->
+            <div class="page-header">
+                <div class="header-content">
+                    <h1 class="page-title">
+                        <i class="fas fa-calendar-alt"></i>
+                        Appointment Management
+                    </h1>
+                    <p class="page-description">
+                        Schedule, approve, and manage appointments for patients and healthcare providers
+                    </p>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="header-actions">
+                    <p:commandButton value="Schedule Appointment" 
+                                    icon="fas fa-plus" 
+                                    styleClass="btn-primary"
+                                    onclick="PF('scheduleDialog').show()"
+                                    rendered="#{appointmentManagementController.canScheduleAppointments()}"
+                                    update="@form" />
+                    
+                    <p:commandButton value="Refresh" 
+                                    icon="fas fa-sync-alt" 
+                                    styleClass="btn-secondary"
+                                    action="#{appointmentManagementController.loadAppointments()}"
+                                    update="@form" />
+                </div>
+            </div>
+            
+            <!-- Statistics Cards -->
+            <div class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon pending">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number">#{appointmentManagementController.pendingAppointments.size()}</h3>
+                            <p class="stat-label">Pending</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon confirmed">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number">#{appointmentManagementController.confirmedAppointments.size()}</h3>
+                            <p class="stat-label">Confirmed</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon completed">
+                            <i class="fas fa-check-double"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number">#{appointmentManagementController.completedAppointments.size()}</h3>
+                            <p class="stat-label">Completed</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon urgent">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number">#{appointmentManagementController.urgentAppointments.size()}</h3>
+                            <p class="stat-label">Urgent</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filters Section -->
+            <div class="filters-section">
+                <p:panel header="Filters and Search" styleClass="filter-panel">
+                    <div class="filter-grid">
+                        <div class="filter-item">
+                            <p:outputLabel for="statusFilter" value="Status:" />
+                            <p:selectOneMenu id="statusFilter" value="#{appointmentManagementController.selectedStatus}">
+                                <f:selectItem itemLabel="All Statuses" itemValue="" />
+                                <f:selectItem itemLabel="Scheduled" itemValue="SCHEDULED" />
+                                <f:selectItem itemLabel="Confirmed" itemValue="CONFIRMED" />
+                                <f:selectItem itemLabel="Completed" itemValue="COMPLETED" />
+                                <f:selectItem itemLabel="Cancelled" itemValue="CANCELLED" />
+                                <f:selectItem itemLabel="No Show" itemValue="NO_SHOW" />
+                            </p:selectOneMenu>
+                        </div>
+                        
+                        <div class="filter-item">
+                            <p:outputLabel for="doctorFilter" value="Doctor:" />
+                            <p:selectOneMenu id="doctorFilter" value="#{appointmentManagementController.selectedDoctorId}">
+                                <f:selectItem itemLabel="All Doctors" itemValue="" />
+                                <f:selectItems value="#{appointmentManagementController.availableDoctors}" 
+                                              var="doctor" 
+                                              itemLabel="#{doctor.firstName} #{doctor.lastName}" 
+                                              itemValue="#{doctor.doctorId}" />
+                            </p:selectOneMenu>
+                        </div>
+                        
+                        <div class="filter-item">
+                            <p:outputLabel for="patientFilter" value="Patient:" />
+                            <p:selectOneMenu id="patientFilter" value="#{appointmentManagementController.selectedPatientId}">
+                                <f:selectItem itemLabel="All Patients" itemValue="" />
+                                <f:selectItems value="#{appointmentManagementController.allPatients}" 
+                                              var="patient" 
+                                              itemLabel="#{patient.firstName} #{patient.lastName}" 
+                                              itemValue="#{patient.patientId}" />
+                            </p:selectOneMenu>
+                        </div>
+                        
+                        <div class="filter-item">
+                            <p:outputLabel for="dateFilter" value="Date:" />
+                            <p:calendar id="dateFilter" 
+                                       value="#{appointmentManagementController.selectedDate}" 
+                                       showTime="false" 
+                                       pattern="MM/dd/yyyy" />
+                        </div>
+                        
+                        <div class="filter-item">
+                            <p:outputLabel for="searchFilter" value="Search:" />
+                            <p:inputText id="searchFilter" 
+                                        value="#{appointmentManagementController.searchTerm}" 
+                                        placeholder="Search appointments..." />
+                        </div>
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <p:commandButton value="Apply Filters" 
+                                        icon="fas fa-filter" 
+                                        styleClass="btn-primary"
+                                        action="#{appointmentManagementController.filterAppointments()}"
+                                        update="@form" />
+                        
+                        <p:commandButton value="Clear Filters" 
+                                        icon="fas fa-times" 
+                                        styleClass="btn-secondary"
+                                        action="#{appointmentManagementController.clearFilters()}"
+                                        update="@form" />
+                    </div>
+                </p:panel>
+            </div>
+            
+            <!-- Appointments Tabs -->
+            <div class="appointments-section">
+                <p:tabView styleClass="appointment-tabs">
+                    
+                    <!-- Pending Appointments Tab -->
+                    <p:tab title="Pending (#{appointmentManagementController.pendingAppointments.size()})" 
+                           styleClass="tab-pending">
+                        <div class="appointments-list">
+                            <p:dataTable value="#{appointmentManagementController.pendingAppointments}" 
+                                        var="appointment" 
+                                        styleClass="appointment-table"
+                                        emptyMessage="No pending appointments found">
+                                
+                                <p:column headerText="Patient" styleClass="patient-column">
+                                    <div class="patient-info">
+                                        <strong>#{appointment.patient.firstName} #{appointment.patient.lastName}</strong>
+                                        <small>ID: #{appointment.patient.patientId}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Doctor" styleClass="doctor-column">
+                                    <div class="doctor-info">
+                                        <strong>Dr. #{appointment.doctor.firstName} #{appointment.doctor.lastName}</strong>
+                                        <small>#{appointment.doctor.specialization}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Date & Time" styleClass="datetime-column">
+                                    <div class="datetime-info">
+                                        <strong>#{appointment.appointmentDateTime}</strong>
+                                        <small>Duration: #{appointment.durationMinutes} min</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Reason" styleClass="reason-column">
+                                    <div class="reason-info">
+                                        <strong>#{appointment.reason}</strong>
+                                        <small>Type: #{appointment.appointmentType}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Priority" styleClass="priority-column">
+                                    <p:tag value="#{appointment.priority}" 
+                                           severity="#{appointmentManagementController.getPriorityColor(appointment.priority)}" />
+                                </p:column>
+                                
+                                <p:column headerText="Actions" styleClass="actions-column">
+                                    <div class="action-buttons">
+                                        <p:commandButton icon="fas fa-check" 
+                                                        styleClass="btn-success btn-sm"
+                                                        title="Approve"
+                                                        rendered="#{appointmentManagementController.canApproveAppointments()}"
+                                                        action="#{appointmentManagementController.openApprovalDialog(appointment)}"
+                                                        update="@form" />
+                                                        
+                                        <p:commandButton icon="fas fa-times" 
+                                                        styleClass="btn-danger btn-sm"
+                                                        title="Reject"
+                                                        rendered="#{appointmentManagementController.canApproveAppointments()}"
+                                                        action="#{appointmentManagementController.openApprovalDialog(appointment)}"
+                                                        update="@form" />
+                                                        
+                                        <p:commandButton icon="fas fa-calendar-check" 
+                                                        styleClass="btn-info btn-sm"
+                                                        title="Confirm"
+                                                        rendered="#{appointmentManagementController.canConfirmAppointments()}"
+                                                        action="#{appointmentManagementController.openApprovalDialog(appointment)}"
+                                                        update="@form" />
+                                                        
+                                        <p:commandButton icon="fas fa-edit" 
+                                                        styleClass="btn-warning btn-sm"
+                                                        title="Reschedule"
+                                                        rendered="#{appointmentManagementController.canRescheduleAppointments()}"
+                                                        action="#{appointmentManagementController.openRescheduleDialog(appointment)}"
+                                                        update="@form" />
+                                    </div>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </p:tab>
+                    
+                    <!-- Confirmed Appointments Tab -->
+                    <p:tab title="Confirmed (#{appointmentManagementController.confirmedAppointments.size()})" 
+                           styleClass="tab-confirmed">
+                        <div class="appointments-list">
+                            <p:dataTable value="#{appointmentManagementController.confirmedAppointments}" 
+                                        var="appointment" 
+                                        styleClass="appointment-table"
+                                        emptyMessage="No confirmed appointments found">
+                                
+                                <p:column headerText="Patient" styleClass="patient-column">
+                                    <div class="patient-info">
+                                        <strong>#{appointment.patient.firstName} #{appointment.patient.lastName}</strong>
+                                        <small>ID: #{appointment.patient.patientId}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Doctor" styleClass="doctor-column">
+                                    <div class="doctor-info">
+                                        <strong>Dr. #{appointment.doctor.firstName} #{appointment.doctor.lastName}</strong>
+                                        <small>#{appointment.doctor.specialization}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Date & Time" styleClass="datetime-column">
+                                    <div class="datetime-info">
+                                        <strong>#{appointment.appointmentDateTime}</strong>
+                                        <small>Duration: #{appointment.durationMinutes} min</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Reason" styleClass="reason-column">
+                                    <div class="reason-info">
+                                        <strong>#{appointment.reason}</strong>
+                                        <small>Type: #{appointment.appointmentType}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Priority" styleClass="priority-column">
+                                    <p:tag value="#{appointment.priority}" 
+                                           severity="#{appointmentManagementController.getPriorityColor(appointment.priority)}" />
+                                </p:column>
+                                
+                                <p:column headerText="Actions" styleClass="actions-column">
+                                    <div class="action-buttons">
+                                        <p:commandButton icon="fas fa-check-double" 
+                                                        styleClass="btn-success btn-sm"
+                                                        title="Mark Complete"
+                                                        action="#{appointmentManagementController.markAsCompleted(appointment)}"
+                                                        update="@form" />
+                                                        
+                                        <p:commandButton icon="fas fa-user-times" 
+                                                        styleClass="btn-secondary btn-sm"
+                                                        title="Mark No Show"
+                                                        action="#{appointmentManagementController.markAsNoShow(appointment)}"
+                                                        update="@form" />
+                                                        
+                                        <p:commandButton icon="fas fa-edit" 
+                                                        styleClass="btn-warning btn-sm"
+                                                        title="Reschedule"
+                                                        rendered="#{appointmentManagementController.canRescheduleAppointments()}"
+                                                        action="#{appointmentManagementController.openRescheduleDialog(appointment)}"
+                                                        update="@form" />
+                                    </div>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </p:tab>
+                    
+                    <!-- Completed Appointments Tab -->
+                    <p:tab title="Completed (#{appointmentManagementController.completedAppointments.size()})" 
+                           styleClass="tab-completed">
+                        <div class="appointments-list">
+                            <p:dataTable value="#{appointmentManagementController.completedAppointments}" 
+                                        var="appointment" 
+                                        styleClass="appointment-table"
+                                        emptyMessage="No completed appointments found">
+                                
+                                <p:column headerText="Patient" styleClass="patient-column">
+                                    <div class="patient-info">
+                                        <strong>#{appointment.patient.firstName} #{appointment.patient.lastName}</strong>
+                                        <small>ID: #{appointment.patient.patientId}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Doctor" styleClass="doctor-column">
+                                    <div class="doctor-info">
+                                        <strong>Dr. #{appointment.doctor.firstName} #{appointment.doctor.lastName}</strong>
+                                        <small>#{appointment.doctor.specialization}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Date & Time" styleClass="datetime-column">
+                                    <div class="datetime-info">
+                                        <strong>#{appointment.appointmentDateTime}</strong>
+                                        <small>Duration: #{appointment.durationMinutes} min</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Reason" styleClass="reason-column">
+                                    <div class="reason-info">
+                                        <strong>#{appointment.reason}</strong>
+                                        <small>Type: #{appointment.appointmentType}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Status" styleClass="status-column">
+                                    <p:tag value="COMPLETED" severity="success" />
+                                </p:column>
+                                
+                                <p:column headerText="Actions" styleClass="actions-column">
+                                    <div class="action-buttons">
+                                        <p:commandButton icon="fas fa-eye" 
+                                                        styleClass="btn-info btn-sm"
+                                                        title="View Details"
+                                                        action="#{appointmentManagementController.openDetailsDialog(appointment)}"
+                                                        update="@form" />
+                                    </div>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </p:tab>
+                    
+                    <!-- Urgent Appointments Tab -->
+                    <p:tab title="Urgent (#{appointmentManagementController.urgentAppointments.size()})" 
+                           styleClass="tab-urgent"
+                           rendered="#{appointmentManagementController.urgentAppointments.size() > 0}">
+                        <div class="appointments-list">
+                            <p:dataTable value="#{appointmentManagementController.urgentAppointments}" 
+                                        var="appointment" 
+                                        styleClass="appointment-table urgent-table"
+                                        emptyMessage="No urgent appointments found">
+                                
+                                <p:column headerText="Patient" styleClass="patient-column">
+                                    <div class="patient-info">
+                                        <strong>#{appointment.patient.firstName} #{appointment.patient.lastName}</strong>
+                                        <small>ID: #{appointment.patient.patientId}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Doctor" styleClass="doctor-column">
+                                    <div class="doctor-info">
+                                        <strong>Dr. #{appointment.doctor.firstName} #{appointment.doctor.lastName}</strong>
+                                        <small>#{appointment.doctor.specialization}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Date & Time" styleClass="datetime-column">
+                                    <div class="datetime-info">
+                                        <strong>#{appointment.appointmentDateTime}</strong>
+                                        <small>Duration: #{appointment.durationMinutes} min</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Reason" styleClass="reason-column">
+                                    <div class="reason-info">
+                                        <strong>#{appointment.reason}</strong>
+                                        <small>Type: #{appointment.appointmentType}</small>
+                                    </div>
+                                </p:column>
+                                
+                                <p:column headerText="Priority" styleClass="priority-column">
+                                    <p:tag value="#{appointment.priority}" severity="danger" />
+                                </p:column>
+                                
+                                <p:column headerText="Actions" styleClass="actions-column">
+                                    <div class="action-buttons">
+                                        <p:commandButton icon="fas fa-check" 
+                                                        styleClass="btn-success btn-sm"
+                                                        title="Approve"
+                                                        rendered="#{appointmentManagementController.canApproveAppointments()}"
+                                                        action="#{appointmentManagementController.openApprovalDialog(appointment)}"
+                                                        update="@form" />
+                                                        
+                                        <p:commandButton icon="fas fa-calendar-check" 
+                                                        styleClass="btn-info btn-sm"
+                                                        title="Confirm"
+                                                        rendered="#{appointmentManagementController.canConfirmAppointments()}"
+                                                        action="#{appointmentManagementController.openApprovalDialog(appointment)}"
+                                                        update="@form" />
+                                    </div>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </p:tab>
+                    
+                </p:tabView>
+            </div>
+            
+        </div>
+        
+        <!-- Schedule Appointment Dialog -->
+        <p:dialog header="Schedule New Appointment" 
+                  widgetVar="scheduleDialog" 
+                  modal="true" 
+                  showEffect="fade" 
+                  hideEffect="fade"
+                  styleClass="appointment-dialog"
+                  rendered="#{appointmentManagementController.showScheduleDialog}">
+            
+            <div class="dialog-content">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <p:outputLabel for="patientSelect" value="Patient *" />
+                        <p:selectOneMenu id="patientSelect" 
+                                        value="#{appointmentManagementController.newAppointment.patientId}"
+                                        required="true"
+                                        requiredMessage="Please select a patient">
+                            <f:selectItem itemLabel="Select Patient" itemValue="" />
+                            <f:selectItems value="#{appointmentManagementController.allPatients}" 
+                                          var="patient" 
+                                          itemLabel="#{patient.firstName} #{patient.lastName} (ID: #{patient.patientId})" 
+                                          itemValue="#{patient.patientId}" />
+                        </p:selectOneMenu>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="doctorSelect" value="Doctor *" />
+                        <p:selectOneMenu id="doctorSelect" 
+                                        value="#{appointmentManagementController.newAppointment.doctorId}"
+                                        required="true"
+                                        requiredMessage="Please select a doctor">
+                            <f:selectItem itemLabel="Select Doctor" itemValue="" />
+                            <f:selectItems value="#{appointmentManagementController.availableDoctors}" 
+                                          var="doctor" 
+                                          itemLabel="Dr. #{doctor.firstName} #{doctor.lastName} (#{doctor.specialization})" 
+                                          itemValue="#{doctor.doctorId}" />
+                        </p:selectOneMenu>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="appointmentDate" value="Date & Time *" />
+                        <p:calendar id="appointmentDate" 
+                                   value="#{appointmentManagementController.newAppointment.appointmentDate}"
+                                   showTime="true" 
+                                   pattern="MM/dd/yyyy HH:mm"
+                                   required="true"
+                                   requiredMessage="Please select appointment date and time" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="duration" value="Duration (minutes)" />
+                        <p:selectOneMenu id="duration" 
+                                        value="#{appointmentManagementController.newAppointment.duration}">
+                            <f:selectItem itemLabel="30 minutes" itemValue="30" />
+                            <f:selectItem itemLabel="45 minutes" itemValue="45" />
+                            <f:selectItem itemLabel="60 minutes" itemValue="60" />
+                            <f:selectItem itemLabel="90 minutes" itemValue="90" />
+                        </p:selectOneMenu>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="priority" value="Priority" />
+                        <p:selectOneMenu id="priority" 
+                                        value="#{appointmentManagementController.newAppointment.priority}">
+                            <f:selectItem itemLabel="Low" itemValue="LOW" />
+                            <f:selectItem itemLabel="Normal" itemValue="NORMAL" />
+                            <f:selectItem itemLabel="High" itemValue="HIGH" />
+                            <f:selectItem itemLabel="Urgent" itemValue="URGENT" />
+                        </p:selectOneMenu>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <p:outputLabel for="reason" value="Reason for Visit *" />
+                        <p:inputTextarea id="reason" 
+                                        value="#{appointmentManagementController.newAppointment.reason}"
+                                        rows="3"
+                                        required="true"
+                                        requiredMessage="Please provide a reason for the appointment" />
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <p:outputLabel for="symptoms" value="Symptoms" />
+                        <p:inputTextarea id="symptoms" 
+                                        value="#{appointmentManagementController.newAppointment.symptoms}"
+                                        rows="2" />
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <p:outputLabel for="notes" value="Additional Notes" />
+                        <p:inputTextarea id="notes" 
+                                        value="#{appointmentManagementController.newAppointment.notes}"
+                                        rows="2" />
+                    </div>
+                </div>
+            </div>
+            
+            <f:facet name="footer">
+                <div class="dialog-actions">
+                    <p:commandButton value="Schedule" 
+                                    icon="fas fa-save" 
+                                    styleClass="btn-primary"
+                                    action="#{appointmentManagementController.scheduleAppointment()}"
+                                    update="@form"
+                                    oncomplete="PF('scheduleDialog').hide()" />
+                    
+                    <p:commandButton value="Cancel" 
+                                    icon="fas fa-times" 
+                                    styleClass="btn-secondary"
+                                    onclick="PF('scheduleDialog').hide()" />
+                </div>
+            </f:facet>
+        </p:dialog>
+        
+        <!-- Approval Dialog -->
+        <p:dialog header="Appointment Approval" 
+                  widgetVar="approvalDialog" 
+                  modal="true" 
+                  showEffect="fade" 
+                  hideEffect="fade"
+                  styleClass="approval-dialog"
+                  rendered="#{appointmentManagementController.showApprovalDialog}">
+            
+            <div class="dialog-content">
+                <div class="appointment-details">
+                    <h4>Appointment Details</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <strong>Patient:</strong> #{appointmentManagementController.selectedAppointment.patient.firstName} #{appointmentManagementController.selectedAppointment.patient.lastName}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Doctor:</strong> Dr. #{appointmentManagementController.selectedAppointment.doctor.firstName} #{appointmentManagementController.selectedAppointment.doctor.lastName}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Date:</strong> #{appointmentManagementController.selectedAppointment.appointmentDateTime}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Reason:</strong> #{appointmentManagementController.selectedAppointment.reason}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="approval-actions">
+                    <div class="form-group">
+                        <p:outputLabel for="approvalNotes" value="Notes" />
+                        <p:inputTextarea id="approvalNotes" 
+                                        value="#{appointmentManagementController.approvalNotes}"
+                                        rows="3" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="rejectionReason" value="Rejection Reason" />
+                        <p:inputTextarea id="rejectionReason" 
+                                        value="#{appointmentManagementController.rejectionReason}"
+                                        rows="3" />
+                    </div>
+                </div>
+            </div>
+            
+            <f:facet name="footer">
+                <div class="dialog-actions">
+                    <p:commandButton value="Approve" 
+                                    icon="fas fa-check" 
+                                    styleClass="btn-success"
+                                    action="#{appointmentManagementController.approveAppointment()}"
+                                    update="@form"
+                                    oncomplete="PF('approvalDialog').hide()"
+                                    rendered="#{appointmentManagementController.canApproveAppointments()}" />
+                    
+                    <p:commandButton value="Reject" 
+                                    icon="fas fa-times" 
+                                    styleClass="btn-danger"
+                                    action="#{appointmentManagementController.rejectAppointment()}"
+                                    update="@form"
+                                    oncomplete="PF('approvalDialog').hide()"
+                                    rendered="#{appointmentManagementController.canApproveAppointments()}" />
+                    
+                    <p:commandButton value="Confirm" 
+                                    icon="fas fa-calendar-check" 
+                                    styleClass="btn-info"
+                                    action="#{appointmentManagementController.confirmAppointment()}"
+                                    update="@form"
+                                    oncomplete="PF('approvalDialog').hide()"
+                                    rendered="#{appointmentManagementController.canConfirmAppointments()}" />
+                    
+                    <p:commandButton value="Cancel" 
+                                    icon="fas fa-times" 
+                                    styleClass="btn-secondary"
+                                    onclick="PF('approvalDialog').hide()" />
+                </div>
+            </f:facet>
+        </p:dialog>
+        
+        <!-- Reschedule Dialog -->
+        <p:dialog header="Reschedule Appointment" 
+                  widgetVar="rescheduleDialog" 
+                  modal="true" 
+                  showEffect="fade" 
+                  hideEffect="fade"
+                  styleClass="reschedule-dialog"
+                  rendered="#{appointmentManagementController.showRescheduleDialog}">
+            
+            <div class="dialog-content">
+                <div class="appointment-details">
+                    <h4>Current Appointment</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <strong>Patient:</strong> #{appointmentManagementController.selectedAppointment.patient.firstName} #{appointmentManagementController.selectedAppointment.patient.lastName}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Doctor:</strong> Dr. #{appointmentManagementController.selectedAppointment.doctor.firstName} #{appointmentManagementController.selectedAppointment.doctor.lastName}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Current Date:</strong> #{appointmentManagementController.selectedAppointment.appointmentDateTime}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Reason:</strong> #{appointmentManagementController.selectedAppointment.reason}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="reschedule-form">
+                    <div class="form-group">
+                        <p:outputLabel for="newDate" value="New Date & Time *" />
+                        <p:calendar id="newDate" 
+                                   value="#{appointmentManagementController.rescheduleDate}"
+                                   showTime="true" 
+                                   pattern="MM/dd/yyyy HH:mm"
+                                   required="true"
+                                   requiredMessage="Please select new appointment date and time" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="rescheduleReason" value="Reason for Reschedule" />
+                        <p:inputTextarea id="rescheduleReason" 
+                                        value="#{appointmentManagementController.rescheduleReason}"
+                                        rows="3" />
+                    </div>
+                </div>
+            </div>
+            
+            <f:facet name="footer">
+                <div class="dialog-actions">
+                    <p:commandButton value="Reschedule" 
+                                    icon="fas fa-calendar-alt" 
+                                    styleClass="btn-primary"
+                                    action="#{appointmentManagementController.rescheduleAppointment()}"
+                                    update="@form"
+                                    oncomplete="PF('rescheduleDialog').hide()" />
+                    
+                    <p:commandButton value="Cancel" 
+                                    icon="fas fa-times" 
+                                    styleClass="btn-secondary"
+                                    onclick="PF('rescheduleDialog').hide()" />
+                </div>
+            </f:facet>
+        </p:dialog>
+        
+    </ui:define>
+    
+</ui:composition>
+</html> 

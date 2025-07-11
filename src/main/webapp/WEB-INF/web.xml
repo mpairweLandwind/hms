@@ -1,4 +1,4 @@
-<<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd" version="6.0">
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd" version="6.0">
 <display-name> HMS</display-name>
 
 <!--  Faces Servlet  -->
@@ -16,7 +16,12 @@
   <servlet-name>Faces Servlet</servlet-name>
   <url-pattern>/faces/*</url-pattern>
 </servlet-mapping>
-<!--  Welcome File  -->
+  <context-param>
+    <param-name>jakarta.faces.DEFAULT_SUFFIX</param-name>
+    <param-value>.xhtml</param-value>
+  </context-param>
+
+  <!--  Welcome File  -->
 <welcome-file-list>
   <welcome-file>index.xhtml</welcome-file>
 </welcome-file-list>
@@ -25,6 +30,11 @@
   <param-name>jakarta.faces.PROJECT_STAGE</param-name>
   <param-value>Development</param-value>
 </context-param>
+
+  <error-page>
+        <exception-type>jakarta.faces.application.ViewExpiredException</exception-type>
+        <location>/index.xhtml</location>
+    </error-page>
 <!--  Weld CDI Listener  -->
 <listener>
   <listener-class>org.jboss.weld.environment.servlet.Listener</listener-class>

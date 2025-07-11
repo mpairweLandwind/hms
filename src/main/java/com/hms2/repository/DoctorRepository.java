@@ -11,8 +11,6 @@ public interface DoctorRepository extends GenericRepository<Doctor, Long> {
     
     Optional<Doctor> findByLicenseNumber(String licenseNumber);
     
-    List<Doctor> findByDepartment(Department department);
-    
     List<Doctor> findBySpecialization(String specialization);
     
     List<Doctor> findByStatus(String status);
@@ -23,9 +21,16 @@ public interface DoctorRepository extends GenericRepository<Doctor, Long> {
     
     List<Doctor> findDeletedDoctors();
     
-    long countByDepartment(Department department);
-    
     long countBySpecialization(String specialization);
     
     long countByStatus(String status);
+    
+    /**
+     * Find doctor by user ID
+     */
+    Optional<Doctor> findByUserId(Long userId);
+
+    void deleteDoctorsByIds(List<Long> doctorIds);
+    
+    // Only keep CRUD and batch delete logic for DoctorTableDTO as per new implementation
 }

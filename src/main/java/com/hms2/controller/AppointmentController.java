@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
@@ -27,8 +27,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 @Named("appointmentController")
-@SessionScoped
-public class AppointmentController implements Serializable {
+@RequestScoped
+public class AppointmentController {
     
     private static final Logger logger = LoggerFactory.getLogger(AppointmentController.class);
     
@@ -115,7 +115,7 @@ public class AppointmentController implements Serializable {
     public void onDepartmentChange() {
         if (selectedDepartmentId != null) {
             filteredDoctors = doctors.stream()
-                .filter(doctor -> doctor.getDepartment().getDepartmentId().equals(selectedDepartmentId))
+                .filter(doctor -> doctor.getDepartment().getId().equals(selectedDepartmentId))
                 .collect(java.util.stream.Collectors.toList());
         } else {
             filteredDoctors = new ArrayList<>(doctors);
@@ -351,9 +351,9 @@ public class AppointmentController implements Serializable {
         dto.setAppointmentId(appointment.getAppointmentId());
         dto.setPatientName(appointment.getPatient().getFirstName() + " " + appointment.getPatient().getLastName());
         dto.setDoctorName(appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName());
-        dto.setDepartment(appointment.getDoctor().getDepartment().getName());
+        dto.setDepartment(appointment.getDoctor().getDepartment().getDepartmentName());
         dto.setAppointmentDate(Date.from(appointment.getAppointmentDateTime().atZone(ZoneId.systemDefault()).toInstant()));
-        dto.setStatus(appointment.getStatus());
+        dto.setStatus(appointment.getStatus().toString());
         dto.setReason(appointment.getReason());
         dto.setPriority(appointment.getAppointmentType());
         dto.setNotes(appointment.getNotes());

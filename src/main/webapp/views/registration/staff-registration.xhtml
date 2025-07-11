@@ -8,7 +8,7 @@
 <ui:composition template="/WEB-INF/templates/registration-layout.xhtml">
     
     <ui:param name="roleType" value="STAFF"/>
-    <ui:param name="pageDescription" value="Register as hospital staff to join our administrative and support team"/>
+    <ui:param name="pageDescription" value="Staff registration for hospital personnel"/>
     
     <ui:define name="pageTitle">Staff Registration</ui:define>
     
@@ -16,11 +16,10 @@
         <i class="pi pi-users" aria-hidden="true"></i>
     </ui:define>
     
-    <ui:define name="heroTitle">Join Our Support Team</ui:define>
+    <ui:define name="heroTitle">Staff Registration</ui:define>
     
     <ui:define name="heroSubtitle">
-        Register as hospital staff and become part of our dedicated team providing 
-        administrative support and exceptional patient care services.
+        Register as hospital staff to provide administrative and support services
     </ui:define>
     
     <ui:define name="progressSteps">
@@ -40,17 +39,89 @@
     
     <ui:define name="registrationForm">
         <h:form id="staffRegistrationForm" styleClass="registration-form">
+            <p:messages id="messages" showDetail="true" closable="true" 
+                       severity="error,warn,info,success" 
+                       showSummary="true" 
+                       autoUpdate="true"
+                       escape="false"
+                       styleClass="form-messages"/>
             
             <!-- Step 1: Account Information -->
             <div class="form-step active" data-step="1">
                 <div class="step-header">
-                    <h3>Create Your Account</h3>
-                    <p>Set up your staff login credentials</p>
+                    <h3>Account Information</h3>
+                    <p>Create your secure login credentials</p>
                 </div>
                 
-                <ui:include src="/WEB-INF/includes/account-fields.xhtml">
-                    <ui:param name="controller" value="#{staffRegistrationController}"/>
-                </ui:include>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <p:outputLabel for="username" value="Username *" styleClass="form-label required">
+                            <i class="pi pi-user label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:inputText id="username" 
+                                   value="#{staffRegistrationController.registrationDTO.username}" 
+                                   required="true" 
+                                   placeholder="Choose a username"
+                                   styleClass="form-input"
+                                   maxlength="50">
+                            <f:validateLength minimum="3" maximum="50"/>
+                            <f:validateRegex pattern="^[a-zA-Z0-9_]{3,50}$" 
+                                           message="Username must be 3-50 characters (letters, numbers, underscores only)"/>
+                        </p:inputText>
+                        <p:message for="username" styleClass="field-error"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="email" value="Email Address *" styleClass="form-label required">
+                            <i class="pi pi-envelope label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:inputText id="email" 
+                                   value="#{staffRegistrationController.registrationDTO.email}" 
+                                   required="true" 
+                                   placeholder="Enter your email address"
+                                   styleClass="form-input"
+                                   maxlength="100">
+                            <f:validateRegex pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" 
+                                           message="Please enter a valid email address"/>
+                        </p:inputText>
+                        <p:message for="email" styleClass="field-error"/>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <p:outputLabel for="password" value="Password *" styleClass="form-label required">
+                            <i class="pi pi-lock label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:password id="password" 
+                                  value="#{staffRegistrationController.registrationDTO.password}" 
+                                  required="true" 
+                                  placeholder="Create a password"
+                                  styleClass="form-input"
+                                  feedback="true"
+                                  toggleMask="true">
+                            <f:validateLength minimum="6" maximum="50"/>
+                            <f:validateRegex pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&amp;])[A-Za-z\d@$!%*?&amp;]{6,50}$"
+                                           message="Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"/>
+                        </p:password>
+                        <p:message for="password" styleClass="field-error"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="confirmPassword" value="Confirm Password *" styleClass="form-label required">
+                            <i class="pi pi-lock label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:password id="confirmPassword" 
+                                  value="#{staffRegistrationController.registrationDTO.confirmPassword}" 
+                                  required="true" 
+                                  placeholder="Confirm your password"
+                                  styleClass="form-input"
+                                  feedback="false">
+                            <f:validateLength minimum="6" maximum="50"/>
+                        </p:password>
+                        <p:message for="confirmPassword" styleClass="field-error"/>
+                    </div>
+                </div>
             </div>
 
             <!-- Step 2: Personal Information -->
@@ -60,9 +131,75 @@
                     <p>Your personal details</p>
                 </div>
                 
-                <ui:include src="/WEB-INF/includes/personal-fields.xhtml">
-                    <ui:param name="controller" value="#{staffRegistrationController}"/>
-                </ui:include>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <p:outputLabel for="firstName" value="First Name *" styleClass="form-label required">
+                            <i class="pi pi-user label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:inputText id="firstName" 
+                                   value="#{staffRegistrationController.registrationDTO.firstName}" 
+                                   required="true" 
+                                   placeholder="Enter your first name"
+                                   styleClass="form-input"
+                                   maxlength="50">
+                            <f:validateLength maximum="50"/>
+                            <f:validateRegex pattern="^[A-Za-z\s]{2,50}$" 
+                                           message="First name must be 2-50 letters and spaces only"/>
+                        </p:inputText>
+                        <p:message for="firstName" styleClass="field-error"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="lastName" value="Last Name *" styleClass="form-label required">
+                            <i class="pi pi-user label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:inputText id="lastName" 
+                                   value="#{staffRegistrationController.registrationDTO.lastName}" 
+                                   required="true" 
+                                   placeholder="Enter your last name"
+                                   styleClass="form-input"
+                                   maxlength="50">
+                            <f:validateLength minimum="1" maximum="50"/>
+                            <f:validateRegex pattern="^[A-Za-z\s]{2,50}$" 
+                                           message="Last name must be 2-50 letters and spaces only"/>
+                        </p:inputText>
+                        <p:message for="lastName" styleClass="field-error"/>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <p:outputLabel for="phoneNumber" value="Phone Number *" styleClass="form-label required">
+                            <i class="pi pi-phone label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:inputText id="phoneNumber" 
+                                   value="#{staffRegistrationController.registrationDTO.phoneNumber}" 
+                                   required="true" 
+                                   placeholder="Enter your phone number"
+                                   styleClass="form-input"
+                                   maxlength="20">
+                            <f:validateRegex pattern="^[+]?[0-9]{10,15}$" 
+                                           message="Phone number must be 10-15 digits with optional + prefix"/>
+                        </p:inputText>
+                        <p:message for="phoneNumber" styleClass="field-error"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <p:outputLabel for="address" value="Address" styleClass="form-label">
+                            <i class="pi pi-map-marker label-icon" aria-hidden="true"></i>
+                        </p:outputLabel>
+                        <p:inputTextarea id="address" 
+                                       value="#{staffRegistrationController.registrationDTO.address}" 
+                                       rows="3" 
+                                       placeholder="Enter your address"
+                                       styleClass="form-input"
+                                       maxlength="255">
+                            <f:validateRegex pattern="^[A-Za-z0-9\s,\.\-_]{0,255}$" 
+                                           message="Address can contain letters, numbers, spaces, commas, periods, hyphens, and underscores only"/>
+                        </p:inputTextarea>
+                        <p:message for="address" styleClass="field-error"/>
+                    </div>
+                </div>
             </div>
 
             <!-- Step 3: Employment Information -->
@@ -81,7 +218,13 @@
                                    value="#{staffRegistrationController.registrationDTO.position}" 
                                    required="true"
                                    placeholder="e.g., Nurse, Receptionist, Administrator"
-                                   styleClass="form-input"/>
+                                   styleClass="form-input"
+                                   maxlength="100">
+                            <f:validateLength maximum="100"/>
+                            <f:validateRegex pattern="^[A-Za-z\s]{2,100}$" 
+                                           message="Position must be 2-100 letters and spaces only"/>
+                        </p:inputText>
+                        <p:message for="position" styleClass="field-error"/>
                     </div>
                     
                     <div class="form-group">
@@ -92,32 +235,42 @@
                                    value="#{staffRegistrationController.registrationDTO.employeeId}" 
                                    required="true"
                                    placeholder="Your assigned employee ID"
-                                   styleClass="form-input">
-                            <p:ajax event="blur" 
-                                  listener="#{staffRegistrationController.validateEmployeeId}" 
-                                  update="messages"/>
+                                   styleClass="form-input"
+                                   maxlength="20">
+                            <f:validateLength maximum="20"/>
+                            <f:validateRegex pattern="^[A-Za-z0-9\-_]{3,20}$" 
+                                           message="Employee ID must be 3-20 characters (letters, numbers, hyphens, underscores)"/>
                         </p:inputText>
+                        <p:message for="employeeId" styleClass="field-error"/>
                     </div>
                 </div>
                 
                 <div class="form-grid">
                     <div class="form-group">
-                        <p:outputLabel for="department" value="Department" styleClass="form-label">
+                        <p:outputLabel for="department" value="Department *" styleClass="form-label required">
                             <i class="pi pi-building label-icon" aria-hidden="true"></i>
                         </p:outputLabel>
                         <p:selectOneMenu id="department" 
-                                       value="#{staffRegistrationController.registrationDTO.departmentId}"
+                                       value="#{staffRegistrationController.registrationDTO.department}" 
+                                       required="true"
                                        styleClass="form-input">
                             <f:selectItem itemLabel="Select Department" itemValue=""/>
-                            <f:selectItems value="#{staffRegistrationController.departments}" 
-                                         var="dept" 
-                                         itemLabel="#{dept.departmentName}" 
-                                         itemValue="#{dept.departmentId}"/>
+                            <f:selectItem itemLabel="Administration" itemValue="Administration"/>
+                            <f:selectItem itemLabel="Nursing" itemValue="Nursing"/>
+                            <f:selectItem itemLabel="Reception" itemValue="Reception"/>
+                            <f:selectItem itemLabel="Laboratory" itemValue="Laboratory"/>
+                            <f:selectItem itemLabel="Pharmacy" itemValue="Pharmacy"/>
+                            <f:selectItem itemLabel="Maintenance" itemValue="Maintenance"/>
+                            <f:selectItem itemLabel="Security" itemValue="Security"/>
+                            <f:selectItem itemLabel="Housekeeping" itemValue="Housekeeping"/>
+                            <f:selectItem itemLabel="IT Support" itemValue="IT Support"/>
+                            <f:selectItem itemLabel="Finance" itemValue="Finance"/>
                         </p:selectOneMenu>
+                        <p:message for="department" styleClass="field-error"/>
                     </div>
                     
                     <div class="form-group">
-                        <p:outputLabel for="hireDate" value="Hire Date" styleClass="form-label">
+                        <p:outputLabel for="hireDate" value="Hire Date *" styleClass="form-label required">
                             <i class="pi pi-calendar label-icon" aria-hidden="true"></i>
                         </p:outputLabel>
                         <p:datePicker id="hireDate" 
@@ -126,91 +279,71 @@
                                     placeholder="Select hire date"
                                     styleClass="form-input"
                                     showIcon="true"
-                                    maxDate="#{staffRegistrationController.today}"/>
+                                    required="true"
+                                    requiredMessage="Hire date is required"
+                                    yearRange="2000:#{currentYear}"
+                                    maxdate="#{currentDate}"
+                                    mindate="2000-01-01">
+                            <p:ajax event="dateSelect" 
+                                  listener="#{staffRegistrationController.validateHireDate}" 
+                                  update="messages"/>
+                        </p:datePicker>
+                        <p:message for="hireDate" styleClass="field-error"/>
                     </div>
                 </div>
                 
                 <div class="form-grid">
                     <div class="form-group">
-                        <p:outputLabel for="salary" value="Salary (Optional)" styleClass="form-label">
-                            <i class="pi pi-dollar label-icon" aria-hidden="true"></i>
+                        <p:outputLabel for="supervisor" value="Supervisor" styleClass="form-label">
+                            <i class="pi pi-user label-icon" aria-hidden="true"></i>
                         </p:outputLabel>
-                        <p:inputNumber id="salary" 
-                                     value="#{staffRegistrationController.registrationDTO.salary}" 
-                                     symbol="$" 
-                                     decimalPlaces="2" 
-                                     minValue="0"
-                                     placeholder="Annual salary"
-                                     styleClass="form-input"/>
+                        <p:inputText id="supervisor" 
+                                   value="#{staffRegistrationController.registrationDTO.supervisor}" 
+                                   placeholder="Your supervisor's name"
+                                   styleClass="form-input"
+                                   maxlength="100">
+                            <f:validateRegex pattern="^[A-Za-z\s]{0,100}$" 
+                                           message="Supervisor name must be letters and spaces only"/>
+                        </p:inputText>
+                        <p:message for="supervisor" styleClass="field-error"/>
                     </div>
                     
                     <div class="form-group">
-                        <p:outputLabel for="status" value="Employment Status" styleClass="form-label">
-                            <i class="pi pi-check-circle label-icon" aria-hidden="true"></i>
+                        <p:outputLabel for="workSchedule" value="Work Schedule" styleClass="form-label">
+                            <i class="pi pi-clock label-icon" aria-hidden="true"></i>
                         </p:outputLabel>
-                        <p:selectOneMenu id="status" 
-                                       value="#{staffRegistrationController.registrationDTO.status}"
+                        <p:selectOneMenu id="workSchedule" 
+                                       value="#{staffRegistrationController.registrationDTO.workSchedule}" 
                                        styleClass="form-input">
-                            <f:selectItem itemLabel="Pending Verification" itemValue="PENDING_VERIFICATION"/>
-                            <f:selectItem itemLabel="Active" itemValue="ACTIVE"/>
-                            <f:selectItem itemLabel="On Leave" itemValue="ON_LEAVE"/>
-                            <f:selectItem itemLabel="Inactive" itemValue="INACTIVE"/>
+                            <f:selectItem itemLabel="Select Schedule" itemValue=""/>
+                            <f:selectItem itemLabel="Full Time (8 AM - 5 PM)" itemValue="Full Time"/>
+                            <f:selectItem itemLabel="Part Time (Morning)" itemValue="Part Time Morning"/>
+                            <f:selectItem itemLabel="Part Time (Evening)" itemValue="Part Time Evening"/>
+                            <f:selectItem itemLabel="Night Shift" itemValue="Night Shift"/>
+                            <f:selectItem itemLabel="Weekend Only" itemValue="Weekend Only"/>
+                            <f:selectItem itemLabel="Flexible" itemValue="Flexible"/>
                         </p:selectOneMenu>
+                        <p:message for="workSchedule" styleClass="field-error"/>
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <p:outputLabel for="notes" value="Additional Notes" styleClass="form-label">
-                        <i class="pi pi-file-edit label-icon" aria-hidden="true"></i>
+                    <p:outputLabel for="skills" value="Skills &amp; Certifications" styleClass="form-label">
+                        <i class="pi pi-certificate label-icon" aria-hidden="true"></i>
                     </p:outputLabel>
-                    <p:inputTextarea id="notes" 
-                                   value="#{staffRegistrationController.registrationDTO.notes}" 
+                    <p:inputTextarea id="skills" 
+                                   value="#{staffRegistrationController.registrationDTO.skills}" 
                                    rows="3" 
-                                   placeholder="Any additional information about your role or experience"
-                                   styleClass="form-input"/>
+                                   placeholder="List your relevant skills, certifications, and training"
+                                   styleClass="form-input"
+                                   maxlength="300">
+                        <f:validateRegex pattern="^[A-Za-z0-9\s,\.\-_]{0,300}$" 
+                                       message="Skills field can contain letters, numbers, spaces, commas, periods, hyphens, and underscores only"/>
+                    </p:inputTextarea>
+                    <p:message for="skills" styleClass="field-error"/>
                 </div>
                 
-                <!-- Document Upload Section -->
-                <div class="document-upload-section">
-                    <h4>Employment Documents</h4>
-                    <p class="upload-note">Please upload relevant employment documents:</p>
-                    
-                    <div class="upload-grid">
-                        <div class="upload-item">
-                            <p:outputLabel value="Resume/CV" styleClass="upload-label"/>
-                            <p:fileUpload id="resumeUpload"
-                                        mode="simple"
-                                        skinSimple="true"
-                                        label="Choose File"
-                                        accept=".pdf,.doc,.docx"
-                                        styleClass="upload-input"/>
-                            <small class="upload-help">PDF or Word document</small>
-                        </div>
-                        
-                        <div class="upload-item">
-                            <p:outputLabel value="Certifications" styleClass="upload-label"/>
-                            <p:fileUpload id="certificatesUpload"
-                                        mode="simple"
-                                        skinSimple="true"
-                                        label="Choose File"
-                                        accept=".pdf,.jpg,.jpeg,.png"
-                                        styleClass="upload-input"/>
-                            <small class="upload-help">Professional certifications</small>
-                        </div>
-                        
-                        <div class="upload-item">
-                            <p:outputLabel value="References" styleClass="upload-label"/>
-                            <p:fileUpload id="referencesUpload"
-                                        mode="simple"
-                                        skinSimple="true"
-                                        label="Choose File"
-                                        accept=".pdf,.doc,.docx"
-                                        styleClass="upload-input"/>
-                            <small class="upload-help">Professional references</small>
-                        </div>
-                    </div>
-                </div>
-                
+                <!-- Terms and Conditions -->
                 <div class="form-group">
                     <div class="checkbox-group">
                         <p:selectBooleanCheckbox id="acceptTerms" 
@@ -219,26 +352,41 @@
                                                styleClass="custom-checkbox"/>
                         <p:outputLabel for="acceptTerms" styleClass="checkbox-label">
                             I agree to the <h:link value="Terms of Service" outcome="/terms"/> and 
-                            <h:link value="Privacy Policy" outcome="/privacy"/>
+                            <h:link value="Privacy Policy" outcome="/privacy"/> *
                         </p:outputLabel>
+                        <p:message for="acceptTerms" styleClass="field-error"/>
                     </div>
                 </div>
                 
                 <div class="form-group">
                     <div class="checkbox-group">
-                        <p:selectBooleanCheckbox id="acceptEmployment" 
-                                               value="#{staffRegistrationController.registrationDTO.acceptEmployment}"
+                        <p:selectBooleanCheckbox id="acceptPrivacy" 
+                                               value="#{staffRegistrationController.registrationDTO.acceptPrivacy}"
                                                required="true"
                                                styleClass="custom-checkbox"/>
-                        <p:outputLabel for="acceptEmployment" styleClass="checkbox-label">
-                            I accept the employment agreement and hospital policies
+                        <p:outputLabel for="acceptPrivacy" styleClass="checkbox-label">
+                            I consent to the processing of my personal data for employment purposes *
                         </p:outputLabel>
+                        <p:message for="acceptPrivacy" styleClass="field-error"/>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <p:selectBooleanCheckbox id="employmentConsent" 
+                                               value="#{staffRegistrationController.registrationDTO.employmentConsent}"
+                                               required="true"
+                                               styleClass="custom-checkbox"/>
+                        <p:outputLabel for="employmentConsent" styleClass="checkbox-label">
+                            I confirm that all provided employment information is accurate and current *
+                        </p:outputLabel>
+                        <p:message for="employmentConsent" styleClass="field-error"/>
                     </div>
                 </div>
             </div>
 
             <!-- Navigation Buttons -->
-            <div class="form-navigation">
+            <div class="form-navigation" id="form-navigation">
                 <p:commandButton value="Previous" 
                                icon="pi pi-chevron-left" 
                                styleClass="btn btn-secondary nav-btn prev-btn"
@@ -251,45 +399,259 @@
                                styleClass="btn btn-primary nav-btn next-btn"
                                onclick="nextStep(); return false;"/>
                 
-                <p:commandButton value="Submit Application" 
-                               icon="pi pi-send" 
+                <p:commandButton value="Create Staff Account" 
+                               icon="pi pi-user-plus" 
                                styleClass="btn btn-primary nav-btn submit-btn"
                                action="#{staffRegistrationController.registerStaff}"
-                               update="staffRegistrationForm messages"
-                               onstart="showLoading('Submitting your application...')"
-                               oncomplete="hideLoading(); handleRegistrationComplete(args);"
-                               style="display: none;"/>
+                               ajax="false"
+                               style="display: none;"
+                               onclick="showLoading('Creating your staff account...');"/>
             </div>
-
-            <p:messages id="messages" showDetail="true" closable="true"/>
         </h:form>
     </ui:define>
     
     <ui:define name="alternativeRoles">
-        <h:link outcome="/views/registration/patient-registration" styleClass="role-link">
-            <i class="pi pi-user" aria-hidden="true"></i>
-            <span>Patient</span>
-        </h:link>
-        <h:link outcome="/views/registration/doctor-registration" styleClass="role-link">
-            <i class="pi pi-user-edit" aria-hidden="true"></i>
-            <span>Doctor</span>
-        </h:link>
+        <div class="alternative-roles">
+            <p>Register as:</p>
+            <div class="role-links">
+                <h:link value="Patient" outcome="/views/registration/patient-registration" styleClass="role-link patient-link">
+                    <i class="pi pi-user"></i>
+                </h:link>
+                <h:link value="Doctor" outcome="/views/registration/doctor-registration" styleClass="role-link doctor-link">
+                    <i class="pi pi-user-edit"></i>
+                </h:link>
+            </div>
+        </div>
     </ui:define>
     
     <ui:define name="additionalScripts">
-        <script>
-            function handleRegistrationComplete(args) {
-                if (args.validationFailed) {
-                    return;
+        <script type="text/javascript">
+        //<![CDATA[
+            // Enhanced validation patterns
+            const VALIDATION_PATTERNS = {
+                phone: /^[+]?[0-9]{10,15}$/,
+                email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                username: /^[a-zA-Z0-9_]{3,50}$/,
+                name: /^[A-Za-z\s]{2,50}$/,
+                employeeId: /^[A-Za-z0-9\-_]{3,20}$/,
+                position: /^[A-Za-z\s]{2,100}$/,
+                supervisor: /^[A-Za-z\s]{0,100}$/,
+                skills: /^[A-Za-z0-9\s,.\-_]{0,300}$/,
+                address: /^[A-Za-z0-9\s,.\-_]{0,255}$/
+            };
+            
+            // Enhanced field validation with better user feedback
+            function validateField(field) {
+                const value = field.value.trim();
+                const fieldType = field.id;
+                
+                // Clear previous errors
+                clearFieldError(field);
+                
+                // Required field validation
+                if (field.hasAttribute('required') && !value) {
+                    showFieldError(field, 'This field is required');
+                    return false;
                 }
                 
-                if (args.success) {
-                    showSuccessMessage('Staff application submitted successfully! HR will review your application and contact you soon.');
-                    setTimeout(() => {
-                        window.location.href = '/index.xhtml';
-                    }, 5000);
+                // Pattern validation
+                if (value && VALIDATION_PATTERNS[fieldType]) {
+                    if (!VALIDATION_PATTERNS[fieldType].test(value)) {
+                        showFieldError(field, getValidationMessage(fieldType));
+                        return false;
+                    }
+                }
+                
+                // Specific field validations
+                switch (fieldType) {
+                    case 'phoneNumber':
+                        if (value && !VALIDATION_PATTERNS.phone.test(value)) {
+                            showFieldError(field, 'Please enter a valid phone number (10-15 digits, + prefix optional)');
+                            return false;
+                        }
+                        break;
+                    case 'email':
+                        if (value && !VALIDATION_PATTERNS.email.test(value)) {
+                            showFieldError(field, 'Please enter a valid email address');
+                            return false;
+                        }
+                        break;
+                    case 'username':
+                        if (value && !VALIDATION_PATTERNS.username.test(value)) {
+                            showFieldError(field, 'Username must be 3-50 characters (letters, numbers, underscores only)');
+                            return false;
+                        }
+                        break;
+                    case 'firstName':
+                    case 'lastName':
+                        if (value && !VALIDATION_PATTERNS.name.test(value)) {
+                            showFieldError(field, 'Name must be 2-50 letters and spaces only');
+                            return false;
+                        }
+                        break;
+                    case 'employeeId':
+                        if (value && !VALIDATION_PATTERNS.employeeId.test(value)) {
+                            showFieldError(field, 'Employee ID must be 3-20 characters (letters, numbers, hyphens, underscores)');
+                            return false;
+                        }
+                        break;
+                    case 'position':
+                        if (value && !VALIDATION_PATTERNS.position.test(value)) {
+                            showFieldError(field, 'Position must be 2-100 letters and spaces only');
+                            return false;
+                        }
+                        break;
+                    case 'supervisor':
+                        if (value && !VALIDATION_PATTERNS.supervisor.test(value)) {
+                            showFieldError(field, 'Supervisor name must be letters and spaces only');
+                            return false;
+                        }
+                        break;
+                    case 'skills':
+                        if (value && !VALIDATION_PATTERNS.skills.test(value)) {
+                            showFieldError(field, 'Skills field can contain letters, numbers, spaces, commas, periods, hyphens, and underscores only');
+                            return false;
+                        }
+                        break;
+                    case 'address':
+                        if (value && !VALIDATION_PATTERNS.address.test(value)) {
+                            showFieldError(field, 'Address can contain letters, numbers, spaces, commas, periods, hyphens, and underscores only');
+                            return false;
+                        }
+                        break;
+                }
+                
+                return true;
+            }
+            
+            function getValidationMessage(fieldType) {
+                const messages = {
+                    phone: 'Please enter a valid phone number (10-15 digits, + prefix optional)',
+                    email: 'Please enter a valid email address',
+                    username: 'Username must be 3-50 characters (letters, numbers, underscores only)',
+                    name: 'Name must be 2-50 letters and spaces only',
+                    employeeId: 'Employee ID must be 3-20 characters (letters, numbers, hyphens, underscores)',
+                    position: 'Position must be 2-100 letters and spaces only',
+                    supervisor: 'Supervisor name must be letters and spaces only',
+                    skills: 'Skills field can contain letters, numbers, spaces, commas, periods, hyphens, and underscores only',
+                    address: 'Address can contain letters, numbers, spaces, commas, periods, hyphens, and underscores only'
+                };
+                return messages[fieldType] || 'Invalid format';
+            }
+            
+            // Enhanced error display
+            function showFieldError(field, message) {
+                field.classList.add('error');
+                field.setAttribute('aria-invalid', 'true');
+                
+                // Remove existing error message
+                const existingError = field.parentNode.querySelector('.field-error-message');
+                if (existingError) {
+                    existingError.remove();
+                }
+                
+                // Create error message element
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'field-error-message';
+                errorDiv.textContent = message;
+                errorDiv.setAttribute('role', 'alert');
+                errorDiv.setAttribute('aria-live', 'polite');
+                
+                field.parentNode.appendChild(errorDiv);
+                
+                // Announce to screen reader
+                announceToScreenReader(message);
+            }
+            
+            function clearFieldError(field) {
+                field.classList.remove('error');
+                field.setAttribute('aria-invalid', 'false');
+                
+                const errorMessage = field.parentNode.querySelector('.field-error-message');
+                if (errorMessage) {
+                    errorMessage.remove();
                 }
             }
+            
+            // Enhanced loading state
+            function showLoading(message = 'Processing...') {
+                const loadingDiv = document.createElement('div');
+                loadingDiv.id = 'loading-overlay';
+                loadingDiv.className = 'loading-overlay';
+                loadingDiv.innerHTML = `
+                    <div class="loading-content">
+                        <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
+                        <p>${message}</p>
+                    </div>
+                `;
+                document.body.appendChild(loadingDiv);
+                
+                // Announce to screen reader
+                announceToScreenReader(message);
+            }
+            
+            function hideLoading() {
+                const loadingDiv = document.getElementById('loading-overlay');
+                if (loadingDiv) {
+                    loadingDiv.remove();
+                }
+            }
+            
+            // Enhanced accessibility
+            function announceToScreenReader(message) {
+                const announcement = document.createElement('div');
+                announcement.setAttribute('aria-live', 'polite');
+                announcement.setAttribute('aria-atomic', 'true');
+                announcement.className = 'sr-only';
+                announcement.textContent = message;
+                
+                document.body.appendChild(announcement);
+                
+                setTimeout(() => {
+                    announcement.remove();
+                }, 1000);
+            }
+            
+            // Enhanced step validation
+            function validateCurrentStep() {
+                const currentStepElement = document.querySelector('.form-step.active');
+                const requiredFields = currentStepElement.querySelectorAll('input[required], select[required], textarea[required]');
+                let isValid = true;
+                
+                requiredFields.forEach(field => {
+                    if (!validateField(field)) {
+                        isValid = false;
+                    }
+                });
+                
+                if (!isValid) {
+                    showStepError('Please correct the errors before proceeding');
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            function showStepError(message) {
+                const messagesContainer = document.getElementById('messages');
+                if (messagesContainer) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'ui-message ui-message-error ui-widget ui-corner-all';
+                    errorDiv.innerHTML = `
+                        <span class=\"ui-message-error-icon\"></span>
+                        <span class=\"ui-message-error-detail\">${message}</span>
+                    `;
+                    messagesContainer.appendChild(errorDiv);
+                    
+                    // Auto-remove after 5 seconds
+                    setTimeout(() => {
+                        errorDiv.remove();
+                    }, 5000);
+                }
+                
+                announceToScreenReader(message);
+            }
+        //]]>
         </script>
     </ui:define>
     

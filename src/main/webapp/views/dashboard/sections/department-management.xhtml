@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+    <title>Department Management - Hospital Management System</title>
+    <h:outputStylesheet library="css" name="dashboard.css" />
+    <h:outputStylesheet library="css" name="components.css" />
+    <h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            background: #007bff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .header-content h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .header-content p {
+            color: #6c757d;
+            font-size: 14px;
+            margin: 4px 0 0 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .management-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 32px;
+            overflow: hidden;
+        }
+
+        .management-header {
+            padding: 24px;
+            border-bottom: 1px solid #e9ecef;
+            background: #f8f9fa;
+        }
+
+        .management-header h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .management-content {
+            padding: 0;
+        }
+
+        .ui-tabs {
+            border: none !important;
+            background: transparent !important;
+        }
+
+        .ui-tabs .ui-tabs-nav {
+            background: #f8f9fa !important;
+            border: none !important;
+            border-bottom: 1px solid #e9ecef !important;
+            padding: 0 24px !important;
+        }
+
+        .ui-tabs .ui-tabs-nav li {
+            border: none !important;
+            background: transparent !important;
+            margin-right: 8px !important;
+        }
+
+        .ui-tabs .ui-tabs-nav li a {
+            background: transparent !important;
+            border: none !important;
+            color: #6c757d !important;
+            padding: 16px 20px !important;
+            font-weight: 500 !important;
+            border-radius: 8px 8px 0 0 !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .ui-tabs .ui-tabs-nav li.ui-tabs-selected a,
+        .ui-tabs .ui-tabs-nav li a:hover {
+            background: white !important;
+            color: #007bff !important;
+            border-bottom: 2px solid #007bff !important;
+        }
+
+        .ui-tabs .ui-tabs-panels {
+            background: white !important;
+            border: none !important;
+            padding: 24px !important;
+        }
+
+        .ui-datatable {
+            border: none !important;
+            border-radius: 12px !important;
+            overflow: hidden !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+        }
+
+        .ui-datatable .ui-datatable-header {
+            background: #f8f9fa !important;
+            border: none !important;
+            padding: 16px 20px !important;
+            font-weight: 600 !important;
+            color: #2c3e50 !important;
+        }
+
+        .ui-datatable .ui-datatable-thead>tr>th {
+            background: #f8f9fa !important;
+            border: none !important;
+            border-bottom: 2px solid #e9ecef !important;
+            padding: 16px 20px !important;
+            font-weight: 600 !important;
+            color: #495057 !important;
+            font-size: 14px !important;
+        }
+
+        .ui-datatable .ui-datatable-tbody>tr>td {
+            border: none !important;
+            border-bottom: 1px solid #f1f3f4 !important;
+            padding: 16px 20px !important;
+            font-size: 14px !important;
+        }
+
+        .ui-datatable .ui-datatable-tbody>tr:hover {
+            background: #f8f9fa !important;
+        }
+
+        .ui-inputfield {
+            border: 2px solid #e9ecef !important;
+            border-radius: 8px !important;
+            padding: 12px 16px !important;
+            font-size: 14px !important;
+            transition: border-color 0.2s ease !important;
+        }
+
+        .ui-inputfield:focus {
+            border-color: #007bff !important;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1) !important;
+        }
+
+        .action-icons-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: flex-start;
+            min-width: 110px;
+        }
+
+        .action-icon-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: transparent;
+            border: none;
+            transition: background 0.2s;
+            cursor: pointer;
+            position: relative;
+            margin-right: 2px;
+            z-index: 2;
+        }
+
+        .action-icon-btn:last-child {
+            margin-right: 0;
+        }
+
+        .action-icon-btn:hover {
+            background: #e9ecef;
+        }
+
+        .action-icon-btn .pi {
+            font-size: 1.2rem;
+            color: #495057;
+            transition: color 0.2s;
+        }
+
+        .action-icon-btn:hover .pi {
+            color: #007bff;
+        }
+
+        .ui-row-editor {
+            min-width: 70px !important;
+            display: flex !important;
+            gap: 6px !important;
+            justify-content: flex-start !important;
+            align-items: center !important;
+            z-index: 3 !important;
+            background: none !important;
+            border: none !important;
+        }
+
+        .ui-row-editor .ui-icon {
+            margin-right: 2px;
+        }
+
+        .ui-row-editor .ui-icon:last-child {
+            margin-right: 0;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 32px;
+            color: #2c3e50;
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .sidebar-link i {
+            font-size: 1.2rem;
+        }
+
+        .sidebar-link.active, .sidebar-link:hover {
+            background: #e9f2ff;
+            color: #007bff !important;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .action-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .action-item:hover {
+            background: #e9f2ff;
+            border-color: #007bff;
+        }
+
+        .action-icon {
+            width: 48px;
+            height: 48px;
+            background: #007bff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 16px;
+            }
+
+            .admin-header {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+
+            .ui-tabs .ui-tabs-nav {
+                padding: 0 16px !important;
+            }
+
+            .ui-tabs .ui-tabs-panels {
+                padding: 16px !important;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Validation Styles */
+        .ui-state-error {
+            border-color: #dc3545 !important;
+            background-color: #fff5f5 !important;
+        }
+        
+        .field-error {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 4px;
+            display: block;
+        }
+        
+        .form-group {
+            position: relative;
+        }
+        
+        .form-group .ui-inputfield:focus {
+            border-color: #007bff !important;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+        }
+        
+        .form-group .ui-inputfield.ui-state-error:focus {
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+        }
+        
+        .messages-container {
+            margin-bottom: 20px;
+        }
+        
+        .form-messages {
+            margin-bottom: 16px;
+        }
+        
+        .global-message {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border: 1px solid;
+        }
+        
+        .global-message.info {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        
+        .global-message.error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        
+        .global-message.warn {
+            color: #856404;
+            background-color: #fff3cd;
+            border-color: #ffeaa7;
+        }
+        
+        /* Form validation feedback styles */
+        .form-group.has-error .ui-inputfield {
+            border-color: #dc3545 !important;
+            background-color: #fff5f5 !important;
+        }
+        
+        .form-group.has-success .ui-inputfield {
+            border-color: #28a745 !important;
+            background-color: #f8fff9 !important;
+        }
+        
+        .validation-summary {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+        
+        .validation-summary ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .validation-summary li {
+            margin-bottom: 4px;
+        }
+        
+        .field-help {
+            color: #6c757d;
+            font-size: 11px;
+            margin-top: 2px;
+            font-style: italic;
+        }
+        
+        .required-field {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        /* Row Editing Styles */
+        .ui-datatable .ui-datatable-tbody > tr.ui-row-editing > td {
+            padding: 8px !important;
+            vertical-align: middle !important;
+        }
+        
+        .ui-datatable .ui-datatable-tbody > tr.ui-row-editing .ui-inputfield {
+            width: 100% !important;
+            min-width: 120px !important;
+            padding: 8px !important;
+            border: 1px solid #ced4da !important;
+            border-radius: 4px !important;
+            font-size: 14px !important;
+            background-color: #fff !important;
+        }
+        
+        .ui-datatable .ui-datatable-tbody > tr.ui-row-editing .ui-inputfield:focus {
+            border-color: #007bff !important;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+            outline: none !important;
+        }
+        
+        .ui-datatable .ui-datatable-tbody > tr.ui-row-editing textarea.ui-inputfield {
+            resize: vertical !important;
+            min-height: 60px !important;
+        }
+        
+        .ui-datatable .ui-datatable-tbody > tr.ui-row-editing .ui-selectonemenu {
+            width: 100% !important;
+            min-width: 120px !important;
+        }
+        
+        .ui-datatable .ui-datatable-tbody > tr.ui-row-editing .ui-selectonemenu .ui-selectonemenu-trigger {
+            border-left: 1px solid #ced4da !important;
+        }
+        
+        .ui-row-editor {
+            display: flex !important;
+            gap: 4px !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+        }
+        
+        .ui-row-editor .ui-icon {
+            width: 24px !important;
+            height: 24px !important;
+            border-radius: 4px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+        }
+        
+        .ui-row-editor .ui-icon:hover {
+            background-color: #e9ecef !important;
+        }
+        
+        .ui-row-editor .ui-icon.ui-icon-check {
+            color: #28a745 !important;
+        }
+        
+        .ui-row-editor .ui-icon.ui-icon-close {
+            color: #dc3545 !important;
+        }
+        
+        .ui-row-editor .ui-icon.ui-icon-pencil {
+            color: #007bff !important;
+        }
+        
+        /* Ensure proper spacing in editing mode */
+        .ui-datatable .ui-datatable-tbody > tr.ui-row-editing {
+            background-color: #f8f9fa !important;
+        }
+        
+        .ui-datatable .ui-datatable-tbody > tr.ui-row-editing:hover {
+            background-color: #e9ecef !important;
+        }
+        
+        /* Additional enhancements for better UX */
+        .ui-datatable .ui-datatable-tbody > tr.ui-row-editing td {
+            border: 1px solid #dee2e6 !important;
+        }
+        
+        .ui-datatable .ui-datatable-tbody > tr.ui-row-editing .ui-inputfield:invalid {
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+        }
+        
+        .ui-datatable .ui-datatable-tbody > tr.ui-row-editing .ui-inputfield:valid {
+            border-color: #28a745 !important;
+        }
+        
+        /* Improve action button styling */
+        .action-icons-row {
+            display: flex !important;
+            gap: 4px !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+        }
+        
+        .action-icon-btn {
+            padding: 4px 8px !important;
+            border-radius: 4px !important;
+            border: 1px solid transparent !important;
+            background: transparent !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+        }
+        
+        .action-icon-btn:hover {
+            background-color: #e9ecef !important;
+            border-color: #ced4da !important;
+        }
+        
+        /* Ensure proper table layout */
+        .ui-datatable {
+            width: 100% !important;
+            table-layout: fixed !important;
+        }
+        
+        .ui-datatable .ui-datatable-thead > tr > th {
+            background-color: #f8f9fa !important;
+            border-bottom: 2px solid #dee2e6 !important;
+            font-weight: 600 !important;
+            padding: 12px 8px !important;
+        }
+        
+        .ui-datatable .ui-datatable-tbody > tr > td {
+            padding: 8px !important;
+            vertical-align: middle !important;
+            border-bottom: 1px solid #dee2e6 !important;
+        }
+    </style>
+    
+    <script type="text/javascript">
+        function clearFormMessages() {
+            // Clear form messages when reset button is clicked
+            setTimeout(function() {
+                var formMessages = document.getElementById('departmentForm:formMessages');
+                if (formMessages) {
+                    formMessages.innerHTML = '';
+                }
+                
+                // Clear field error messages
+                var errorMessages = document.querySelectorAll('.field-error');
+                errorMessages.forEach(function(msg) {
+                    msg.innerHTML = '';
+                });
+                
+                // Remove error styling from input fields
+                var errorFields = document.querySelectorAll('.ui-state-error');
+                errorFields.forEach(function(field) {
+                    field.classList.remove('ui-state-error');
+                });
+            }, 100);
+        }
+        
+        // Add real-time validation feedback
+        document.addEventListener('DOMContentLoaded', function() {
+            var inputs = document.querySelectorAll('.ui-inputfield');
+            inputs.forEach(function(input) {
+                input.addEventListener('blur', function() {
+                    validateField(this);
+                });
+                
+                input.addEventListener('input', function() {
+                    if (this.classList.contains('ui-state-error')) {
+                        validateField(this);
+                    }
+                });
+            });
+        });
+        
+        function validateField(field) {
+            var isValid = true;
+            var errorMessage = '';
+            
+            // Remove existing error styling
+            field.classList.remove('ui-state-error');
+            
+            // Get the error message element
+            var fieldId = field.id;
+            var messageElement = document.querySelector('[for="' + fieldId + '"] + .field-error');
+            
+            if (!messageElement) {
+                messageElement = field.parentNode.querySelector('.field-error');
+            }
+            
+            // Validate based on field type
+            switch(fieldId) {
+                case 'departmentForm:deptName':
+                    if (!field.value.trim()) {
+                        isValid = false;
+                        errorMessage = 'Department name is required';
+                    } else if (field.value.length > 100) {
+                        isValid = false;
+                        errorMessage = 'Department name must not exceed 100 characters';
+                    } else if (!/^[a-zA-Z0-9\s\-_&amp;]+$/.test(field.value)) {
+                        isValid = false;
+                        errorMessage = 'Department name can only contain letters, numbers, spaces, hyphens, underscores, and ampersands';
+                    }
+                    break;
+                    
+                case 'departmentForm:deptDesc':
+                    if (!field.value.trim()) {
+                        isValid = false;
+                        errorMessage = 'Description is required';
+                    } else if (field.value.length > 500) {
+                        isValid = false;
+                        errorMessage = 'Description must not exceed 500 characters';
+                    }
+                    break;
+                    
+                case 'departmentForm:deptLoc':
+                    if (!field.value.trim()) {
+                        isValid = false;
+                        errorMessage = 'Location is required';
+                    } else if (field.value.length > 100) {
+                        isValid = false;
+                        errorMessage = 'Location must not exceed 100 characters';
+                    } else if (!/^[a-zA-Z0-9\s\-_,.()]+$/.test(field.value)) {
+                        isValid = false;
+                        errorMessage = 'Location can only contain letters, numbers, spaces, hyphens, commas, periods, and parentheses';
+                    }
+                    break;
+                    
+                case 'departmentForm:deptPhone':
+                    console.log('Validating phone number: "' + field.value + '"');
+                    console.log('Phone number length: ' + field.value.length);
+                    console.log('Phone number trimmed: "' + field.value.trim() + '"');
+                    console.log('Matches pattern: ' + /^[+]?[0-9]{10,15}$/.test(field.value.trim()));
+                    
+                    if (!field.value.trim()) {
+                        isValid = false;
+                        errorMessage = 'Phone number is required';
+                    } else if (!/^[+]?[0-9]{10,15}$/.test(field.value.trim())) {
+                        isValid = false;
+                        errorMessage = 'Phone number must be 10-15 digits (can start with + for international numbers)';
+                    }
+                    break;
+                    
+                case 'departmentForm:deptEmail':
+                    if (!field.value.trim()) {
+                        isValid = false;
+                        errorMessage = 'Email is required';
+                    } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(field.value)) {
+                        isValid = false;
+                        errorMessage = 'Please enter a valid email address';
+                    }
+                    break;
+            }
+            
+            // Apply validation result
+            if (!isValid) {
+                field.classList.add('ui-state-error');
+                if (messageElement) {
+                    messageElement.textContent = errorMessage;
+                    messageElement.style.display = 'block';
+                }
+            } else {
+                if (messageElement) {
+                    messageElement.textContent = '';
+                    messageElement.style.display = 'none';
+                }
+            }
+            
+            return isValid;
+        }
+        
+        function validateForm() {
+            console.log('validateForm() called');
+            var isValid = true;
+            var inputs = document.querySelectorAll('.ui-inputfield');
+            console.log('Found ' + inputs.length + ' input fields to validate');
+            
+            // Clear previous error messages
+            var errorMessages = document.querySelectorAll('.field-error');
+            errorMessages.forEach(function(msg) {
+                msg.textContent = '';
+                msg.style.display = 'none';
+            });
+            
+            // Remove error styling from all fields
+            var errorFields = document.querySelectorAll('.ui-state-error');
+            errorFields.forEach(function(field) {
+                field.classList.remove('ui-state-error');
+            });
+            
+            // Validate each field
+            inputs.forEach(function(input) {
+                console.log('Validating field: ' + input.id + ' with value: "' + input.value + '"');
+                if (!validateField(input)) {
+                    console.log('Field validation failed: ' + input.id);
+                    isValid = false;
+                } else {
+                    console.log('Field validation passed: ' + input.id);
+                }
+            });
+            
+            console.log('Form validation result: ' + isValid);
+            
+            if (!isValid) {
+                // Show validation summary
+                var formMessages = document.getElementById('departmentForm:formMessages');
+                if (formMessages) {
+                    formMessages.innerHTML = '&lt;div style="color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 8px; border-radius: 4px; margin-bottom: 8px;">Please correct the validation errors above before submitting the form.&lt;/div>';
+                }
+            }
+            
+            return isValid;
+        }
+        
+        // Row Editing Enhancement
+        function enhanceRowEditing() {
+            // Add event listeners for row editing
+            document.addEventListener('DOMContentLoaded', function() {
+                // Handle row edit start
+                $(document).on('click', '.ui-row-editor .ui-icon-pencil', function() {
+                    setTimeout(function() {
+                        // Focus on the first input field in the editing row
+                        var editingRow = document.querySelector('.ui-row-editing');
+                        if (editingRow) {
+                            var firstInput = editingRow.querySelector('.ui-inputfield');
+                            if (firstInput) {
+                                firstInput.focus();
+                                firstInput.select();
+                            }
+                        }
+                    }, 100);
+                });
+                
+                // Handle keyboard navigation in editing mode
+                $(document).on('keydown', '.ui-row-editing .ui-inputfield', function(e) {
+                    if (e.key === 'Enter' &amp;&amp; !e.shiftKey) {
+                        e.preventDefault();
+                        // Trigger save
+                        var saveButton = this.closest('tr').querySelector('.ui-icon-check');
+                        if (saveButton) {
+                            saveButton.click();
+                        }
+                    } else if (e.key === 'Escape') {
+                        e.preventDefault();
+                        // Trigger cancel
+                        var cancelButton = this.closest('tr').querySelector('.ui-icon-close');
+                        if (cancelButton) {
+                            cancelButton.click();
+                        }
+                    }
+                });
+                
+                // Handle tab navigation in editing mode
+                $(document).on('keydown', '.ui-row-editing .ui-inputfield, .ui-row-editing .ui-selectonemenu', function(e) {
+                    if (e.key === 'Tab') {
+                        var inputs = this.closest('tr').querySelectorAll('.ui-inputfield, .ui-selectonemenu');
+                        var currentIndex = Array.from(inputs).indexOf(this);
+                        
+                        if (e.shiftKey) {
+                            // Tab backwards
+                            if (currentIndex > 0) {
+                                inputs[currentIndex - 1].focus();
+                            }
+                        } else {
+                            // Tab forwards
+                            if (currentIndex &lt; inputs.length - 1) {
+                                inputs[currentIndex + 1].focus();
+                            }
+                        }
+                        e.preventDefault();
+                    }
+                });
+            });
+        }
+        
+        // Initialize row editing enhancement
+        enhanceRowEditing();
+    </script>
+</h:head>
+
+<h:body>
+    <div class="admin-layout" style="display: flex; min-height: 100vh;">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" style="width: 240px; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-right: 32px; padding: 32px 0 24px 0; display: flex; flex-direction: column; align-items: center;">
+            <div class="sidebar-logo" style="margin-bottom: 32px;">
+                <span style="font-size: 2rem; font-weight: bold; color: #007bff;">HMS</span>
+            </div>
+            <nav class="sidebar-nav" style="width: 100%;">
+                <ul style="list-style: none; padding: 0; margin: 0; width: 100%;">
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/admin-dashboard.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-home"></i> Dashboard
+                        </h:link>
+                    </li>
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/sections/patient-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-users"></i> Patients
+                        </h:link>
+                    </li>
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/sections/doctor-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-id-card"></i> Doctors
+                        </h:link>
+                    </li>
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/sections/staff-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-id-card"></i> Staff
+                        </h:link>
+                    </li>
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/sections/user-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-user"></i> Users
+                        </h:link>
+                    </li>
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/sections/department-management.xhtml" styleClass="sidebar-link active">
+                            <i class="pi pi-building"></i> Departments
+                        </h:link>
+                    </li>
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/sections/billing-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-credit-card"></i> Billing
+                        </h:link>
+                    </li>
+                    <li style="margin-bottom: 16px;">
+                        <h:link outcome="/views/dashboard/sections/appointment-management.xhtml" styleClass="sidebar-link">
+                            <i class="pi pi-calendar"></i> Appointments
+                        </h:link>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="admin-container" style="flex: 1;">
+            <header class="admin-header" style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 24px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <button type="button" style="background: #f7f8fa; border: none; border-radius: 6px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; margin-right: 8px;">
+                        <i class="pi pi-angle-left" style="font-size: 1.3rem; color: #6c757d;"></i>
+                    </button>
+                    <span style="font-size: 1.1rem; font-weight: 500; color: #555; letter-spacing: 1px;"> Department DASHBOARD</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 24px; flex: 1; justify-content: flex-end;">
+                    <i class="pi pi-search" style="font-size: 1.2rem; color: #6c757d; cursor: pointer;"></i>
+                    <span style="position: relative;">
+                        <i class="pi pi-bell" style="font-size: 1.2rem; color: #6c757d; cursor: pointer;"></i>
+                        <span style="position: absolute; top: -6px; right: -8px; background: #007bff; color: white; font-size: 11px; border-radius: 8px; padding: 0 5px; min-width: 16px; text-align: center;">5</span>
+                    </span>
+                    <h:form id="userMenuForm" style="margin: 0;">
+                        <p:overlayPanel id="userMenuPanel" for="userMenuAvatar" hideEffect="fade" showEffect="fade" style="min-width: 180px;">
+                            <div style="padding: 8px 0;">
+                                <p:commandLink style="display: flex; align-items: center; gap: 10px; padding: 8px 16px; color: #333; text-decoration: none;" action="#">
+                                    <img src="#{request.contextPath}/resources/images/user.png" alt="Profile" style="width:18px;height:18px;border-radius:50%;border:1px solid #e9ecef;object-fit:cover;"/> Profile
+                                </p:commandLink>
+                                <p:commandLink style="display: flex; align-items: center; gap: 10px; padding: 8px 16px; color: #333; text-decoration: none;" action="#">
+                                    <i class="pi pi-cog" style="color: #007bff;"></i> Settings
+                                </p:commandLink>
+                                <p:divider style="margin: 4px 0;"/>
+                                <p:commandButton value="Logout" icon="pi pi-sign-out" action="#{authController.logout}" immediate="true" styleClass="ui-button-flat" style="width: 100%; text-align: left; color: #d9534f; padding: 8px 16px; background: none; border: none;" ajax="false"/>
+                            </div>
+                        </p:overlayPanel>
+                        <p:commandLink id="userMenuAvatar" style="display: flex; align-items: center; gap: 8px;">
+                            <img src="#{request.contextPath}/resources/images/user.png" alt="User" style="width:32px;height:32px;border-radius:50%;border:1px solid #e9ecef;object-fit:cover;"/>
+                            <span style="font-weight: 500; color: #2c3e50;">#{authController.currentUserName}</span>
+                        </p:commandLink>
+                    </h:form>
+                </div>
+            </header>
+
+            <section class="management-section" aria-labelledby="dept-mgmt-header">
+                <div class="management-header">
+                    <h3 id="dept-mgmt-header">Department Management</h3>
+                </div>
+                <div class="management-content">
+                    <h:form id="departmentForm">
+                        <p:messages id="deptMessages" showDetail="true" closable="true" />
+                        
+                        <p:tabView id="departmentTabView">
+                            <p:tab title="Add New Department">
+                                <p:messages id="formMessages" showDetail="true" closable="true" />
+                                
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="deptName">Department Name: <span style="color: #dc3545;">*</span></label>
+                                        <p:inputText id="deptName"
+                                            value="#{adminDashboardController.newDepartment.departmentName}" 
+                                            required="true"
+                                            requiredMessage="Department name is required"
+                                            maxlength="100"
+                                            size="50"
+                                            placeholder="Enter department name (max 100 characters)"
+                                            aria-required="true" 
+                                            aria-label="Department Name" 
+                                            styleClass="ui-inputfield #{component.valid ? '' : 'ui-state-error'}"
+                                            validatorMessage="Department name must not exceed 100 characters">
+                                            <f:validateLength maximum="100"/>
+                                            <f:validateRegex pattern="^[a-zA-Z0-9\s\-_&amp;]+$"
+                                                           message="Department name can only contain letters, numbers, spaces, hyphens, underscores, and ampersands"/>
+                                        </p:inputText>
+                                        <p:message for="deptName" display="icon" styleClass="field-error" />
+                                        <div class="field-help">Enter a unique department name (letters, numbers, spaces, hyphens, underscores, ampersands only)</div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="deptDesc">Description: <span style="color: #dc3545;">*</span></label>
+                                        <p:inputTextarea id="deptDesc"
+                                            value="#{adminDashboardController.newDepartment.description}" 
+                                            required="true"
+                                            requiredMessage="Description is required"
+                                            maxlength="500"
+                                            rows="4"
+                                            cols="50"
+                                            placeholder="Enter department description (max 500 characters)"
+                                            aria-required="true" 
+                                            aria-label="Description" 
+                                            styleClass="ui-inputfield #{component.valid ? '' : 'ui-state-error'}"
+                                            validatorMessage="Description must not exceed 500 characters">
+                                            <f:validateLength maximum="500"/>
+                                        </p:inputTextarea>
+                                        <p:message for="deptDesc" display="icon" styleClass="field-error" />
+                                        <div class="field-help">Provide a detailed description of the department's purpose and responsibilities</div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="deptLoc">Location: <span style="color: #dc3545;">*</span></label>
+                                        <p:inputText id="deptLoc" 
+                                            value="#{adminDashboardController.newDepartment.location}" 
+                                            required="true"
+                                            requiredMessage="Location is required"
+                                            maxlength="100"
+                                            size="50"
+                                            placeholder="Enter department location (max 100 characters)"
+                                            aria-required="true" 
+                                            aria-label="Location" 
+                                            styleClass="ui-inputfield #{component.valid ? '' : 'ui-state-error'}"
+                                            validatorMessage="Location must not exceed 100 characters">
+                                            <f:validateLength maximum="100"/>
+                                            <f:validateRegex pattern="^[a-zA-Z0-9\s\-_,.()]+$" 
+                                                           message="Location can only contain letters, numbers, spaces, hyphens, commas, periods, and parentheses"/>
+                                        </p:inputText>
+                                        <p:message for="deptLoc" display="icon" styleClass="field-error" />
+                                        <div class="field-help">Enter the physical location (building, floor, room number, etc.)</div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="deptPhone">Phone: <span style="color: #dc3545;">*</span></label>
+                                        <p:inputText id="deptPhone"
+                                            value="#{adminDashboardController.newDepartment.phoneNumber}" 
+                                            required="true"
+                                            requiredMessage="Phone number is required"
+                                            maxlength="20"
+                                            size="20"
+                                            placeholder="Enter phone number (10-15 digits, can start with +)"
+                                            aria-required="true" 
+                                            aria-label="Phone" 
+                                            styleClass="ui-inputfield #{component.valid ? '' : 'ui-state-error'}"
+                                            validatorMessage="Phone number must be 10-15 digits">
+                                            <f:validateRegex pattern="^[+]?[0-9]{10,15}$" 
+                                                           message="Phone number must be 10-15 digits (can start with + for international numbers)"/>
+                                        </p:inputText>
+                                        <p:message for="deptPhone" display="icon" styleClass="field-error" />
+                                        <div class="field-help">Enter a 10-15 digit phone number (can start with + for international numbers)</div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="deptEmail">Email: <span style="color: #dc3545;">*</span></label>
+                                        <p:inputText id="deptEmail" 
+                                            value="#{adminDashboardController.newDepartment.email}" 
+                                            required="true"
+                                            requiredMessage="Email is required"
+                                            maxlength="100"
+                                            size="50"
+                                            type="email"
+                                            placeholder="Enter valid email address"
+                                            aria-required="true" 
+                                            aria-label="Email" 
+                                            styleClass="ui-inputfield #{component.valid ? '' : 'ui-state-error'}"
+                                            validatorMessage="Please enter a valid email address">
+                                            <f:validateRegex pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" 
+                                                           message="Please enter a valid email address"/>
+                                        </p:inputText>
+                                        <p:message for="deptEmail" display="icon" styleClass="field-error" />
+                                        <div class="field-help">Enter a valid email address for the department</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-top: 20px;">
+                                    <h:commandButton value="Create Department"
+                                        action="#{adminDashboardController.createDepartment}"
+                                        styleClass="ui-button-primary"
+                                        style="background: #2c3e50 !important; border-color: #2c3e50 !important; outline: 2px solid #0056b3; outline-offset: 2px; padding: 12px 24px; font-size: 16px;"
+                                        aria-label="Create Department"
+                                        update="formMessages @form"
+                                        ajax="true"
+                                        onclick="return validateForm()"/>
+                                    <h:commandButton value="Reset Form" 
+                                        type="reset"
+                                        styleClass="ui-button-secondary"
+                                        style="margin-left: 12px; padding: 12px 24px; font-size: 16px;"
+                                        aria-label="Reset Form"
+                                        onclick="clearFormMessages()"/>
+                                    <h:commandButton value="Validate Form" 
+                                        action="#{adminDashboardController.validateDepartmentForm}"
+                                        styleClass="ui-button-info"
+                                        style="margin-left: 12px; padding: 12px 24px; font-size: 16px;"
+                                        aria-label="Validate Form"
+                                        update="formMessages"
+                                        ajax="true"/>
+                                </div>
+                            </p:tab>
+
+                            <p:tab title="View All Departments">
+                                <div style="margin-bottom: 16px;">
+                                    <p:commandButton value="Refresh Data" 
+                                        action="#{adminDashboardController.refreshDepartmentData}"
+                                        icon="pi pi-refresh"
+                                        styleClass="ui-button-secondary"
+                                        update="@form"
+                                        style="margin-right: 8px;"/>
+                                    <span style="color: #6c757d; font-size: 14px;">
+                                        Total Departments: #{adminDashboardController.allDepartments.size()}
+                                    </span>
+                                </div>
+                                <p:dataTable id="allDepartmentsTable"
+                                             value="#{adminDashboardController.allDepartments}"
+                                             var="dept"
+                                             editable="true"
+                                             rowKey="#{dept.departmentId}"
+                                             editMode="row"
+                                             selection="#{adminDashboardController.selectedDepartment}"
+                                             selectionMode="single"
+                                             styleClass="ui-datatable"
+                                             aria-label="All Departments">
+                                    <p:ajax event="rowEdit" listener="#{adminDashboardController.onRowEditDepartment}" update="allDepartmentsTable msgsAllDepartments"/>
+                                    <p:ajax event="rowEditCancel" listener="#{adminDashboardController.onRowEditCancelDepartment}" update="allDepartmentsTable msgsAllDepartments"/>
+                                    <p:column headerText="Name" style="width: 15%;">
+                                        <p:cellEditor>
+                                            <f:facet name="output">
+                                                <h:outputText value="#{dept.departmentName}"/>
+                                            </f:facet>
+                                            <f:facet name="input">
+                                                <p:inputText value="#{dept.departmentName}" maxlength="100" style="width:100%"/>
+                                            </f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column headerText="Description" style="width: 25%;">
+                                        <p:cellEditor>
+                                            <f:facet name="output">
+                                                <h:outputText value="#{dept.description}"/>
+                                            </f:facet>
+                                            <f:facet name="input">
+                                                <p:inputText value="#{dept.description}" maxlength="500" style="width:100%"/>
+                                            </f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column headerText="Location" style="width: 15%;">
+                                        <p:cellEditor>
+                                            <f:facet name="output">
+                                                <h:outputText value="#{dept.location}"/>
+                                            </f:facet>
+                                            <f:facet name="input">
+                                                <p:inputText value="#{dept.location}" maxlength="100" style="width:100%"/>
+                                            </f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column headerText="Phone" style="width: 12%;">
+                                        <p:cellEditor>
+                                            <f:facet name="output">
+                                                <h:outputText value="#{dept.phoneNumber}"/>
+                                            </f:facet>
+                                            <f:facet name="input">
+                                                <p:inputText value="#{dept.phoneNumber}" maxlength="20" style="width:100%"/>
+                                            </f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column headerText="Email" style="width: 18%;">
+                                        <p:cellEditor>
+                                            <f:facet name="output">
+                                                <h:outputText value="#{dept.email}"/>
+                                            </f:facet>
+                                            <f:facet name="input">
+                                                <p:inputText value="#{dept.email}" maxlength="100" style="width:100%"/>
+                                            </f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column headerText="Status" style="width: 10%;">
+                                        <p:cellEditor>
+                                            <f:facet name="output">
+                                                <h:outputText value="#{dept.status}"/>
+                                            </f:facet>
+                                            <f:facet name="input">
+                                                <p:selectOneMenu value="#{dept.status}" style="width:100%">
+                                                    <f:selectItem itemLabel="ACTIVE" itemValue="ACTIVE"/>
+                                                    <f:selectItem itemLabel="INACTIVE" itemValue="INACTIVE"/>
+                                                    <f:selectItem itemLabel="UNDER_MAINTENANCE" itemValue="UNDER_MAINTENANCE"/>
+                                                </p:selectOneMenu>
+                                            </f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column style="width:6rem">
+                                        <p:rowEditor editTitle="Edit Row" cancelTitle="Cancel Edit" saveTitle="Save Row"/>
+                                    </p:column>
+                                    <p:column headerText="Actions" style="width: 5%;">
+                                        <p:commandButton icon="pi pi-trash" 
+                                            title="Soft Delete" 
+                                            action="#{adminDashboardController.deleteDepartmentById(dept.departmentId)}" 
+                                            update="allDepartmentsTable msgsAllDepartments" 
+                                            styleClass="ui-button-danger action-icon-btn" 
+                                            aria-label="Soft Delete Department" 
+                                            ajax="false"
+                                            immediate="true"
+                                            rendered="#{not empty dept.departmentId}"/>
+                                    </p:column>
+                                </p:dataTable>
+                                <p:growl id="msgsAllDepartments" showDetail="true"/>
+                            </p:tab>
+
+                            <p:tab title="Show Deleted/Restore">
+                                <div style="margin-bottom: 16px;">
+                                    <p:commandButton value="Refresh Data" 
+                                        action="#{adminDashboardController.refreshDepartmentData}"
+                                        icon="pi pi-refresh"
+                                        styleClass="ui-button-secondary"
+                                        update="@form"
+                                        style="margin-right: 8px;"/>
+                                    <span style="color: #6c757d; font-size: 14px;">
+                                        Deleted Departments: #{adminDashboardController.deletedDepartments.size()}
+                                    </span>
+                                </div>
+                                <p:dataTable id="deletedDepartmentsTable" value="#{adminDashboardController.deletedDepartments}" var="dept" styleClass="ui-datatable" aria-label="Deleted Departments">
+                                    <p:column headerText="Name">#{dept.departmentName}</p:column>
+                                    <p:column headerText="Description">#{dept.description}</p:column>
+                                    <p:column headerText="Location">#{dept.location}</p:column>
+                                    <p:column headerText="Phone">#{dept.phoneNumber}</p:column>
+                                    <p:column headerText="Email">#{dept.email}</p:column>
+                                    <p:column headerText="Status">#{dept.status}</p:column>
+                                    <p:column headerText="Actions">
+                                        <p:commandButton value="Restore" icon="pi pi-undo" action="#{adminDashboardController.restoreDepartment(dept)}" update="deletedDepartmentsTable msgsDeletedDepartments" styleClass="ui-button-success" aria-label="Restore Department" ajax="false" immediate="true"/>
+                                    </p:column>
+                                </p:dataTable>
+                                <p:growl id="msgsDeletedDepartments" showDetail="true"/>
+                            </p:tab>
+
+                            <p:tab title="Manage Roles">
+                                <div class="actions-grid">
+                                    <div class="action-item" tabindex="0" aria-label="Manage Roles">
+                                        <div class="action-icon">
+                                            <i class="pi pi-users"></i>
+                                        </div>
+                                        <span>Manage Roles</span>
+                                    </div>
+                                </div>
+                            </p:tab>
+                        </p:tabView>
+                    </h:form>
+                </div>
+            </section>
+        </div>
+    </div>
+</h:body>
+
+</html> 

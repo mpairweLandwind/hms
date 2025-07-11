@@ -1,293 +1,358 @@
-/* Registration Page Styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/**
+ * Enhanced Registration Form Styles
+ * Hospital Management System
+ */
+
+/* Multi-step form navigation */
+.form-step {
+    display: none;
 }
 
-body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  min-height: 100vh;
+.form-step.active {
+    display: block;
 }
 
-.registration-container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+/* Ensure only the active step is visible */
+.form-step:not(.active) {
+    display: none !important;
 }
 
-/* Header */
-.registration-header {
-  background: white;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 1rem 0;
+.form-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
 }
 
-.header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 2rem;
+.nav-btn {
+    min-width: 120px;
 }
 
-.logo {
-  display: flex;
-  align-items: center;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #2c3e50;
-  text-decoration: none;
+/* Loading dialog */
+.loading-dialog {
+    text-align: center;
+    padding: 2rem;
 }
 
-.logo i {
-  font-size: 2rem;
-  color: #ff6b6b;
-  margin-right: 0.5rem;
+.loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
 }
 
-.back-link {
-  display: flex;
-  align-items: center;
-  color: #7f8c8d;
-  text-decoration: none;
-  transition: color 0.3s ease;
+.loading-content i {
+    color: #007bff;
 }
 
-.back-link:hover {
-  color: #2c3e50;
+.loading-content p {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #666;
 }
 
-.back-link i {
-  margin-right: 0.5rem;
+/* Step indicators */
+.step {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    background-color: #f8f9fa;
+    color: #6c757d;
+    transition: all 0.3s ease;
 }
 
-/* Registration Content */
-.registration-content {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 2rem;
+.step.active {
+    background-color: #007bff;
+    color: white;
 }
 
-.registration-card {
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 800px;
-  overflow: hidden;
+.step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: currentColor;
+    color: white;
+    font-weight: bold;
+    font-size: 0.875rem;
 }
 
-.card-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 2rem;
-  text-align: center;
+.step.active .step-number {
+    background-color: white;
+    color: #007bff;
 }
 
-.registration-icon {
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1rem;
+.step-label {
+    font-weight: 500;
 }
 
-.registration-icon i {
-  font-size: 2rem;
+/* Form validation messages */
+.field-error {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
 }
 
-.card-header h2 {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
+.form-messages {
+    margin-bottom: 1rem;
 }
 
-.card-header p {
-  opacity: 0.9;
-  font-size: 1.1rem;
+/* Checkbox styling */
+.checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
 }
 
-/* Form Styles */
-.registration-form {
-  padding: 2rem;
+.custom-checkbox {
+    margin-top: 0.25rem;
 }
 
-.form-section {
-  margin-bottom: 2rem;
-  border-bottom: 1px solid #e9ecef;
-  padding-bottom: 2rem;
+.checkbox-label {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: #495057;
 }
 
-.form-section:last-of-type {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
+.checkbox-label a {
+    color: #007bff;
+    text-decoration: none;
 }
 
-.form-section h3 {
-  color: #2c3e50;
-  font-size: 1.3rem;
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
+.checkbox-label a:hover {
+    text-decoration: underline;
 }
 
-.form-section h3 i {
-  margin-right: 0.5rem;
-  color: #667eea;
+/* Enhanced Form Groups */
+.form-group {
+    margin-bottom: 1.5rem;
 }
 
+.form-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #374151;
+    font-size: 0.875rem;
+}
+
+.form-label.required::after {
+    content: ' *';
+    color: #dc2626;
+}
+
+.label-icon {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+/* Enhanced Form Inputs */
+.form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    background-color: white;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-input::placeholder {
+    color: #9ca3af;
+}
+
+/* Enhanced Form Grid */
 .form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
-.form-field {
-  display: flex;
-  flex-direction: column;
+/* Alternative Roles */
+.alternative-roles {
+    text-align: center;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
 }
 
-.form-field label {
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: #2c3e50;
+.alternative-roles p {
+    margin-bottom: 1rem;
+    color: #6b7280;
+    font-weight: 500;
 }
 
-.form-field .ui-inputfield,
-.form-field .ui-selectonemenu,
-.form-field .ui-inputtextarea {
-  padding: 0.75rem;
-  border: 2px solid #e9ecef;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+.role-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
 }
 
-.form-field .ui-inputfield:focus,
-.form-field .ui-selectonemenu:focus,
-.form-field .ui-inputtextarea:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-  outline: none;
+.role-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: white;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    color: #374151;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
-.form-field .ui-selectonemenu {
-  background: white;
+.role-link:hover {
+    background-color: #f3f4f6;
+    border-color: #9ca3af;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Form Actions */
-.form-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid #e9ecef;
+.role-link i {
+    font-size: 1rem;
 }
 
-.submit-btn {
-  min-width: 200px;
+.patient-link:hover {
+    border-color: #3b82f6;
+    color: #3b82f6;
 }
 
-/* Password Feedback */
-.ui-password-panel {
-  margin-top: 0.5rem;
+.doctor-link:hover {
+    border-color: #10b981;
+    color: #10b981;
+}
+
+.staff-link:hover {
+    border-color: #f59e0b;
+    color: #f59e0b;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .registration-content {
-    padding: 1rem;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .card-header {
-    padding: 1.5rem;
-  }
-
-  .card-header h2 {
-    font-size: 1.5rem;
-  }
-
-  .registration-form {
-    padding: 1.5rem;
-  }
-
-  .form-actions {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .submit-btn {
-    width: 100%;
-  }
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .form-navigation {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .nav-btn {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .progress-steps {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+    }
+    
+    .step:not(:last-child)::after {
+        display: none;
+    }
+    
+    .role-links {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .role-link {
+        width: 100%;
+        max-width: 200px;
+        justify-content: center;
+    }
 }
 
 @media (max-width: 480px) {
-  .header-content {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-  }
-
-  .logo {
-    font-size: 1.2rem;
-  }
-
-  .logo i {
-    font-size: 1.5rem;
-  }
+    .step-header h3 {
+        font-size: 1.25rem;
+    }
+    
+    .form-input {
+        padding: 0.625rem 0.875rem;
+    }
+    
+    .loading-content {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
 }
 
-/* PrimeFaces Component Overrides */
-.ui-growl {
-  top: 100px !important;
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .form-input {
+        border-width: 2px;
+    }
+    
+    .form-input:focus {
+        border-width: 3px;
+    }
+    
+    .nav-btn {
+        border-width: 2px;
+    }
+    
+    .checkbox-group {
+        border-width: 2px;
+    }
 }
 
-.ui-datepicker {
-  z-index: 9999 !important;
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    .form-step,
+    .nav-btn,
+    .step,
+    .role-link {
+        transition: none;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
 }
 
-.ui-password-meter {
-  margin-top: 0.5rem;
-}
-
-/* Custom Button Styles */
-.p-button-lg {
-  padding: 0.75rem 2rem !important;
-  font-size: 1.1rem !important;
-}
-
-/* Validation Messages */
-.ui-message {
-  margin-top: 0.5rem;
-}
-
-.ui-message-error {
-  background: #fee;
-  border: 1px solid #fcc;
-  color: #c66;
-  padding: 0.5rem;
-  border-radius: 4px;
-}
-
-.ui-message-info {
-  background: #eff;
-  border: 1px solid #cfc;
-  color: #6c6;
-  padding: 0.5rem;
-  border-radius: 4px;
+/* Print Styles */
+@media print {
+    .form-navigation,
+    .alternative-roles,
+    .loading-overlay {
+        display: none !important;
+    }
+    
+    .form-step {
+        display: block !important;
+        page-break-inside: avoid;
+    }
+    
+    .form-input {
+        border: 1px solid #000;
+        background-color: white !important;
+    }
 }

@@ -3,61 +3,179 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      lang="en">
 
 <h:head>
-    <title><ui:insert name="title">HealthCare Plus</ui:insert></title>
+    <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="description" content="#{empty pageDescription ? 'Professional Hospital Management System' : pageDescription}"/>
+    <meta name="description" content="#{empty pageDescription ? 'Professional Hospital Management System - Streamlining healthcare operations with modern technology' : pageDescription}"/>
+    <meta name="keywords" content="hospital management, healthcare, medical records, appointments, billing, patient care"/>
+    <meta name="author" content="HealthCare Plus"/>
+    
+    <title>
+        <ui:insert name="title">HealthCare Plus - Hospital Management System</ui:insert>
+    </title>
+    
+    <!-- Favicon -->
+<!--    <link rel="icon" type="image/x-icon" href="#{resource['images:hms.png']}"/>-->
+<!--    <link rel="apple-touch-icon" href="#{resource['images:hms.png']}"/>-->
     
     <!-- Core Stylesheets -->
     <h:outputStylesheet library="css" name="variables.css"/>
     <h:outputStylesheet library="css" name="base.css"/>
     <h:outputStylesheet library="css" name="components.css"/>
     <h:outputStylesheet library="css" name="layout.css"/>
+    <h:outputStylesheet library="css" name="header.css"/>
+    <h:outputStylesheet library="css" name="responsive.css"/>
+    <h:outputStylesheet library="css" name="accessibility.css"/>
     
     <!-- Page Specific Stylesheets -->
     <ui:insert name="stylesheets"/>
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+    
+    <!-- Additional Head Content -->
+    <ui:insert name="head"/>
 </h:head>
 
-<h:body styleClass="#{empty bodyClass ? 'main-layout' : bodyClass}">
+<h:body styleClass="main-layout #{empty bodyClass ? '' : bodyClass}">
     <!-- Skip Links for Accessibility -->
     <div class="skip-links">
         <a href="#main-content" class="skip-link">Skip to main content</a>
-        <a href="#navigation" class="skip-link">Skip to navigation</a>
+        <a href="#main-navigation" class="skip-link">Skip to navigation</a>
+        <a href="#main-footer" class="skip-link">Skip to footer</a>
     </div>
 
-    <!-- Header -->
-    <ui:insert name="header">
-        <ui:include src="/WEB-INF/includes/main-header.xhtml"/>
-    </ui:insert>
-
-    <!-- Main Content -->
-    <main id="main-content" class="main-content" role="main">
-        <ui:insert name="content"/>
-    </main>
-
-    <!-- Footer -->
-    <ui:insert name="footer">
-        <ui:include src="/WEB-INF/includes/main-footer.xhtml"/>
-    </ui:insert>
-
-    <!-- Global Components -->
-    <p:growl id="globalMessages" showDetail="true" life="5000" autoUpdate="true"/>
-    
     <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;" role="status" aria-live="polite">
         <div class="loading-content">
-            <p:progressSpinner id="loadingSpinner" style="width: 50px; height: 50px"/>
+            <div class="loading-spinner" aria-label="Loading"></div>
             <p class="loading-text">Please wait...</p>
         </div>
     </div>
 
+    <!-- Header -->
+    <header class="main-header" role="banner">
+        <ui:insert name="header">
+            <ui:include src="/WEB-INF/includes/main-header.xhtml"/>
+        </ui:insert>
+    </header>
+
+    <!-- Navigation -->
+    <nav id="main-navigation" class="main-navigation" role="navigation" aria-label="Main navigation">
+        <ui:insert name="navigation">
+            <ui:include src="/WEB-INF/includes/main-navigation.xhtml"/>
+        </ui:insert>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content" role="main" tabindex="-1">
+ 
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <ui:insert name="content"/>
+        </div>
+    </main>
+
+    <!-- Sidebar (if needed) -->
+    <aside class="main-sidebar" role="complementary" aria-label="Sidebar">
+        <ui:insert name="sidebar"/>
+    </aside>
+
+    <!-- Footer -->
+    <footer id="main-footer" class="main-footer" role="contentinfo">
+        <ui:insert name="footer">
+            <ui:include src="/WEB-INF/includes/main-footer.xhtml"/>
+        </ui:insert>
+    </footer>
+
+    <!-- Global Messages -->
+    <p:growl id="globalMessages" 
+             showDetail="true" 
+             showSummary="true" 
+             sticky="false" 
+             life="5000"
+             autoUpdate="true"
+             escape="false"
+             position="top-right"/>
+
+    <!-- Confirmation Dialog -->
+    <p:confirmDialog global="true" 
+                     showEffect="fade" 
+                     hideEffect="fade" 
+                     responsive="true"
+                     width="350"
+                     styleClass="confirmation-dialog"
+                     header="Confirm Action"
+                     message="Are you sure you want to proceed?"
+                     severity="warn">
+        <p:commandButton value="Yes" 
+                         type="button" 
+                         styleClass="ui-confirmdialog-yes btn btn-primary" 
+                         icon="pi pi-check"/>
+        <p:commandButton value="No" 
+                         type="button" 
+                         styleClass="ui-confirmdialog-no btn btn-secondary" 
+                         icon="pi pi-times"/>
+    </p:confirmDialog>
+
     <!-- Core JavaScript -->
     <h:outputScript library="js" name="core.js"/>
+    
+    <!-- Page Specific Scripts -->
     <ui:insert name="scripts"/>
+    
+    <!-- Accessibility Announcements -->
+    <div id="aria-live-region" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+    
+    <!-- Focus Management Script -->
+    <script>
+        // Focus management for accessibility
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle skip links
+            const skipLinks = document.querySelectorAll('.skip-link');
+            skipLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const targetId = this.getAttribute('href').substring(1);
+                    const target = document.getElementById(targetId);
+                    if (target) {
+                        e.preventDefault();
+                        target.focus();
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // Announce page changes to screen readers
+            const liveRegion = document.getElementById('aria-live-region');
+            if (liveRegion) {
+                liveRegion.textContent = document.title;
+            }
+        });
+        
+        // Loading overlay management
+        function showLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.style.display = 'flex';
+                overlay.setAttribute('aria-hidden', 'false');
+            }
+        }
+        
+        function hideLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.style.display = 'none';
+                overlay.setAttribute('aria-hidden', 'true');
+            }
+        }
+        
+        // Global loading functions
+        window.showLoading = showLoading;
+        window.hideLoading = hideLoading;
+    </script>
 </h:body>
 </html>

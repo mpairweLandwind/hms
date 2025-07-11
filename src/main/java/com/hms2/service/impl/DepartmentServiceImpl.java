@@ -1,40 +1,47 @@
 package com.hms2.service.impl;
 
-import com.hms2.model.Department;
-import com.hms2.repository.DepartmentRepository;
-import com.hms2.service.DepartmentService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 
+import com.hms2.model.Department;
+import com.hms2.repository.DepartmentRepository;
+import com.hms2.service.DepartmentService;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+
 @ApplicationScoped
 public class DepartmentServiceImpl implements DepartmentService {
-    
-    private static final Logger logger = LoggerFactory.getLogger(DepartmentServiceImpl.class);
     
     @Inject
     private DepartmentRepository departmentRepository;
     
     @Override
     public Department createDepartment(Department department) {
-        logger.info("Creating new department: {}", department.getDepartmentName());
+        System.err.println("[CREATE] Department received from form: " + department);
+        try {
+            System.err.println("Creating new department: " + department.getDepartmentName());
         
         if (!isDepartmentNameUnique(department.getDepartmentName())) {
             throw new IllegalArgumentException("Department name already exists");
         }
         
+            System.err.println("[SUCCESS] Department created: " + department);
         return departmentRepository.save(department);
+        } catch (Exception e) {
+            System.err.println("[ERROR] Failed to create department: " + department);
+            e.printStackTrace(System.err);
+            throw e;
+        }
     }
     
     @Override
     public Department updateDepartment(Department department) {
-        logger.info("Updating department: {}", department.getDepartmentName());
+        System.err.println("[UPDATE] Department received from form: " + department);
+        try {
+            System.err.println("Updating department: " + department.getDepartmentName());
         
-        Optional<Department> existingDepartment = departmentRepository.findById(department.getDepartmentId());
+        Optional<Department> existingDepartment = departmentRepository.findById(department.getId());
         if (existingDepartment.isEmpty()) {
             throw new IllegalArgumentException("Department not found");
         }
@@ -46,29 +53,43 @@ public class DepartmentServiceImpl implements DepartmentService {
             throw new IllegalArgumentException("Department name already exists");
         }
         
+            System.err.println("[SUCCESS] Department updated: " + department);
         return departmentRepository.update(department);
+        } catch (Exception e) {
+            System.err.println("[ERROR] Failed to update department: " + department);
+            e.printStackTrace(System.err);
+            throw e;
+        }
     }
     
     @Override
     public void deleteDepartment(Long departmentId) {
-        logger.info("Soft deleting department with ID: {}", departmentId);
+        System.err.println("[DELETE] Department delete requested for ID: " + departmentId);
+        try {
+            System.err.println("Soft deleting department with ID: " + departmentId);
         Optional<Department> departmentOpt = departmentRepository.findById(departmentId);
         if (departmentOpt.isPresent()) {
             Department department = departmentOpt.get();
             department.softDelete("SYSTEM");
             departmentRepository.update(department);
+                System.err.println("[SUCCESS] Department soft deleted: " + departmentId);
         } else {
             throw new IllegalArgumentException("Department not found");
+            }
+        } catch (Exception e) {
+            System.err.println("[ERROR] Failed to soft delete department: " + departmentId);
+            e.printStackTrace(System.err);
+            throw e;
         }
     }
     
     @Override
     public void restoreDepartment(Long departmentId) {
-        logger.info("Restoring department with ID: {}", departmentId);
+        System.err.println("Restoring department with ID: " + departmentId);
         Optional<Department> departmentOpt = departmentRepository.findById(departmentId);
         if (departmentOpt.isPresent()) {
             Department department = departmentOpt.get();
-            department.restore("SYSTEM");
+            department.restore();
             departmentRepository.update(department);
         } else {
             throw new IllegalArgumentException("Department not found");
@@ -77,7 +98,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     
     @Override
     public void permanentlyDeleteDepartment(Long departmentId) {
-        logger.info("Permanently deleting department with ID: {}", departmentId);
+        System.err.println("Permanently deleting department with ID: " + departmentId);
         departmentRepository.deleteById(departmentId);
     }
     
@@ -124,5 +145,10 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public boolean isDepartmentNameUnique(String departmentName) {
         return departmentRepository.findByDepartmentName(departmentName).isEmpty();
+    }
+
+    @Override
+    public List<Department> findAll() {
+        return List.of();
     }
 }

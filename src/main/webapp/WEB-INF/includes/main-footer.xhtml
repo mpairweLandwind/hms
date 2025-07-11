@@ -1,63 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:p="http://primefaces.org/ui"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <footer class="main-footer" role="contentinfo">
-        <div class="footer-container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <div class="footer-logo">
-                        <i class="pi pi-heart-fill" aria-hidden="true"></i>
-                        <span>HealthCare Plus</span>
+    <div class="main-footer" style="background: #f8fafc; border-top: 1px solid #e0e6ed; padding: 2em 0 0 0;">
+        <div class="footer-container" style="max-width: 1400px; margin: 0 auto;">
+            <div class="footer-content" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 2em;">
+                <!-- Brand Section -->
+                <div class="footer-section brand-section" style="flex: 1 1 260px; min-width: 220px;">
+                    <div class="footer-brand" style="display: flex; align-items: center; gap: 1em;">
+                        <div class="footer-logo">
+                            <h:graphicImage library="images" name="hms.png" alt="HMS Logo" style="height: 48px; width: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);"/>
+                        </div>
+                        <div class="footer-brand-text">
+                            <h3 class="footer-brand-name" style="margin: 0; font-weight: 700; color: #1a365d;">HealthCare<span class="brand-accent" style="color: #2b6cb0;">Plus</span></h3>
+                            <p class="footer-brand-tagline" style="margin: 0; color: #4a5568; font-size: 1em;">Professional Hospital Management System</p>
+                        </div>
                     </div>
-                    <p class="footer-description">
-                        Transforming healthcare through innovative technology 
-                        and compassionate care.
+                    <p class="footer-description" style="margin: 1em 0 0 0; color: #718096; font-size: 0.98em;">
+                        Empowering healthcare professionals with comprehensive management solutions for efficient patient care and administrative excellence.
                     </p>
+                    <div class="footer-social" style="margin-top: 1em; display: flex; gap: 0.5em;">
+                        <a href="#" class="social-link" title="Facebook"><i class="pi pi-facebook"></i></a>
+                        <a href="#" class="social-link" title="Twitter"><i class="pi pi-twitter"></i></a>
+                        <a href="#" class="social-link" title="LinkedIn"><i class="pi pi-linkedin"></i></a>
+                        <a href="#" class="social-link" title="YouTube"><i class="pi pi-youtube"></i></a>
+                    </div>
                 </div>
                 
-                <div class="footer-section">
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><h:link outcome="/index" value="Home"/></li>
-                        <li><h:link outcome="/about" value="About"/></li>
-                        <li><h:link outcome="/contact" value="Contact"/></li>
-                        <li><h:link outcome="/help" value="Help Center"/></li>
+                <!-- Quick Access Section -->
+                <div class="footer-section" style="flex: 1 1 180px; min-width: 160px;">
+                    <h4 class="footer-section-title" style="margin-bottom: 0.7em; color: #2b6cb0;">Quick Access</h4>
+                    <ul class="footer-links" style="list-style: none; padding: 0; margin: 0;">
+                        <li><h:link outcome="/index" styleClass="footer-link" style="color: #1a365d;">Home</h:link></li>
+                        <li><h:link outcome="/views/appointments/appointments" styleClass="footer-link" style="color: #1a365d;">Appointments</h:link></li>
+                        <li><h:link outcome="/views/patients/patients" styleClass="footer-link" style="color: #1a365d;">Patients</h:link></li>
+                        <li><h:link outcome="/views/doctors/doctors" styleClass="footer-link" style="color: #1a365d;">Doctors</h:link></li>
+                        <li><h:link outcome="/views/billing/billing" styleClass="footer-link" style="color: #1a365d;">Billing</h:link></li>
                     </ul>
                 </div>
                 
-                <div class="footer-section">
-                    <h4>For Patients</h4>
-                    <ul>
-                        <li><h:link outcome="/views/registration/patient-registration" value="Register"/></li>
-                        <li><h:link outcome="/patient-portal" value="Patient Portal"/></li>
-                        <li><h:link outcome="/appointments" value="Appointments"/></li>
-                        <li><h:link outcome="/billing" value="Billing"/></li>
+                <!-- Registration Section -->
+                <div class="footer-section" style="flex: 1 1 180px; min-width: 160px;">
+                    <h4 class="footer-section-title" style="margin-bottom: 0.7em; color: #2b6cb0;">Registration</h4>
+                    <ul class="footer-links" style="list-style: none; padding: 0; margin: 0;">
+                        <li><h:link outcome="/views/registration/patient-registration" styleClass="footer-link" style="color: #1a365d;">Patient Registration</h:link></li>
+                        <li><h:link outcome="/views/registration/doctor-registration" styleClass="footer-link" style="color: #1a365d;">Doctor Registration</h:link></li>
+                        <li><h:link outcome="/views/registration/staff-registration" styleClass="footer-link" style="color: #1a365d;">Staff Registration</h:link></li>
+                        <li><h:link outcome="/index" styleClass="footer-link" style="color: #1a365d;">Login</h:link></li>
                     </ul>
                 </div>
                 
-                <div class="footer-section">
-                    <h4>For Professionals</h4>
-                    <ul>
-                        <li><h:link outcome="/views/registration/doctor-registration" value="Doctor Registration"/></li>
-                        <li><h:link outcome="/views/registration/staff-registration" value="Staff Registration"/></li>
-                        <li><h:link outcome="/admin" value="Admin Portal"/></li>
-                        <li><h:link outcome="/careers" value="Careers"/></li>
+                <!-- Support Section -->
+                <div class="footer-section" style="flex: 1 1 180px; min-width: 160px;">
+                    <h4 class="footer-section-title" style="margin-bottom: 0.7em; color: #2b6cb0;">Support &amp; Help</h4>
+                    <ul class="footer-links" style="list-style: none; padding: 0; margin: 0;">
+                        <li><h:link outcome="/help" styleClass="footer-link" style="color: #1a365d;">Help Center</h:link></li>
+                        <li><h:link outcome="/contact" styleClass="footer-link" style="color: #1a365d;">Contact Us</h:link></li>
+                        <li><h:link outcome="/about" styleClass="footer-link" style="color: #1a365d;">About Us</h:link></li>
+                        <li><h:link outcome="/faq" styleClass="footer-link" style="color: #1a365d;">FAQ</h:link></li>
                     </ul>
+                </div>
+                
+                <!-- Contact Section -->
+                <div class="footer-section contact-section" style="flex: 1 1 220px; min-width: 180px;">
+                    <h4 class="footer-section-title" style="margin-bottom: 0.7em; color: #2b6cb0;">Contact Information</h4>
+                    <div class="contact-info" style="color: #4a5568; font-size: 0.98em;">
+                        <div class="contact-item" style="margin-bottom: 0.4em;"><i class="pi pi-map-marker"></i> <span>123 Healthcare Street, Kampala  City 12345</span></div>
+                        <div class="contact-item" style="margin-bottom: 0.4em;"><i class="pi pi-phone"></i> <span>+256 (773) 336-896</span></div>
+                        <div class="contact-item" style="margin-bottom: 0.4em;"><i class="pi pi-envelope"></i> <span>info@healthcareplus.com</span></div>
+                        <div class="contact-item"><i class="pi pi-clock"></i> <span>24/7 Emergency Support</span></div>
+                    </div>
                 </div>
             </div>
             
-            <div class="footer-bottom">
-                <p>&copy; 2024 HealthCare Plus. All rights reserved.</p>
-                <div class="footer-links">
-                    <h:link outcome="/privacy" value="Privacy Policy"/>
-                    <h:link outcome="/terms" value="Terms of Service"/>
-                    <h:link outcome="/accessibility" value="Accessibility"/>
+            <!-- Footer Bottom -->
+            <div class="footer-bottom" style="border-top: 1px solid #e0e6ed; margin-top: 2em; padding: 1em 0 0 0; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; font-size: 0.97em; color: #718096;">
+                <div class="footer-copyright">
+                    <p style="margin: 0;">&copy; 2025 HealthCare Plus. All rights reserved.  Designed By Alien</p>
+                </div>
+                <div class="footer-legal" style="display: flex; gap: 1em;">
+                    <h:link outcome="/privacy" styleClass="footer-legal-link" style="color: #2b6cb0;">Privacy Policy</h:link>
+                    <h:link outcome="/terms" styleClass="footer-legal-link" style="color: #2b6cb0;">Terms of Service</h:link>
+                    <h:link outcome="/cookies" styleClass="footer-legal-link" style="color: #2b6cb0;">Cookie Policy</h:link>
                 </div>
             </div>
         </div>
-    </footer>
+    </div>
 
 </ui:composition>

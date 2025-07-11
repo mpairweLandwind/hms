@@ -1,16 +1,19 @@
 package com.hms2.service;
 
-import com.hms2.model.Staff;
-import com.hms2.model.StaffStatus;
-import com.hms2.model.Department;
 import java.util.List;
 import java.util.Optional;
+
+import com.hms2.enums.StaffStatus;
+import com.hms2.model.Department;
+import com.hms2.model.Staff;
 
 public interface StaffService {
     
     Staff createStaff(Staff staff);
     
     Staff updateStaff(Staff staff);
+
+    long getActiveStaffCount();
     
     void deleteStaff(Long staffId);
     
@@ -47,4 +50,9 @@ public interface StaffService {
     boolean isEmployeeIdUnique(String employeeId);
     
     boolean isEmailUnique(String email);
+    
+    // Soft Delete operations
+    void restoreStaff(Long staffId);
+    List<Staff> getDeletedStaff();
+    void permanentlyDeleteStaff(Long staffId);
 }

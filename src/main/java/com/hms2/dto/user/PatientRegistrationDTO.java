@@ -1,7 +1,13 @@
 package com.hms2.dto.user;
 
-import jakarta.validation.constraints.*;
 import java.util.Date;
+
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 public class PatientRegistrationDTO {
     
@@ -66,6 +72,9 @@ public class PatientRegistrationDTO {
     
     @AssertTrue(message = "You must accept the privacy policy")
     private boolean acceptPrivacy = false;
+    
+    @AssertTrue(message = "You must consent to medical data processing")
+    private boolean medicalConsent = false;
     
     // Constructors
     public PatientRegistrationDTO() {}
@@ -211,5 +220,13 @@ public class PatientRegistrationDTO {
     
     public void setAcceptPrivacy(boolean acceptPrivacy) {
         this.acceptPrivacy = acceptPrivacy;
+    }
+    
+    public boolean isMedicalConsent() {
+        return medicalConsent;
+    }
+    
+    public void setMedicalConsent(boolean medicalConsent) {
+        this.medicalConsent = medicalConsent;
     }
 }

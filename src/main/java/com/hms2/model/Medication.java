@@ -1,17 +1,24 @@
 package com.hms2.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "medications")
 public class Medication extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "medication_seq")
-    @SequenceGenerator(name = "medication_seq", sequenceName = "medication_seq", allocationSize = 1)
     @Column(name = "medication_id")
     private Long medicationId;
 
@@ -240,5 +247,22 @@ public class Medication extends BaseEntity {
 
     public void setPrescriptionMedications(List<PrescriptionMedication> prescriptionMedications) {
         this.prescriptionMedications = prescriptionMedications;
+    }
+
+    /**
+     * Alias for getMedicationName() for convenience.
+     * @return The name of the medication.
+     */
+    public String getName() {
+        return this.medicationName;
+    }
+
+    @Override
+    public String toString() {
+        return "Medication{" +
+                "medicationId=" + medicationId +
+                ", medicationName='" + medicationName + '\'' +
+                ", status='" + status + '\'' +
+                '}';
     }
 }
